@@ -8,6 +8,14 @@ module BrowseEverything
         validate_config
       end
 
+      def icon
+        'unchecked'
+      end
+
+      def name
+        self.class.name.split(/::/).last.titleize
+      end
+
       def validate_config
       end
 

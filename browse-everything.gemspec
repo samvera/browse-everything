@@ -20,6 +20,9 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rails", "~> 3.2"
   spec.add_dependency "twitter-bootstrap-rails"
+  spec.add_dependency "font-awesome-rails"
+  spec.add_dependency "less-rails"
+  spec.add_dependency "therubyracer"
   spec.add_dependency "google_drive"
   spec.add_dependency "dropbox-api"
   spec.add_development_dependency "rspec"

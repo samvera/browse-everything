@@ -2,6 +2,10 @@ module BrowseEverything
   module Driver
     class FileSystem < Base
 
+      def icon
+        'file'
+      end
+      
       def validate_config
         unless config[:home]
           raise BrowseEverything::InitializationError, "FileSystem driver requires a :home argument"

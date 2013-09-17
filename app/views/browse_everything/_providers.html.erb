@@ -1,0 +1,7 @@
+<div class="browse-ev providers">
+  <ul class="unstyled">
+    <% @browser.providers.values.each do |provider| %>
+      <li><i class="icon-<%=provider.icon%>"></i> <%= provider.name %></li>
+    <% end %>
+  </ul>
+</div>
