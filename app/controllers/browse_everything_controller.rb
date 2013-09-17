@@ -1,4 +1,4 @@
-class BrowseEverythingController
+class BrowseEverythingController < ActionController::Base
   before_filter :load_browser
 
   def index
@@ -8,7 +8,8 @@ class BrowseEverythingController
   end
   
   def load_browser
-    @browser = BrowseEverything::Browser.new(file_system: { home: Rails.root })
+    @browser = BrowseEverything::Browser.new('file_system' => { home: Rails.root })
     @provider = @browser.providers[params[:provider]]
+    @path = params[:path] || '/'
   end  
 end
