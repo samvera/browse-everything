@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/projecthydra/browse-everything.png?branch=master)](https://travis-ci.org/projecthydra/browse-everything)
+
 # BrowseEverything
 
 TODO: Write a gem description
