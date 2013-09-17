@@ -1,4 +1,5 @@
 class BrowseEverythingController < ActionController::Base
+  layout 'browse_everything'
   before_filter :load_browser
 
   def index

@@ -19,10 +19,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "rails", ">= 3.1"
-  spec.add_dependency "twitter-bootstrap-rails"
-  spec.add_dependency "font-awesome-rails"
-  spec.add_dependency "less-rails"
-  spec.add_dependency "therubyracer"
+  spec.add_dependency "sass-rails"
+  spec.add_dependency "bootstrap-sass"
   spec.add_dependency "google_drive"
   spec.add_dependency "dropbox-api"
   spec.add_development_dependency "rspec"
