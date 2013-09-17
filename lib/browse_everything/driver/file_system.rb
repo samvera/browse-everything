@@ -13,12 +13,18 @@ module BrowseEverything
       end
 
       def contents(path='')
-        real_path = File.join(config[:home], path.sub(%r{^[/.]+},''))
-        if File.directory?(real_path)
-          Dir[File.join(real_path,'*')].collect { |f| details(f) }
-        else File.exists?(real_path)
-          [details(real_path)]
+        relative_path = path.sub(%r{^[/.]+},'')
+        real_path = File.join(config[:home], relative_path)
+        result = []
+        if relative_path.present?
+          result << details('..')
         end
+        if File.directory?(real_path)
+          result += Dir[File.join(real_path,'*')].collect { |f| details(f) }
+        else File.exists?(real_path)
+          result += [details(real_path)]
+        end
+        result
       end
 
       def details(path)

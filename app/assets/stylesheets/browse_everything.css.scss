@@ -4,6 +4,10 @@
 @import "bootstrap-responsive";
 @import "font-awesome";
 
+.ev-container {
+  padding: 0;
+}
+
 .ev-browser {
   .ev-providers {
     padding: 4px;
@@ -14,7 +18,7 @@
 
     li {
       cursor: pointer;
-      .selected {
+      .ev-selected {
         color: $dropdownLinkColorHover;
         background-color: $dropdownLinkBackgroundHover;
       }
@@ -45,4 +49,8 @@
       .ev-file-type { display: none; }
     }
   }
+}
+
+.ev-footer {
+  height: 50px;
 }

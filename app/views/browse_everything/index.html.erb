@@ -1,4 +1,12 @@
-<div class="ev-browser">
-  <%= render :partial => 'providers' %>
-  <%= render :partial => 'files' %>
+<div class="modal-body ev-container">
+  <div class="ev-browser">
+    <%= render :partial => 'providers' %>
+    <%= render :partial => 'files' %>
+  </div>
+</div>
+<div class="modal-footer">
+  <form class="ev-submit-form form-horizontal" action="<%=params[:submit_to]%>" method="POST">
+    <button type="cancel" class="btn btn-danger">Cancel</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
 </div>

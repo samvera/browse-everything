@@ -2,7 +2,7 @@
 <% if @provider.present? %>
   <ul class="unstyled">
     <% @provider.contents(@path).each do |file| %>
-    <li>
+    <li data-ev-location="<%= file.location %>">
       <span class="ev-file ev-file-name<%=file.container? ? ' ev-container' : ''%>">
         <%= link_to(file.name, browse_everything_engine.contents_path(params[:provider],File.join(@path,file.name))) %>
       </span>
