@@ -20,15 +20,16 @@ module BrowseEverything
       def details(path)
         if File.exists?(path)
           info = File::Stat.new(path)
-          {
-            :name      => File.basename(path),
-            :container => info.directory?,
-            :mtime     => info.mtime,
-            :size      => info.size,
-            :mime_type => Rack::Mime.mime_type(File.extname(path))
-          }
+          BrowseEverything::FileEntry.new(
+            "file://#{File.expand_path(File.join(config[:home],path))}",
+            File.basename(path),
+            info.size,
+            info.mtime,
+            Rack::Mime.mime_type(File.extname(path)),
+            info.directory?
+          )
         else
-          {}
+          nil
         end
       end
     end
