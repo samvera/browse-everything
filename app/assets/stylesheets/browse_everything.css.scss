@@ -1,3 +1,48 @@
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
 @import "bootstrap";
 @import "bootstrap-responsive";
 @import "font-awesome";
+
+.ev-browser {
+  .ev-providers {
+    padding: 4px;
+    background-color: lightgray;
+    float: left;
+    width: 140px;
+    height: 100%;
+
+    li {
+      cursor: pointer;
+      .selected {
+        color: $dropdownLinkColorHover;
+        background-color: $dropdownLinkBackgroundHover;
+      }
+    }
+  }
+
+  .ev-files {
+    .ev-file-name {
+      cursor: pointer;
+      &:hover {
+        color: $dropdownLinkColorHover;
+        background-color: $dropdownLinkBackgroundHover;
+      }
+    }
+
+    &.detail li {
+      display: table-row; 
+      .ev-file-name, 
+      .ev-file-size, 
+      .ev-file-mtime, 
+      .ev-file-type { display: table-cell; }
+    }
+
+    &.list li {
+      .ev-file-name { display: block; }
+      .ev-file-size, 
+      .ev-file-mtime,
+      .ev-file-type { display: none; }
+    }
+  }
+}

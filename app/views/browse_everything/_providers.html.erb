@@ -1,7 +1,10 @@
-<div class="browse-ev providers">
+<div class="ev-providers">
   <ul class="unstyled">
-    <% @browser.providers.values.each do |provider| %>
-      <li><i class="icon-<%=provider.icon%>"></i> <%= provider.name %></li>
+    <% @browser.providers.each_pair do |key, provider| %>
+      <li>
+        <i class="icon-<%=provider.icon%>"></i>
+        <%= link_to(provider.name, browse_everything_engine.contents_path(key)) %>
+      </li>
     <% end %>
   </ul>
 </div>

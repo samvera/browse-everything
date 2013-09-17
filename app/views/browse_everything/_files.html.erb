@@ -1,24 +1,16 @@
+<div class="ev-files list">
 <% if @provider.present? %>
-<div class="browse-ev files">
-  <table class="table table-striped table-condensed">
-    <thead>
-    <tr>
-      <th>Name</th>
-      <th>Size</th>
-      <th>Modified</th>
-      <th>Type</th>
-    </tr>
-    </thead>
-    <tbody>
+  <ul class="unstyled">
     <% @provider.contents(@path).each do |file| %>
-    <tr>
-      <td class="<%=file.container? ? 'container' : ''%>"><%= file.name %></td>
-      <td><%= number_to_human_size(file.size) %></td>
-      <td><%= file.mtime.strftime('%F %R') %></td>
-      <td><%= file.type %></td>
-    </tr>
+    <li>
+      <span class="ev-file ev-file-name<%=file.container? ? ' ev-container' : ''%>">
+        <%= link_to(file.name, browse_everything_engine.contents_path(params[:provider],File.join(@path,file.name))) %>
+      </span>
+      <span class="ev-file ev-file-size"><%= number_to_human_size(file.size) %></span>
+      <span class="ev-file ev-file-mtime"><%= file.mtime.strftime('%F %R') %></span>
+      <span class="ev-file ev-file-type"><%= file.type %></span>
+    </li>
     <% end %>
-    </tbody>
-  </table>
-</div>
+  </ul>
 <% end %>
+</div>
