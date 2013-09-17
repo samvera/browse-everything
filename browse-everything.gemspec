@@ -1,0 +1,30 @@
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'browse_everything/version'
+
+Gem::Specification.new do |spec|
+  spec.name          = "browse-everything"
+  spec.version       = BrowseEverything::VERSION
+  spec.authors       = ["Michael Klein"]
+  spec.email         = ["mbklein@gmail.com"]
+  spec.description   = %q{AJAX file browser for cloud storage services}
+  spec.summary       = %q{AJAX file browser for cloud storage services}
+  spec.homepage      = "https://github.com/mbklein/browse-everything"
+  spec.license       = "Apache 2"
+
+  spec.files         = `git ls-files`.split($/)
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.require_paths = ["lib"]
+
+  spec.add_dependency "rails", "~> 3.2"
+  spec.add_dependency "twitter-bootstrap-rails"
+  spec.add_dependency "google_drive"
+  spec.add_dependency "dropbox-api"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "rspec-rails"
+  spec.add_development_dependency "bundler", "~> 1.3"
+  spec.add_development_dependency "pry"
+  spec.add_development_dependency "rake"
+end
