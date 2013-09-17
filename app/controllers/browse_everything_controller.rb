@@ -9,7 +9,7 @@ class BrowseEverythingController < ActionController::Base
   end
   
   def load_browser
-    @browser = BrowseEverything::Browser.new('file_system' => { home: Rails.root })
+    @browser = BrowseEverything::Browser.new
     @provider = @browser.providers[params[:provider]]
     @path = params[:path] || ''
   end  

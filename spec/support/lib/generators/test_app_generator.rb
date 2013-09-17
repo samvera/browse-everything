@@ -27,4 +27,10 @@ class TestAppGenerator < Rails::Generators::Base
       "\n\nmount BrowseEverything::Engine => '/browse'\n\n"
     end
   end
+
+  def create_bev_configuration
+    create_file "config/browse_everything_providers.yml" do
+      YAML.dump({ 'file_system' => { :home => Rails.root.to_s }})
+    end
+  end
 end
