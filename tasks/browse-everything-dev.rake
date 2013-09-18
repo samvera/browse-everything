@@ -27,6 +27,7 @@ namespace :app do
 
   desc "Clean out the test rails app"
   task :clean do
+    Rake::Task["app:stop"].invoke
     puts "Removing sample rails app"
     `rm -rf spec/internal`
   end
@@ -43,15 +44,19 @@ namespace :app do
 
   desc "Stop the test rails app"
   task :stop do
+    pid_file = 'tmp/pids/server.pid'
     within_test_app do
-      pid = File.read('tmp/pids/server.pid')
-      puts "Stopping pid #{pid}"
-      system "kill -2 #{pid}"
+      if (File.exists?(pid_file))
+        pid = File.read(pid_file)
+        puts "Stopping pid #{pid}"
+        system "kill -2 #{pid}"
+      end
     end
   end
 end
 
 def within_test_app
+  return unless  (File.exists?('spec/internal'))
   FileUtils.cd('spec/internal')
   yield
   FileUtils.cd('../..')
