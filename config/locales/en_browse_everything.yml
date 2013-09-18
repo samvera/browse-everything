@@ -1,0 +1,5 @@
+en:
+  browse_everything:
+    modal_form:
+      submit: "Submit"
+      cancel: "Cancel"

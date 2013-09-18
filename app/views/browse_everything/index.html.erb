@@ -12,7 +12,7 @@
 <div class="modal-footer">
   <span class="pull-left ev-status">0 files selected</span>
   <%= form_tag browse_everything_file_handler_path, :method => "POST", :class => "ev-submit-form form-horizontal" do %>
-    <button class="ev-cancel btn btn-danger">Cancel</button>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button class="ev-cancel btn btn-danger"><%= t('browse_everything.modal_form.cancel')%></button>
+    <button type="submit" class="btn btn-primary"><%= t('browse_everything.modal_form.submit')%></button>
   <% end %>
 </div>
