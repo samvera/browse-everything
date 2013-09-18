@@ -1,15 +1,12 @@
 <% if @provider.present? %>
   <ul class="unstyled">
     <% @provider.contents(@path).each do |file| %>
-    <li data-ev-location="<%= file.location %>">
-      <span class="ev-file ev-file-name<%=file.container? ? ' ev-container' : ''%>">
+    <li data-ev-location="<%= file.location %>" title="<%= number_to_human_size(file.size).sub(/Bytes/,'bytes') %> • <%= file.mtime.strftime('%F %R') %>">
+      <span class="<%=file.container? ? 'ev-container' : 'ev-file'%> ev-file-name">
         <%= link_to(file.name, browse_everything_engine.contents_path(params[:provider],File.join(@path,file.name))) %>
       </span>
-      <span class="ev-file ev-file-size"><%= number_to_human_size(file.size) %></span>
-      <span class="ev-file ev-file-mtime"><%= file.mtime.strftime('%F %R') %></span>
-      <span class="ev-file ev-file-type"><%= file.type %></span>
     </li>
     <% end %>
-  </ul>
+  </table>
 <% end %>
 </div>

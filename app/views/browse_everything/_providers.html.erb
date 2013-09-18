@@ -1,10 +1,10 @@
-<div class="ev-providers">
   <ul class="unstyled">
     <% @browser.providers.each_pair do |key, provider| %>
-      <li class="ev-container">
-        <i class="icon-<%=provider.icon%>"></i>
-        <%= link_to(provider.name, browse_everything_engine.contents_path(key)) %>
+      <li>
+        <span class="ev-container">
+          <i class="icon-<%=provider.icon%>"></i>
+          <%= link_to(provider.name, browse_everything_engine.contents_path(key)) %>
+        </span>
       </li>
     <% end %>
   </ul>
-</div>
