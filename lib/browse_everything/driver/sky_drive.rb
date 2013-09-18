@@ -1,14 +1,19 @@
 module BrowseEverything
   module Driver
-    class FileSystem < Base
+    class SkyDrive < Base
+
+      require 'skydrive'
 
       def icon
-        'file'
+        'windows'
       end
       
       def validate_config
-        unless config[:home]
-          raise BrowseEverything::InitializationError, "FileSystem driver requires a :home argument"
+        unless config[:client_id]
+          raise BrowseEverything::InitializationError, "SkyDrive driver requires a :client_id argument"
+        end
+        unless config[:client_secret]
+          raise BrowseEverything::InitializationError, "SkyDrive driver requires a :client_secret argument"
         end
       end
 
@@ -43,9 +48,13 @@ module BrowseEverything
         end
       end
 
-      def authorized?
-        true
+      def auth_link(opts={})
+        callback = connector_response_url(opts)
+        oauth_client = Skydrive::Oauth::Client.new(config[:client_id], config[:client_secret], callback.to_s,"wl.skydrive")
+        #todo error checking here
+        oauth_client.authorize_url
       end
+
     end
 
   end

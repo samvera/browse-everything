@@ -1,6 +1,6 @@
 module BrowseEverything
   module Driver
-    class FileSystem < Base
+    class DropBox < Base
 
       def icon
         'file'
@@ -44,7 +44,7 @@ module BrowseEverything
       end
 
       def authorized?
-        true
+        false
       end
     end
 

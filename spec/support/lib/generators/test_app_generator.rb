@@ -16,6 +16,12 @@ class TestAppGenerator < Rails::Generators::Base
     end
   end
 
+  def inject_application
+    insert_into_file "config/application.rb", :after => 'Rails::Application' do
+      "\nconfig.autoload_paths+=[File.join(Rails.root,'../../lib')]"
+    end
+  end
+
   def update_gemfile
     append_file "Gemfile" do
       "gem 'bootstrap-sass'\ngem 'font-awesome-rails'"
