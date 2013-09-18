@@ -11,5 +11,6 @@ module BrowseEverything
     autoload :Base,       'browse_everything/driver/base'
     autoload :FileSystem, 'browse_everything/driver/file_system'
     autoload :SkyDrive, 'browse_everything/driver/sky_drive'
+    autoload :Box, 'browse_everything/driver/box'
   end
 end
