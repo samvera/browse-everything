@@ -7,7 +7,11 @@ module BrowseEverything
       def icon
         'windows'
       end
-      
+
+      def container_items
+        ["folder","album"]
+      end
+
       def validate_config
         unless config[:client_id]
           raise BrowseEverything::InitializationError, "SkyDrive driver requires a :client_id argument"
@@ -18,46 +22,78 @@ module BrowseEverything
       end
 
       def contents(path='')
-        relative_path = path.sub(%r{^[/.]+},'')
-        real_path = File.join(config[:home], relative_path)
         result = []
-        if relative_path.present?
-          result << details('..')
+        token_obj = rehydrate_token
+        client = Skydrive::Client.new(token_obj)
+        if (path == '')
+          folder = client.my_skydrive
+        #todo do some loop to get down to my path
+        else
+          folder = client.get("/#{path.gsub("-",".")}/")
+          # embed an up dir
+          #result += [folder_details(folder)]
         end
-        if File.directory?(real_path)
-          result += Dir[File.join(real_path,'*')].collect { |f| details(f) }
-        else File.exists?(real_path)
-          result += [details(real_path)]
+
+        files = folder.files
+        files.items.each do |item|
+          if container_items.include? item.type
+            result += [folder_details(item)]
+          else
+            Rails.logger.warn("\n\nID #{item.id} #{item.type}")
+            result += [file_details(item)]
+          end
         end
         result
       end
 
-      def details(path)
-        if File.exists?(path)
-          info = File::Stat.new(path)
-          BrowseEverything::FileEntry.new(
-            "file://#{File.expand_path(File.join(config[:home],path))}",
-            File.basename(path),
-            info.size,
-            info.mtime,
-            info.directory? ? 'directory' : Rack::Mime.mime_type(File.extname(path)),
-            info.directory?
-          )
-        else
-          nil
-        end
+      def link_for(path)
+        token_obj = rehydrate_token
+        client = Skydrive::Client.new(token_obj)
+        response = client.get("/#{real_id(path)}/shared_read_link")
+        response.parsed_response["link"]
       end
+
+
+
+      def file_details(file)
+          BrowseEverything::FileEntry.new(
+            #file.download_link,
+            safe_id(file.id),
+            "#{key}:#{safe_id(file.id)}",
+            file.name,
+            file.size,
+            file.updated_time,
+            'file',#todo how are we getting mime type
+            false
+          )
+      end
+
+      def folder_details(folder)
+        BrowseEverything::FileEntry.new(
+            safe_id(folder.id),
+            "#{key}:#{safe_id(folder.id)}",
+            folder.name,
+            0,
+            folder.updated_time,
+            'directory',#todo how are we getting mime type
+            true
+        )
+      end
+
 
       def auth_link
         oauth_client.authorize_url
       end
 
       def authorized?
-        @token.present?
+        return false unless @token.present?
+        return !rehydrate_token.expired?
       end
 
-      def connect(code)
-        @token = oauth_client.get_access_token(code).token
+      def connect(params,data)
+        Rails.logger.warn "params #{params.inspect}"
+        token = oauth_client.get_access_token(params[:code])
+        @token = {token:token.token, expires_at:token.expires_at}
       end
 
       private
@@ -67,7 +103,21 @@ module BrowseEverything
         #todo error checking here
       end
 
+      def rehydrate_token
+        return @rehydrate_token if @rehydrate_token
+        token_str = @token[:token]
+        token_expires = @token[:expires_at]
+        Rails.logger.warn "\n\n Rehydrating: #{@token} #{token_str} #{token_expires}"
+        @rehydrate_token = oauth_client.get_access_token_from_hash(token_str,{expires_at:token_expires})
       end
 
+      def safe_id(id)
+        id.gsub(".","-")
+      end
+
+      def real_id(id)
+        id.gsub("-",".")
+      end
+    end
   end
 end
