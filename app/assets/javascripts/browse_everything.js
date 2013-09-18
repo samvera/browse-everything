@@ -1,3 +1,3 @@
 //= require jquery
 //= require bootstrap
-//= require browse_everything_behavior
+//= require browse_everything/behavior

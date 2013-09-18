@@ -1,14 +1,18 @@
-<div class="modal-body ev-container">
-  <div class="ev-browser">
-    <%= render :partial => 'providers' %>
-    <div class="ev-files list">
+<div class="modal-header"></div>
+<div class="modal-body ev-body">
+  <div class="ev-browser row-fluid">
+    <div class="span2 ev-providers nav nav-list well">
+      <%= render :partial => 'providers' %>
+    </div>
+    <div class="span10 ev-files list">
       <%= render :partial => 'files' %>
     </div>
   </div>
 </div>
 <div class="modal-footer">
-  <form class="ev-submit-form form-horizontal" action="<%=params[:submit_to]%>" method="POST">
-    <button type="cancel" class="btn btn-danger">Cancel</button>
+  <span class="pull-left ev-status">0 files selected</span>
+  <%= form_tag browse_everything_file_handler_path, :method => "POST", :class => "ev-submit-form form-horizontal" do %>
+    <button class="ev-cancel btn btn-danger">Cancel</button>
     <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+  <% end %>
 </div>

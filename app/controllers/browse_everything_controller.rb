@@ -3,9 +3,11 @@ class BrowseEverythingController < ActionController::Base
   before_filter :load_browser
 
   def index
+    render :layout => !request.xhr?
   end
 
   def show
+    render :layout => !request.xhr?
   end
   
   def load_browser
