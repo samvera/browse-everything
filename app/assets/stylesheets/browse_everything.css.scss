@@ -4,53 +4,72 @@
 @import "bootstrap-responsive";
 @import "font-awesome";
 
-.ev-container {
+@mixin border-highlight($color) {
+  $bl: 3;
+  @if $color == none {
+    $bl: 0
+  }
+  margin-left: #{4-$bl}px;
+  border-left: #{$bl}px solid $color;
+  padding-left: 4px;
+}
+
+@mixin ev-link {
+  cursor: pointer;
+  @include border-highlight(none);
+  &:hover {
+    @include border-highlight(gray);
+  }
+  a {
+    color: inherit;
+    background-color: inherit;
+    text-decoration: none;
+  }
+}
+
+.ev-body {
   padding: 0;
 }
 
-.ev-browser {
-  .ev-providers {
-    padding: 4px;
-    background-color: lightgray;
-    float: left;
-    width: 140px;
-    height: 100%;
+.ev-providers {
+  padding: 4px;
+  background-color: lightgray;
+}
 
-    li {
-      cursor: pointer;
-      .ev-selected {
-        color: $dropdownLinkColorHover;
-        background-color: $dropdownLinkBackgroundHover;
-      }
-    }
-  }
-
-  .ev-files {
-    .ev-file-name {
-      cursor: pointer;
-      &:hover {
-        color: $dropdownLinkColorHover;
-        background-color: $dropdownLinkBackgroundHover;
-      }
-    }
-
-    &.detail li {
-      display: table-row; 
-      .ev-file-name, 
-      .ev-file-size, 
-      .ev-file-mtime, 
-      .ev-file-type { display: table-cell; }
-    }
-
-    &.list li {
-      .ev-file-name { display: block; }
-      .ev-file-size, 
-      .ev-file-mtime,
-      .ev-file-type { display: none; }
-    }
+.ev-providers, .ev-files {
+  li { @include ev-link; }
+  .ev-selected {
+    @include border-highlight(black);
   }
 }
 
-.ev-footer {
-  height: 50px;
+.ev-files {
+  position: relative;
+
+  li { 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    .ev-file-name {
+//      padding: 0px 6px;
+      white-space: nowrap;
+    }
+    border-top: none;
+  }
+
+  &.detail {
+  }
+
+  &.list ul {
+    @include content-columns(3);
+  }
+}
+
+.ev-container li {
+  cursor: pointer;
+}
+
+#browse-everything {
+  margin: 0 0 0 -450px;
+  width: 900px;
+  left: 50%;
 }

@@ -24,7 +24,12 @@ class TestAppGenerator < Rails::Generators::Base
 
   def inject_routes
     insert_into_file "config/routes.rb", :after => ".draw do" do
-      "\n\nmount BrowseEverything::Engine => '/browse'\n\n"
+      %{
+
+  mount BrowseEverything::Engine => '/browse'
+  root :to => "file_handler#index"
+  post '/file', :to => "file_handler#update", :as => "browse_everything_file_handler"
+      }
     end
   end
 
@@ -32,5 +37,10 @@ class TestAppGenerator < Rails::Generators::Base
     create_file "config/browse_everything_providers.yml" do
       YAML.dump({ 'file_system' => { :home => Rails.root.to_s }})
     end
+  end
+
+  def create_test_route
+    copy_file "app/controllers/file_handler_controller.rb", "app/controllers/file_handler_controller.rb"
+    copy_file "app/views/file_handler/index.html.erb", "app/views/file_handler/index.html.erb"
   end
 end
