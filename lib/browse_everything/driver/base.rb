@@ -4,6 +4,7 @@ module BrowseEverything
       include BrowseEverything::Engine.routes.url_helpers
 
       attr_reader :config
+      attr_accessor :token
 
       def initialize(config,session_info={})
         @config = config
@@ -36,6 +37,11 @@ module BrowseEverything
       def auth_link
         ''
       end
+
+      def connect(code)
+        ''
+      end
+
     end
   end
 end

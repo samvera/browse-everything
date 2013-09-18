@@ -11,8 +11,17 @@ class BrowseEverythingController < ActionController::Base
   end
   
   def load_browser
-    @browser = BrowseEverything::Browser.new
-    @provider = @browser.providers[params[:provider]]
+    @browser = BrowseEverything::Browser.new(url_options)
+    provider_name = params[:provider]
+    @provider = @browser.providers[provider_name]
+    @provider.token = session["#{provider_name}_token"] unless @provider.blank?
     @path = params[:path] || ''
-  end  
+  end
+
+  def auth
+    code = params[:code]
+    provider_name = params[:state]
+    @provider = @browser.providers[provider_name]
+    session["#{provider_name}_token"] = @provider.connect(code)
+  end
 end

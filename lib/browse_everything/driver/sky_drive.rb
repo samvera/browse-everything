@@ -48,14 +48,26 @@ module BrowseEverything
         end
       end
 
-      def auth_link(opts={})
-        callback = connector_response_url(opts)
-        oauth_client = Skydrive::Oauth::Client.new(config[:client_id], config[:client_secret], callback.to_s,"wl.skydrive")
-        #todo error checking here
+      def auth_link
         oauth_client.authorize_url
       end
 
-    end
+      def authorized?
+        @token.present?
+      end
+
+      def connect(code)
+        @token = oauth_client.get_access_token(code).token
+      end
+
+      private
+      def oauth_client
+        callback = connector_response_url(config[:url_options])
+        Skydrive::Oauth::Client.new(config[:client_id], config[:client_secret], callback.to_s,"wl.skydrive")
+        #todo error checking here
+      end
+
+      end
 
   end
 end
