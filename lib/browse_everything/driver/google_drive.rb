@@ -18,7 +18,6 @@ module BrowseEverything
       end
 
       def contents(path='')
-        client = oauth_client
         default_params = { }
         page_token = nil
         files = []
@@ -29,7 +28,7 @@ module BrowseEverything
           unless page_token.blank?
             default_params[:pageToken] = page_token
           end
-          api_result = client.execute( api_method: drive.files.list, parameters: default_params )
+          api_result = oauth_client.execute( api_method: drive.files.list, parameters: default_params )
           response = JSON.parse(api_result.response.body)
           page_token = response["nextPageToken"]
           response["items"].select do |file|
@@ -58,11 +57,10 @@ module BrowseEverything
       end
 
       def link_for(id)
-        client = oauth_client
         api_method = drive.files.get
-        api_result = client.execute(api_method: api_method, parameters: {fileId: id})
+        api_result = oauth_client.execute(api_method: api_method, parameters: {fileId: id})
         download_url = JSON.parse(api_result.response.body)["downloadUrl"]
-        auth_header = "EXTRA_HEADERS=Authorization: Bearer #{client.authorization.access_token.to_s}"
+        auth_header = "EXTRA_HEADERS=Authorization: Bearer #{oauth_client.authorization.access_token.to_s}"
         [download_url,auth_header].join('&')
       end
 
@@ -75,9 +73,8 @@ module BrowseEverything
       end
 
       def connect(params, data)
-        client = oauth_client
-        client.authorization.code = params[:code]
-        @token = client.authorization.fetch_access_token!
+        oauth_client.authorization.code = params[:code]
+        @token = oauth_client.authorization.fetch_access_token!
       end
 
       def drive
@@ -87,15 +84,17 @@ module BrowseEverything
       private
 
       def oauth_client
-        callback = connector_response_url(config[:url_options])
-        client = Google::APIClient.new
-        client.authorization.client_id = config[:client_id]
-        client.authorization.client_secret = config[:client_secret]
-        client.authorization.scope = "https://www.googleapis.com/auth/drive"
-        client.authorization.redirect_uri = callback
-        client.authorization.update_token!(@token) if @token.present?
+        if @client.nil?
+          callback = connector_response_url(config[:url_options])
+          @client = Google::APIClient.new
+          @client.authorization.client_id = config[:client_id]
+          @client.authorization.client_secret = config[:client_secret]
+          @client.authorization.scope = "https://www.googleapis.com/auth/drive"
+          @client.authorization.redirect_uri = callback
+          @client.authorization.update_token!(@token) if @token.present?
+        end
         #todo error checking here
-        client
+        @client
       end
 
     end
