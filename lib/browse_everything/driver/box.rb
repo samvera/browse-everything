@@ -4,7 +4,7 @@ module BrowseEverything
       require 'ruby-box'
 
       def icon
-        'file'
+        'cloud'
       end
 
       def validate_config
