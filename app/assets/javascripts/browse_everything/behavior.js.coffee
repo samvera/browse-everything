@@ -62,3 +62,13 @@ $ ->
     count = $('input.ev-url').length
     files = if count == 1 then "file" else "files"
     $('.ev-status').html("#{count} #{files} selected")
+
+  $(document).on 'click', '.ev-auth', (event) ->
+    event.preventDefault()
+    auth_win = window.open($(this).attr('href'))
+    check_func = ->
+      if auth_win.closed
+        $('.ev-providers .ev-selected a').click()
+      else
+        window.setTimeout check_func, 1000
+    check_func()
