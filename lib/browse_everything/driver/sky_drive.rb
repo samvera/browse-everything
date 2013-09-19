@@ -30,8 +30,7 @@ module BrowseEverything
         #todo do some loop to get down to my path
         else
           folder = client.get("/#{path.gsub("-",".")}/")
-          # embed an up dir
-          #result += [folder_details(folder)]
+          result += [parent_folder_details(folder)] if folder.parent_id
         end
 
         files = folder.files
@@ -63,6 +62,20 @@ module BrowseEverything
             false
           )
       end
+
+     def parent_folder_details(file)
+          BrowseEverything::FileEntry.new(
+            safe_id(file.parent_id),
+            "#{key}:#{safe_id(file.parent_id)}",
+            "..",
+            0,
+            Time.now,
+            true
+          )
+      end
+
+
+
 
       def folder_details(folder)
         BrowseEverything::FileEntry.new(
