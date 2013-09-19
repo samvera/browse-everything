@@ -11,6 +11,10 @@ module BrowseEverything
         validate_config
       end
 
+      def key
+        self.class.name.split(/::/).last.underscore
+      end
+
       def icon
         'unchecked'
       end

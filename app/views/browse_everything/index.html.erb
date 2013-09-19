@@ -11,8 +11,8 @@
 </div>
 <div class="modal-footer">
   <span class="pull-left ev-status">0 files selected</span>
-  <%= form_tag browse_everything_file_handler_path, :method => "POST", :class => "ev-submit-form form-horizontal" do %>
+  <%= form_tag browse_everything_file_handler_path, :method => "POST", :class => "ev-submit-form form-horizontal", :data => { :resolver => browse_everything_engine.resolver_path } do %>
     <button class="ev-cancel btn btn-danger"><%= t('browse_everything.modal_form.cancel')%></button>
-    <button type="submit" class="btn btn-primary"><%= t('browse_everything.modal_form.submit')%></button>
+    <button class="ev-submit btn btn-primary" data-loading-text="Loading..."><%= t('browse_everything.modal_form.submit')%></button>
   <% end %>
 </div>
