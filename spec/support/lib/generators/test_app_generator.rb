@@ -24,7 +24,7 @@ class TestAppGenerator < Rails::Generators::Base
 
   def update_gemfile
     append_file "Gemfile" do
-      "gem 'bootstrap-sass'\ngem 'font-awesome-rails' \ngem 'skydrive', github:'psu-stewardship/skydrive' ,ref:'e2822df9631598db3782b0a47f49993090c9be02'"
+      "gem 'bootstrap-sass'\ngem 'font-awesome-rails'"
     end
   end
 
