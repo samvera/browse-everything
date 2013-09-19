@@ -11,6 +11,10 @@ module BrowseEverything
         validate_config
       end
 
+      def key
+        self.class.name.split(/::/).last.underscore
+      end
+
       def icon
         'unchecked'
       end
@@ -28,6 +32,10 @@ module BrowseEverything
 
       def details(path)
         {}
+      end
+
+      def link_for(path)
+        path
       end
 
       def authorized?

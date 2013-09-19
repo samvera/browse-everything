@@ -1,8 +1,9 @@
 module BrowseEverything
   class FileEntry
-    attr_reader :location, :name, :size, :mtime, :type
+    attr_reader :id, :location, :name, :size, :mtime, :type
 
-    def initialize(location, name, size, mtime, type, container)
+    def initialize(id, location, name, size, mtime, type, container)
+      @id        = id
       @location  = location
       @name      = name
       @size      = size
