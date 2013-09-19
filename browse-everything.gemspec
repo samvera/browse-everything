@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "sass-rails"
   spec.add_dependency "bootstrap-sass"
   spec.add_dependency "google_drive"
-  spec.add_dependency "dropbox-api"
+  spec.add_dependency "dropbox-sdk"
   spec.add_dependency "skydrive"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rspec-rails"

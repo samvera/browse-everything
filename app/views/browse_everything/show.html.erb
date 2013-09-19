@@ -1,5 +1,5 @@
-<% if @provider.present? %>
-  <% if @provider.authorized? %>
+<% if provider.present? %>
+  <% if provider.authorized? %>
     <%= render 'files' %>
   <% else %>
     <%= render 'auth' %>
