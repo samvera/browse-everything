@@ -15,7 +15,15 @@ module BrowseEverything
       end
 
       def contents(path='')
-        client.metadata(path)['contents'].collect do |info|
+        path.sub!(/^[\/.]+/,'')
+        result = []
+        unless path.empty?
+          result << BrowseEverything::FileEntry.new(
+            Pathname(path).join('..'),
+            '', '..', 0, Time.now, true
+          )
+        end
+        result += client.metadata(path)['contents'].collect do |info|
           path = info['path']
           BrowseEverything::FileEntry.new(
             path,
@@ -26,6 +34,7 @@ module BrowseEverything
             info['is_dir']
           )
         end
+        result
       end
 
       def link_for(path)
