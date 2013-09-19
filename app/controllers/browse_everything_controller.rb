@@ -1,5 +1,8 @@
+require File.expand_path('../../helpers/browse_everything_helper',__FILE__)
+
 class BrowseEverythingController < ActionController::Base
   layout 'browse_everything'
+  helper BrowseEverythingHelper
 
   def index
     render :layout => !request.xhr?
@@ -16,14 +19,21 @@ class BrowseEverythingController < ActionController::Base
 
   def resolve
     selected_files = params[:selected_files] || []
-    links = selected_files.collect { |file| 
+    @links = selected_files.collect { |file| 
       p,f = file.split(/:/) 
-      browser.providers[p].link_for(f)
+      (url,header) = browser.providers[p].link_for(f)
+      h = { url: url }
+      h[:auth_header] = header unless header.nil?
+      h
     }
-    render :json => links
+    respond_to do |format|  
+      format.html { render :layout => false }
+      format.json { render :json => @links }
+    end
   end
 
   private
+
   def auth_link
     @auth_link ||= if provider.present?
       link, data = provider.auth_link

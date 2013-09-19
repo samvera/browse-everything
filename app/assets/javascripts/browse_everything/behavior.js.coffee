@@ -18,12 +18,11 @@ $ ->
     resolver_url = main_form.data('resolver')
     $.ajax resolver_url,
       type: 'POST'
+      dataType: 'html'
       data: main_form.serialize()
     .done (data) ->
       $('input.ev-url',main_form).remove()
-      $(data).each () ->
-        hidden_input = $("<input type='hidden' class='ev-url' name='selected_files[]' value='#{this}'>")
-        main_form.append(hidden_input)
+      $(main_form).append(data)
       main_form.submit()
     .fail (xhr,status,error) ->
       $('.ev-files').html(xhr.responseText)
