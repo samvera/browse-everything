@@ -33,7 +33,7 @@ module BrowseEverything
           response = JSON.parse(api_result.response.body)
           page_token = response["nextPageToken"]
           response["items"].select do |file|
-            path.blank? ? file["parents"].blank? : true
+            path.blank? ? (file["parents"].blank? or file["parents"].any?{|p| p["isRoot"] }) : true
           end.each do |file|
             files << details(file, path)
           end
