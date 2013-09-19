@@ -14,6 +14,13 @@ class BrowseEverythingController < ActionController::Base
     session["#{provider_name}_token"] = provider.connect(params,session["#{provider_name}_data"])
   end
 
+  def resolve
+    links = params[:selected_files].collect { |file| 
+      p,f = file.split(/:/) 
+      browser.providers[p].link_for(f)
+    }
+    render :json => links
+  end
 
   private
   def auth_link

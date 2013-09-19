@@ -34,6 +34,10 @@ module BrowseEverything
         {}
       end
 
+      def link_for(path)
+        path
+      end
+
       def authorized?
         false
       end

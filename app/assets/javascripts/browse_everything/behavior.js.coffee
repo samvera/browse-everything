@@ -7,14 +7,41 @@ $ ->
         dialog.modal()
 
   $(document).on 'click', 'button.ev-cancel', (event) ->
-    event.preventDefault();
+    event.preventDefault()
     $(this).closest('.modal').modal('hide')
+
+  $(document).on 'click', 'button.ev-submit', (event) ->
+    event.preventDefault()
+    $(this).button('loading')
+    $('body').css('cursor','wait')
+    main_form = $(this).closest('form')
+    resolver_url = main_form.data('resolver')
+    $.ajax resolver_url,
+      type: 'POST'
+      data: main_form.serialize()
+    .done (data) ->
+      $('input.ev-url',main_form).remove()
+      $(data).each () ->
+        hidden_input = $("<input type='hidden' class='ev-url' name='selected_files[]' value='#{this}'>")
+        main_form.append(hidden_input)
+      main_form.submit()
+    .fail (xhr,status,error) ->
+      $('.ev-files').html(xhr.responseText)
+    .always ->
+      $('body').css('cursor','default')
 
   $(document).on 'click', '.ev-container a', (event) ->
     event.preventDefault()
-    $('.ev-files').load $(this).attr('href'), ->
+    $('body').css('cursor','wait')
+    $.ajax($(this).attr('href'))
+    .done (data) ->
+      $('.ev-files').html(data)
       $('input.ev-url').each () ->
         $("*[data-ev-location='#{$(this).val()}']").addClass('ev-selected')
+    .fail (xhr,status,error) ->
+      $('.ev-files').html(xhr.responseText)
+    .always ->
+      $('body').css('cursor','default')
 
   $(document).on 'click', '.ev-providers a', (event) ->
     $('.ev-providers li').removeClass('ev-selected')
