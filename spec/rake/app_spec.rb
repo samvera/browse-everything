@@ -19,6 +19,10 @@ def loaded_files_excluding_current_rake_file
   $".reject { |file| file.include? "tasks/sufia-fixtures" }
 end
 
+def attempts_max
+  30
+end
+
 describe "Rake Tasks" do
   before (:each) do
     @rake = Rake::Application.new
@@ -36,6 +40,11 @@ describe "Rake Tasks" do
         @rake['app:start'].invoke
       end
       o.should include "Starting"
+      attempts = 1
+      while ((!File.exists?('spec/internal/tmp/pids/server.pid')) && (attempts=+1 <attempts_max ))
+        sleep(0.01)
+      end
+
       expect(File).to exist("spec/internal/tmp/pids/server.pid")
     end
   end
@@ -57,7 +66,7 @@ describe "Rake Tasks" do
       end
       o.should include "Stopping"
       attempts = 1
-      while ((File.exists?('spec/internal/tmp/pids/server.pid')) && (attempts=+1 <20 ))
+      while ((File.exists?('spec/internal/tmp/pids/server.pid')) && (attempts=+1 <attempts_max ))
         sleep(0.01)
       end
       expect(File).not_to exist("spec/internal/tmp/pids/server.pid")
