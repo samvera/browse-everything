@@ -23,7 +23,6 @@ module BrowseEverything
             File.basename(path),
             info['size'],
             Time.parse(info['modified']),
-            info['is_dir'] ? 'directory' : Rack::Mime.mime_type(File.extname(path)),
             info['is_dir']
           )
         end

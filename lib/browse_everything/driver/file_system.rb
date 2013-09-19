@@ -36,7 +36,6 @@ module BrowseEverything
             File.basename(path),
             info.size,
             info.mtime,
-            info.directory? ? 'directory' : Rack::Mime.mime_type(File.extname(path)),
             info.directory?
           )
         else
