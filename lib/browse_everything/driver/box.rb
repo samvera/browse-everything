@@ -42,7 +42,9 @@ module BrowseEverything
       end
 
       def link_for(path)
-        box_client.file(path).create_shared_link.url
+        file = box_client.file(path)
+        file.create_shared_link
+        file.shared_link.download_url
       end
 
       def details(f)
