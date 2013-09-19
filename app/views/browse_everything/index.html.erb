@@ -1,7 +1,7 @@
 <div class="modal-header"></div>
 <div class="modal-body ev-body">
   <div class="ev-browser row-fluid">
-    <div class="span2 ev-providers nav nav-list well">
+    <div class="span2 ev-providers nav nav-list">
       <%= render :partial => 'providers' %>
     </div>
     <div class="span10 ev-files list">
@@ -16,3 +16,13 @@
     <button type="submit" class="btn btn-primary"><%= t('browse_everything.modal_form.submit')%></button>
   <% end %>
 </div>
+<script>
+  $(window).resize(function() {
+    var be = $('#browse-everything').outerHeight();
+    var he = $('#browse-everything .modal-header').outerHeight();
+    var fo = $('#browse-everything .modal-footer').outerHeight();
+    $('#browse-everything .modal-body').css('max-height','none').height(be-(he+fo));
+    $('#browse-everything .ev-providers').height(be-(he+fo));
+  })
+  $(window).trigger('resize');
+</script>
