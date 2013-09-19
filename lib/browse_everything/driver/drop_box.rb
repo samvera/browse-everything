@@ -18,6 +18,7 @@ module BrowseEverything
         client.metadata(path)['contents'].collect do |info|
           path = info['path']
           BrowseEverything::FileEntry.new(
+            path,
             [self.key,path].join(':'),
             File.basename(path),
             info['size'],

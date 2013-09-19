@@ -31,6 +31,7 @@ module BrowseEverything
         if File.exists?(path)
           info = File::Stat.new(path)
           BrowseEverything::FileEntry.new(
+            Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(config[:home])),
             [self.key,path].join(':'),
             File.basename(path),
             info.size,
@@ -44,7 +45,7 @@ module BrowseEverything
       end
 
       def link_for(path)
-        "file://#{File.expand_path(File.join(config[:home],path))}"
+        "file://#{File.expand_path(path)}"
       end
 
       def authorized?
