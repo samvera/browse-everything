@@ -47,23 +47,19 @@ module BrowseEverything
       end
 
       def link_for(path)
-        token_obj = rehydrate_token
-        client = Skydrive::Client.new(token_obj)
-        response = client.get("/#{real_id(path)}/shared_read_link")
-        response.parsed_response["link"]
+        response = Skydrive::Client.new(rehydrate_token).get("/#{real_id(path)}/")
+        response.download_link
       end
 
 
 
       def file_details(file)
           BrowseEverything::FileEntry.new(
-            #file.download_link,
             safe_id(file.id),
             "#{key}:#{safe_id(file.id)}",
             file.name,
             file.size,
             file.updated_time,
-            'file',#todo how are we getting mime type
             false
           )
       end
@@ -75,8 +71,8 @@ module BrowseEverything
             folder.name,
             0,
             folder.updated_time,
-            'directory',#todo how are we getting mime type
-            true
+            true,
+            'directory'#todo how are we getting mime type
         )
       end
 
