@@ -27,9 +27,7 @@ module BrowseEverything
         end
         folder = path.empty? ? box_client.root_folder : box_client.folder(path)
         result += folder.items.collect do |f|
-          Rails.logger.info("@@@@@@@@@@#{f.inspect}")
         BrowseEverything::FileEntry.new(
-            #id, location, name, size, mtime, type, container
             File.join(path,f.name),#id here
             "#{self.key}:#{File.join(path,f.name)}",#single use link
             f.name,
@@ -62,7 +60,6 @@ module BrowseEverything
 
       def connect(params,data)
         @token = oauth_client.get_access_token(params[:code]).token
-     #   @refresh_token = oauth_client.get_access_token(code).refresh_token
       end
 
       private
