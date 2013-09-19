@@ -1,5 +1,13 @@
 en:
   browse_everything:
+    auth_prompt:
+      head: "%{provider}"
+      text: >
+        Please take a moment to authorize this application 
+        to access your %{provider} files. You will be guided
+        through authorization in a popup window, and returned
+        here automatically when authorization is complete.
+      button_text: "Connect to %{provider}"
     modal_form:
       submit: "Submit"
       cancel: "Cancel"

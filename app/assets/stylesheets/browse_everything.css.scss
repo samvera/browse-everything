@@ -43,8 +43,14 @@
   }
 }
 
+.modal-body {
+  overflow: hidden;
+}
+
 .ev-files {
   position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
 
   li { 
     overflow: hidden;
@@ -69,7 +75,8 @@
 }
 
 #browse-everything {
-  margin: 0 0 0 -450px;
-  width: 900px;
+  margin: 0 0 0 -37.5%;
   left: 50%;
+  width: 75%;
+  height: 75%;
 }
