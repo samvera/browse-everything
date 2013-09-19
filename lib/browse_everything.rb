@@ -8,9 +8,11 @@ module BrowseEverything
   autoload :Browser,   'browse_everything/browser'
   autoload :FileEntry, 'browse_everything/file_entry'
   module Driver
-    autoload :Base,       'browse_everything/driver/base'
-    autoload :FileSystem, 'browse_everything/driver/file_system'
-    autoload :SkyDrive, 'browse_everything/driver/sky_drive'
-    autoload :Box, 'browse_everything/driver/box'
+    autoload :Base,        'browse_everything/driver/base'
+    autoload :FileSystem,  'browse_everything/driver/file_system'
+    autoload :SkyDrive,    'browse_everything/driver/sky_drive'
+    autoload :Box,         'browse_everything/driver/box'
+    autoload :GoogleDrive, 'browse_everything/driver/google_drive'
+
   end
 end
