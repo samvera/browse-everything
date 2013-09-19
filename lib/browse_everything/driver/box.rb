@@ -17,26 +17,35 @@ module BrowseEverything
       end
 
       def contents(path='')
-        box_client.root_folder.folders.each do |f|
-         Rails.logger.info("@@@@@@@@@@#{f.inspect}")
-          details(f)
-        end
+        path.sub!(/^[\/.]+/,'')
         result = []
+        unless path.empty?
+          result << BrowseEverything::FileEntry.new(
+              Pathname(path).join('..'),
+              '', '..', 0, Time.now, true
+          )
+        end
+        folder = path.empty? ? box_client.root_folder : box_client.folder(path)
+        result += folder.items.collect do |f|
+          Rails.logger.info("@@@@@@@@@@#{f.inspect}")
+        BrowseEverything::FileEntry.new(
+            #id, location, name, size, mtime, type, container
+            File.join(path,f.name),#id here
+            "#{self.key}:#{File.join(path,f.name)}",#single use link
+            f.name,
+            f.size,
+            f.created_at,
+            f.type == 'folder'
+        )
+        end
         result
       end
 
+      def link_for(path)
+        box_client.file(path).create_shared_link.url
+      end
+
       def details(f)
-
-        BrowseEverything::FileEntry.new(
-            "",#single use link
-            f.description,
-            f.size,
-            f.mtime,
-            f.directory? ? 'directory' : Rack::Mime.mime_type(File.extname(path)),
-            f.directory?
-
-        )
-        Rails.logger.info("@@@@@@@@files: #{f.description}")
       end
 
       def auth_link
@@ -49,8 +58,8 @@ module BrowseEverything
         @token.present?
       end
 
-      def connect(code)
-        @token = oauth_client.get_access_token(code).token
+      def connect(params,data)
+        @token = oauth_client.get_access_token(params[:code]).token
      #   @refresh_token = oauth_client.get_access_token(code).refresh_token
       end
 
