@@ -61,7 +61,9 @@ module BrowseEverything
         client = oauth_client
         api_method = drive.files.get
         api_result = client.execute(api_method: api_method, parameters: {fileId: id})
-        JSON.parse(api_result.response.body)["downloadUrl"]
+        download_url = JSON.parse(api_result.response.body)["downloadUrl"]
+        auth_header = "EXTRA_HEADERS=Authorization: Bearer #{client.authorization.access_token.to_s}"
+        [download_url,auth_header].join('&')
       end
 
       def auth_link
