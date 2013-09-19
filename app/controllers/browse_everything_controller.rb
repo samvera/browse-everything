@@ -15,7 +15,8 @@ class BrowseEverythingController < ActionController::Base
   end
 
   def resolve
-    links = params[:selected_files].collect { |file| 
+    selected_files = params[:selected_files] || []
+    links = selected_files.collect { |file| 
       p,f = file.split(/:/) 
       browser.providers[p].link_for(f)
     }
