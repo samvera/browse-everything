@@ -31,7 +31,7 @@ module BrowseEverything
       end
 
       def details(path)
-        {}
+        nil
       end
 
       def link_for(path)
@@ -43,11 +43,11 @@ module BrowseEverything
       end
 
       def auth_link
-        ''
+        []
       end
 
-      def connect(code)
-        ''
+      def connect(params,data)
+        nil
       end
 
     end
