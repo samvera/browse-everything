@@ -49,4 +49,8 @@ class TestAppGenerator < Rails::Generators::Base
     copy_file "app/controllers/file_handler_controller.rb", "app/controllers/file_handler_controller.rb"
     copy_file "app/views/file_handler/index.html.erb", "app/views/file_handler/index.html.erb"
   end
+
+  def copy_example_config
+    copy_file "config/browse_everything_providers.yml.example", "config/browse_everything_providers.yml.example"
+  end
 end

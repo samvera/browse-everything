@@ -16,15 +16,21 @@ module BrowseEverything
         relative_path = path.sub(%r{^[/.]+},'')
         real_path = File.join(config[:home], relative_path)
         result = []
-        if relative_path.present?
-          result << details('..')
-        end
         if File.directory?(real_path)
+          if relative_path.present?
+            result << details('..')
+          end
           result += Dir[File.join(real_path,'*')].collect { |f| details(f) }
-        else File.exists?(real_path)
+        elsif File.exists?(real_path)
           result += [details(real_path)]
         end
-        result
+        result.sort do |a,b|
+          if b.container?
+            a.container? ? a.name.downcase <=> b.name.downcase : 1
+          else
+            a.container? ? -1 : a.name.downcase <=> b.name.downcase
+          end
+        end
       end
 
       def details(path)
