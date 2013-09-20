@@ -16,3 +16,4 @@ test/tmp
 test/version_tmp
 tmp
 spec/internal
+browse_everything_providers.yml
