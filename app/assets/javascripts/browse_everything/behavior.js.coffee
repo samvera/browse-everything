@@ -4,22 +4,27 @@ $(document).ready ->
 
   initialize = (options) ->
     opts = $.extend(true, {}, options)
-    unless opts.datatype?
-      opts.datatype = if opts.target then 'html' else 'json'
+
+  toHiddenFields = (data) ->
+    fields = $.param(data)
+      .split('&')
+      .map (t) -> t.split('=',2)
+    elements = $(fields).map () ->
+      "<input type='hidden' name='#{decodeURIComponent(this[0])}' value='#{decodeURIComponent(this[1])}'/>"
+    $(elements.toArray().join("\n"))
 
   $.fn.browseEverything = (options) ->
     initialize(options)
 
-    dialog = $('div#browse-everything')
-    if dialog.length == 0
-      dialog = $('<div id="browse-everything" class="ev-browser modal hide fade"></div>').appendTo('body')
-    dialog.load opts.route, () ->
-      dialog.modal()
+    $(this).click () ->
+      dialog = $('div#browse-everything')
+      if dialog.length == 0
+        dialog = $('<div id="browse-everything" class="ev-browser modal hide fade"></div>').appendTo('body')
+      dialog.load opts.route, () -> dialog.modal('show')
     promise = $.Deferred()
-    return promise
 
-  $('*[data-toggle=browse-everything]').click () ->
-      $(this).browseEverything($(this).data())
+  triggers = $('*[data-toggle=browse-everything]')
+  triggers.browseEverything($(this).data()) if triggers.length > 0
 
   $(document).on 'click', 'button.ev-cancel', (event) ->
     event.preventDefault()
@@ -34,11 +39,12 @@ $(document).ready ->
     resolver_url = main_form.data('resolver')
     $.ajax resolver_url,
       type: 'POST'
-      dataType: opts.datatype
+      dataType: 'json'
       data: main_form.serialize()
     .done (data) ->
       if opts.target?
-        $(opts.target).append($(data))
+        fields = toHiddenFields({selected_files: data})
+        $(opts.target).append($(fields))
       promise.resolve(data)
     .fail (xhr,status,error) ->
       promise.reject(status, error, xhr.responseText)
