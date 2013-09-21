@@ -4,9 +4,20 @@
   <p>Please click the button below to start pickin' files!</p>
 
   <%= form_tag(browse_everything_file_handler_path, id: 'main_form', method: 'post') do %>
-    <%= button_tag("Browse", type: 'button', class: 'btn btn-large btn-success',
-      'data-toggle'=>'browse-everything', 'data-route'=>browse_everything_engine.root_path,
-      'data-target'=>"#main_form") %>
-    <%= button_tag("Submit", type: 'submit', class: 'btn btn-large btn-primary' ) %>
+    <%= button_tag("Browse", type: 'button', class: 'btn btn-large btn-success', id: "browse-btn") %>
+    <%= button_tag("Submit", type: 'submit', class: 'btn btn-large btn-primary', id: "submit-btn") %>
   <% end %>
+
+  <p id="status">0 items selected</p>
+
+  <script>
+    $(document).ready(function() {
+      $('#browse-btn').browseEverything({
+        route: "<%= browse_everything_engine.root_path %>",
+        target: '#main_form'
+      }).done(function(data) {
+        $('#status').html(data.length.toString() + " items selected")
+      }).fail(function() { window.alert('Canceled!') })
+    })
+  </script>
 </div>
