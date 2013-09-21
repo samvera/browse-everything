@@ -1,14 +1,30 @@
-$ ->
+$(document).ready ->
+  opts = {}
+  promise = null
+
+  initialize = (options) ->
+    opts = $.extend(true, {}, options)
+    unless opts.datatype?
+      opts.datatype = if opts.target then 'html' else 'json'
+
+  $.fn.browseEverything = (options) ->
+    initialize(options)
+
+    dialog = $('div#browse-everything')
+    if dialog.length == 0
+      dialog = $('<div id="browse-everything" class="ev-browser modal hide fade"></div>').appendTo('body')
+    dialog.load opts.route, () ->
+      dialog.modal()
+    promise = $.Deferred()
+    return promise
+
   $('*[data-toggle=browse-everything]').click () ->
-      dialog = $('div#browse-everything')
-      if dialog.length == 0
-        dialog = $('<div id="browse-everything" class="modal hide fade"></div>').appendTo('body')
-      dialog.load $(this).data('route'), () ->
-        dialog.modal()
+      $(this).browseEverything($(this).data())
 
   $(document).on 'click', 'button.ev-cancel', (event) ->
     event.preventDefault()
-    $(this).closest('.modal').modal('hide')
+    $('.ev-browser').trigger('cancel')
+    $('.ev-browser').modal('hide')
 
   $(document).on 'click', 'button.ev-submit', (event) ->
     event.preventDefault()
@@ -18,16 +34,18 @@ $ ->
     resolver_url = main_form.data('resolver')
     $.ajax resolver_url,
       type: 'POST'
-      dataType: 'html'
+      dataType: opts.datatype
       data: main_form.serialize()
     .done (data) ->
-      $('input.ev-url',main_form).remove()
-      $(main_form).append(data)
-      main_form.submit()
+      if opts.target?
+        $(opts.target).append($(data))
+      promise.resolve(data)
     .fail (xhr,status,error) ->
-      $('.ev-files').html(xhr.responseText)
+      promise.reject(status, error, xhr.responseText)
     .always ->
       $('body').css('cursor','default')
+      $('.ev-browser').modal('hide')
+      promise.notify()
 
   $(document).on 'click', '.ev-container a', (event) ->
     event.preventDefault()
