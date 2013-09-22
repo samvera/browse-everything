@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails", ">= 3.1"
   spec.add_dependency "sass-rails"
   spec.add_dependency "bootstrap-sass"
+  spec.add_dependency "font-awesome-rails"
   spec.add_dependency "google_drive"
   spec.add_dependency "dropbox-sdk"
   spec.add_dependency "skydrive"
