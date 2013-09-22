@@ -1,9 +1,20 @@
 $(document).ready ->
-  opts = {}
-  promise = null
+  context = {}
+  active = null
 
-  initialize = (options) ->
-    opts = $.extend(true, {}, options)
+  initialize = (obj,options) ->
+    context[obj] = 
+      opts: $.extend(true, {}, options)
+      callbacks:
+        done: $.Callbacks()
+        cancel: $.Callbacks()
+        fail: $.Callbacks()
+    ctx = context[obj]
+    ctx.callback_proxy = 
+      done:   (func) -> ctx.callbacks.done.add(func)   ; return this
+      cancel: (func) -> ctx.callbacks.cancel.add(func) ; return this
+      fail:   (func) -> ctx.callbacks.fail.add(func)   ; return this
+    ctx
 
   toHiddenFields = (data) ->
     fields = $.param(data)
@@ -14,21 +25,24 @@ $(document).ready ->
     $(elements.toArray().join("\n"))
 
   $.fn.browseEverything = (options) ->
-    initialize(options)
+    if options?
+      initialize(this[0], options)
 
-    $(this).click () ->
-      dialog = $('div#browse-everything')
-      if dialog.length == 0
-        dialog = $('<div id="browse-everything" class="ev-browser modal hide fade"></div>').appendTo('body')
-      dialog.load opts.route, () -> dialog.modal('show')
-    promise = $.Deferred()
+      $(this).click () ->
+        active = context[this]
+        dialog = $('div#browse-everything')
+        if dialog.length == 0
+          dialog = $('<div id="browse-everything" class="ev-browser modal hide fade"></div>').appendTo('body')
+        dialog.load active.opts.route, () -> dialog.modal('show')
+    else
+      context[this[0]].callback_proxy
 
   triggers = $('*[data-toggle=browse-everything]')
-  triggers.browseEverything($(this).data()) if triggers.length > 0
+  triggers.each () -> $(this).browseEverything($(this).data())
 
   $(document).on 'click', 'button.ev-cancel', (event) ->
     event.preventDefault()
-    $('.ev-browser').trigger('cancel')
+    active.callbacks.cancel.fire()
     $('.ev-browser').modal('hide')
 
   $(document).on 'click', 'button.ev-submit', (event) ->
@@ -42,16 +56,15 @@ $(document).ready ->
       dataType: 'json'
       data: main_form.serialize()
     .done (data) ->
-      if opts.target?
+      if active.opts.target?
         fields = toHiddenFields({selected_files: data})
-        $(opts.target).append($(fields))
-      promise.resolve(data)
+        $(active.opts.target).append($(fields))
+      active.callbacks.done.fire(data)
     .fail (xhr,status,error) ->
-      promise.reject(status, error, xhr.responseText)
+      active.callbacks.fail.fire(status, error, xhr.responseText)
     .always ->
       $('body').css('cursor','default')
       $('.ev-browser').modal('hide')
-      promise.notify()
 
   $(document).on 'click', '.ev-container a', (event) ->
     event.preventDefault()
