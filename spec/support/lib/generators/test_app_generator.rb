@@ -22,12 +22,6 @@ class TestAppGenerator < Rails::Generators::Base
     end
   end
 
-  def update_gemfile
-    append_file "Gemfile" do
-      "gem 'bootstrap-sass'\ngem 'font-awesome-rails'"
-    end
-  end
-
   def inject_routes
     insert_into_file "config/routes.rb", :after => ".draw do" do
       %{
