@@ -21,10 +21,10 @@ class BrowseEverythingController < ActionController::Base
     selected_files = params[:selected_files] || []
     @links = selected_files.collect { |file| 
       p,f = file.split(/:/) 
-      (url,header) = browser.providers[p].link_for(f)
-      h = { url: url }
-      h[:auth_header] = header unless header.nil?
-      h
+      (url,extra) = browser.providers[p].link_for(f)
+      result = { url: url }
+      result.merge!(extra) unless extra.nil?
+      result
     }
     respond_to do |format|  
       format.html { render :layout => false }

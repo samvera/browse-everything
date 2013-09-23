@@ -47,7 +47,7 @@ module BrowseEverything
 
       def link_for(path)
         response = Skydrive::Client.new(rehydrate_token).get("/#{real_id(path)}/")
-        response.download_link
+        [response.download_link, {expires: 1.hour.from_now}]
       end
 
 
