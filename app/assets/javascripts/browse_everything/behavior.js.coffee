@@ -1,8 +1,12 @@
 $(document).ready ->
   context = {}
   active = null
+  dialog = $('div#browse-everything')
 
   initialize = (obj,options) ->
+    if dialog.length == 0
+      dialog = $('<div id="browse-everything" class="ev-browser modal hide fade"></div>').appendTo('body')
+    dialog.modal({ backdrop: 'static', show: false });
     context[obj] = 
       opts: $.extend(true, {}, options)
       callbacks:
@@ -27,12 +31,8 @@ $(document).ready ->
   $.fn.browseEverything = (options) ->
     if options?
       initialize(this[0], options)
-
       $(this).click () ->
         active = context[this]
-        dialog = $('div#browse-everything')
-        if dialog.length == 0
-          dialog = $('<div id="browse-everything" class="ev-browser modal hide fade"></div>').appendTo('body')
         dialog.load active.opts.route, () -> dialog.modal('show')
     else
       context[this[0]].callback_proxy
