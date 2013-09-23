@@ -79,7 +79,8 @@ browse-everything can be triggered in one of two ways:
 #### Via data attributes
 
 ```html
-<button type="button" data-toggle="browse-everything" data-route="<%=browse_everything_engine.root_path%>" data-target="#myForm" class="btn btn-large btn-success" id="browse">Browse!</button>
+<button type="button" data-toggle="browse-everything" data-route="<%=browse_everything_engine.root_path%>" 
+  data-target="#myForm" class="btn btn-large btn-success" id="browse">Browse!</button>
 ```
 
 #### Via JavaScript
@@ -125,7 +126,8 @@ $('#browse').browseEverything({
 Returns the existing callback object for the receiver, allowing for a mix of data attribute and JavaScript modes.
 
 ```html
-<button type="button" data-toggle="browse-everything" data-route="/browse" data-target="#myForm" class="btn btn-large btn-success" id="browse">Browse!</button>
+<button type="button" data-toggle="browse-everything" data-route="/browse" 
+  data-target="#myForm" class="btn btn-large btn-success" id="browse">Browse!</button>
 
 <script>
   $(document).ready(function() {
