@@ -3,9 +3,13 @@
 # BrowseEverything
 
 This Gem allows your rails application to access user files from cloud storage.  
-Currently there are drivers implemented for DropBox, Skydrive, GoogleDrive, box, and a server directory share.
+Currently there are drivers implemented for [DropBox](http://www.dropbox.com), 
+[Skydrive](https://skydrive.live.com/), [Google Drive](http://drive.google.com), 
+[Box](http://www.box.com), and a server-side directory share.
 
-The gem uses OAuth to connect into the user files and generate a list of single use urls that your application can then use to download the files.
+The gem uses [OAuth](http://oauth.net/) to connect to a user's account and 
+generate a list of single use urls that your application can then use to 
+download the files.
 
 ## Installation
 
@@ -28,7 +32,8 @@ Or install it yourself as:
 To use the gem you will need to configure the providers by providing applcation keys that are required by each provider
 
 An example config/browse_everything_providers.yml:
-```
+
+```yaml
 ---
 file_system:
   :home: /<location for server file drop>
@@ -45,11 +50,13 @@ google_drive:
   :client_id: <your client id>
   :client_secret: <your client secret>
 ```
-To register your application for ids you must go to each cloud provider.
-* Skydrive: https://account.live.com/developers/applications/create
-* Dropbox: https://www.dropbox.com/developers/apps/create
-* Box: https://app.box.com/developers/services/edit/
-* GoogleDrive: https://code.google.com/apis/console
+
+You must register your application with each cloud provider separately:
+
+* Skydrive: [https://account.live.com/developers/applications/create](https://account.live.com/developers/applications/create)
+* Dropbox: [https://www.dropbox.com/developers/apps/create](https://www.dropbox.com/developers/apps/create)
+* Box: [https://app.box.com/developers/services/edit/](https://app.box.com/developers/services/edit/)
+* GoogleDrive: [https://code.google.com/apis/console](https://code.google.com/apis/console)
 
 ### CSS and JavaScript Modifications
 
@@ -63,19 +70,84 @@ Mount the engine in your routes.rb
 
 ```
   mount BrowseEverything::Engine => '/browse'
-  root :to => "file_handler#index"
-  post '/file', :to => "file_handler#update", :as => "browse_everything_file_handler"
-
 ```
+
 ### Views
 
-Add `<button class="btn btn-large btn-success" id="browse" data-toggle="browse-everything" data-route="<%=browse_everything_engine.root_path%>">Browse</button>`
+browse-everything can be triggered in one of two ways:
+
+#### Via data attributes
+
+```html
+<button type="button" data-toggle="browse-everything" data-route="<%=browse_everything_engine.root_path%>" data-target="#myForm" class="btn btn-large btn-success" id="browse">Browse!</button>
+```
+
+#### Via JavaScript
+
+```javascript
+$('#browse').browseEverything(options)
+```
+
+#### Options
+
+Options can be passed via data attributes or JavaScript. For data attributes, append the option name to `data-`, 
+as in `data-target="#myForm"`.
+
+| Name            | type            | default         | description                                                    |
+|-----------------|-----------------|-----------------|----------------------------------------------------------------|
+| route           | path (required) | ''              | The base route of the browse-everything engine.                |
+| target          | xpath or jQuery | null            | A form object to add the results to as hidden fields.          |
+
+If a `target` is provided, browse-everything will automatically convert the JSON response to a series of hidden form fields
+that can be posted back to Rails to re-create the array on the server side. 
+
+#### Methods
+
+##### .browseEverything(options)
+
+Attaches the browsing behavior to the click event of the receiver.
+
+```javascript
+$('#browse').browseEverything({
+  route: "/browse",
+  target: "#myForm"
+}).done(function(data) {
+  // User has submitted files; data contains an array of URLs and their options
+}).cancel(function() {
+  // User cancelled the browse operation
+}).fail(function(status, error, text) {
+  // URL retrieval experienced a techical failure
+});
+```
+
+##### .browseEverything()
+
+Returns the existing callback object for the receiver, allowing for a mix of data attribute and JavaScript modes.
+
+```html
+<button type="button" data-toggle="browse-everything" data-route="/browse" data-target="#myForm" class="btn btn-large btn-success" id="browse">Browse!</button>
+
+<script>
+  $(document).ready(function() {
+    $('#browse').browseEverything().done(function(data) {
+      // Set the "done" callback for the already-defined #browse button
+    })
+  });
+</script>
+```
+
+#### Data Structure
+
+browse-everything returns a JSON data structure consisting of an array of URL specifications. Each URL specification
+is a plain object with the following properties:
+
+| Property           | Description                                                                          |
+|--------------------|--------------------------------------------------------------------------------------|
+| url                | The URL of the selected remote file.                                                 |
+| auth_header        | Any headers that need to be added to the request in order to access the remote file. |
+| expires            | The expiration date/time of the specified URL.                                       |
 
 See spec/support/app/views/file_handler/index.html for an example use case.
-
-### Controller
-
-See spec/support/app/controlelrs/file_handler_controller.rb
 
 ## Contributing
 
