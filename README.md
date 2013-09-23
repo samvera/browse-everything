@@ -149,7 +149,11 @@ is a plain object with the following properties:
 | auth_header        | Any headers that need to be added to the request in order to access the remote file. |
 | expires            | The expiration date/time of the specified URL.                                       |
 
-See spec/support/app/views/file_handler/index.html for an example use case.
+### Examples
+
+See `spec/support/app/views/file_handler/index.html` for an example use case. You can also run `rake app:generate` to
+create a fully-functioning demo app in `spec/internal` (though you will have to create 
+`spec/internal/config/browse_everything.providers.yml` file with your own configuration info.)
 
 ## Contributing
 
