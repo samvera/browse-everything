@@ -1,14 +1,49 @@
-$ ->
-  $('*[data-toggle=browse-everything]').click () ->
-      dialog = $('div#browse-everything')
-      if dialog.length == 0
-        dialog = $('<div id="browse-everything" class="modal hide fade"></div>').appendTo('body')
-      dialog.load $(this).data('route'), () ->
-        dialog.modal()
+$(document).ready ->
+  context = {}
+  active = null
+  dialog = $('div#browse-everything')
+
+  initialize = (obj,options) ->
+    if dialog.length == 0
+      dialog = $('<div id="browse-everything" class="ev-browser modal hide fade"></div>').appendTo('body')
+    dialog.modal({ backdrop: 'static', show: false });
+    context[obj] = 
+      opts: $.extend(true, {}, options)
+      callbacks:
+        done: $.Callbacks()
+        cancel: $.Callbacks()
+        fail: $.Callbacks()
+    ctx = context[obj]
+    ctx.callback_proxy = 
+      done:   (func) -> ctx.callbacks.done.add(func)   ; return this
+      cancel: (func) -> ctx.callbacks.cancel.add(func) ; return this
+      fail:   (func) -> ctx.callbacks.fail.add(func)   ; return this
+    ctx
+
+  toHiddenFields = (data) ->
+    fields = $.param(data)
+      .split('&')
+      .map (t) -> t.split('=',2)
+    elements = $(fields).map () ->
+      "<input type='hidden' name='#{decodeURIComponent(this[0])}' value='#{decodeURIComponent(this[1])}'/>"
+    $(elements.toArray().join("\n"))
+
+  $.fn.browseEverything = (options) ->
+    if options?
+      initialize(this[0], options)
+      $(this).click () ->
+        active = context[this]
+        dialog.load active.opts.route, () -> dialog.modal('show')
+    else
+      context[this[0]].callback_proxy
+
+  triggers = $('*[data-toggle=browse-everything]')
+  triggers.each () -> $(this).browseEverything($(this).data())
 
   $(document).on 'click', 'button.ev-cancel', (event) ->
     event.preventDefault()
-    $(this).closest('.modal').modal('hide')
+    active.callbacks.cancel.fire()
+    $('.ev-browser').modal('hide')
 
   $(document).on 'click', 'button.ev-submit', (event) ->
     event.preventDefault()
@@ -18,16 +53,18 @@ $ ->
     resolver_url = main_form.data('resolver')
     $.ajax resolver_url,
       type: 'POST'
-      dataType: 'html'
+      dataType: 'json'
       data: main_form.serialize()
     .done (data) ->
-      $('input.ev-url',main_form).remove()
-      $(main_form).append(data)
-      main_form.submit()
+      if active.opts.target?
+        fields = toHiddenFields({selected_files: data})
+        $(active.opts.target).append($(fields))
+      active.callbacks.done.fire(data)
     .fail (xhr,status,error) ->
-      $('.ev-files').html(xhr.responseText)
+      active.callbacks.fail.fire(status, error, xhr.responseText)
     .always ->
       $('body').css('cursor','default')
+      $('.ev-browser').modal('hide')
 
   $(document).on 'click', '.ev-container a', (event) ->
     event.preventDefault()
