@@ -15,7 +15,7 @@ download the files.
 
 Add this line to your application's Gemfile:
 
-    gem 'browse_everything'
+    gem 'browse-everything'
 
 And then execute:
 
@@ -23,7 +23,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install browse_everything
+    $ gem install browse-everything
 
 ## Usage
 

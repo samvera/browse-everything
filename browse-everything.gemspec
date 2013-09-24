@@ -6,10 +6,10 @@ require 'browse_everything/version'
 Gem::Specification.new do |spec|
   spec.name          = "browse-everything"
   spec.version       = BrowseEverything::VERSION
-  spec.authors       = ["Michael Klein"]
-  spec.email         = ["mbklein@gmail.com"]
-  spec.description   = %q{AJAX file browser for cloud storage services}
-  spec.summary       = %q{AJAX file browser for cloud storage services}
+  spec.authors       = ["Carolyn Cole", "Jessie Keck", "Michael B. Klein", "Thomas Scherz", "Xiaoming Wang"]
+  spec.email         = ["cam156@psu.edu", "jkeck@stanford.edu", "mbklein@gmail.com", "scherztc@ucmail.uc.edu", "xw5d@virginia.edu"]
+  spec.description   = %q{AJAX/Rails engine file browser for cloud storage services}
+  spec.summary       = %q{AJAX/Rails engine file browser for cloud storage services}
   spec.homepage      = "https://github.com/mbklein/browse-everything"
   spec.license       = "Apache 2"
 
