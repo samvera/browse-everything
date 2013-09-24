@@ -42,7 +42,9 @@ module BrowseEverything
       def link_for(path)
         file = box_client.file(path)
         file.create_shared_link
-        file.shared_link.download_url
+        link = file.shared_link
+        extras = link.unshared_at.nil? ? {} : { expires: link.unshared_at }
+        [link.download_url,extras]
       end
 
       def details(f)

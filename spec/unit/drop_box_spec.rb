@@ -103,9 +103,17 @@ describe BrowseEverything::Driver::DropBox, vcr: { cassette_name: 'dropbox', rec
 
   describe "#link_for" do
     before(:each) { provider.connect(auth_params,csrf_data) }
-    subject { provider }
 
-    specify { subject.link_for('/Writer/Writer FAQ.txt').should == "https://dl.dropboxusercontent.com/1/view/FakeDropboxAccessPath/Writer/Writer%20FAQ.txt" }
-    specify { subject.link_for('/Writer/Markdown Test.txt').should == "https://dl.dropboxusercontent.com/1/view/FakeDropboxAccessPath/Writer/Markdown%20Test.txt" }
+    context "[0]" do 
+      subject { provider.link_for('/Writer/Writer FAQ.txt') }
+      specify { subject[0].should == "https://dl.dropboxusercontent.com/1/view/FakeDropboxAccessPath/Writer/Writer%20FAQ.txt" }
+      specify { subject[1].should have_key(:expires) }
+    end
+
+    context "[1]" do 
+      subject { provider.link_for('/Writer/Markdown Test.txt') }
+      specify { subject[0].should == "https://dl.dropboxusercontent.com/1/view/FakeDropboxAccessPath/Writer/Markdown%20Test.txt" }
+      specify { subject[1].should have_key(:expires) }
+    end
   end
 end
