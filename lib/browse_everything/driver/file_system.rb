@@ -18,7 +18,7 @@ module BrowseEverything
         result = []
         if File.directory?(real_path)
           if relative_path.present?
-            result << details('..')
+            result << details(File.expand_path('..',real_path),'..')
           end
           result += Dir[File.join(real_path,'*')].collect { |f| details(f) }
         elsif File.exists?(real_path)
@@ -33,13 +33,13 @@ module BrowseEverything
         end
       end
 
-      def details(path)
+      def details(path,display=nil)
         if File.exists?(path)
           info = File::Stat.new(path)
           BrowseEverything::FileEntry.new(
             Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(config[:home])),
             [self.key,path].join(':'),
-            File.basename(path),
+            display || File.basename(path),
             info.size,
             info.mtime,
             info.directory?
