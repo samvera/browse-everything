@@ -152,7 +152,7 @@ http_interactions:
   recorded_at: Fri, 20 Sep 2013 15:38:55 GMT
 - request:
     method: get
-    uri: https://api.dropbox.com/1/media/auto/Writer/Writer%20FAQ.txt
+    uri: https://api.dropbox.com/1/media/auto/Writer/Writer%20FAQ.txt?
     body:
       encoding: UTF-8
       string: ''
@@ -191,7 +191,7 @@ http_interactions:
   recorded_at: Fri, 20 Sep 2013 15:39:01 GMT
 - request:
     method: get
-    uri: https://api.dropbox.com/1/media/auto/Writer/Markdown%20Test.txt
+    uri: https://api.dropbox.com/1/media/auto/Writer/Markdown%20Test.txt?
     body:
       encoding: UTF-8
       string: ''
