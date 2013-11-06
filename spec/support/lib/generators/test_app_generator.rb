@@ -28,7 +28,7 @@ class TestAppGenerator < Rails::Generators::Base
 
   mount BrowseEverything::Engine => '/browse'
   root :to => "file_handler#index"
-  post '/file', :to => "file_handler#update", :as => "browse_everything_file_handler"
+  post '/file', :to => "file_handler#update"
       }
     end
   end
