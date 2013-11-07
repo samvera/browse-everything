@@ -1,28 +1,20 @@
-<div class="modal-header"></div>
-<div class="modal-body ev-body">
-  <div class="ev-browser row-fluid">
-    <div class="span2 ev-providers nav nav-list">
-      <%= render :partial => 'providers' %>
-    </div>
-    <div class="span10 ev-files list">
-      <%= render :partial => 'files' %>
+<% if bootstrap_three? %><div class="modal-content"><% end %>
+  <div class="modal-header"></div>
+  <div class="modal-body ev-body">
+    <div class="ev-browser row<%=bs2('-fluid')%>">
+      <div class="<%=bs2or3('span','col-xs-')%>2 ev-providers nav nav-list">
+        <%= render :partial => 'providers' %>
+      </div>
+      <div class="<%=bs2or3('span','col-xs-')%>10 ev-files list">
+        <%= render :partial => 'files' %>
+      </div>
     </div>
   </div>
-</div>
-<div class="modal-footer">
-  <span class="pull-left ev-status">0 files selected</span>
-  <%= form_tag '#', :class => "ev-submit-form form-horizontal", :data => { :resolver => browse_everything_engine.resolver_path } do %>
-    <button class="ev-cancel btn btn-danger"><%= t('browse_everything.modal_form.cancel')%></button>
-    <button class="ev-submit btn btn-primary" data-loading-text="Loading..."><%= t('browse_everything.modal_form.submit')%></button>
-  <% end %>
-</div>
-<script>
-  $(window).resize(function() {
-    var be = $('#browse-everything').outerHeight();
-    var he = $('#browse-everything .modal-header').outerHeight();
-    var fo = $('#browse-everything .modal-footer').outerHeight();
-    $('#browse-everything .modal-body').css('max-height','none').height(be-(he+fo));
-    $('#browse-everything .ev-providers').height(be-(he+fo));
-  })
-  $(window).trigger('resize');
-</script>
+  <div class="modal-footer">
+    <span class="pull-left ev-status">0 files selected</span>
+    <%= form_tag '#', :class => "ev-submit-form form-horizontal", :data => { :resolver => browse_everything_engine.resolver_path } do %>
+      <button class="ev-cancel btn btn-danger"><%= t('browse_everything.modal_form.cancel')%></button>
+      <button class="ev-submit btn btn-primary" data-loading-text="Loading..."><%= t('browse_everything.modal_form.submit')%></button>
+    <% end %>
+  </div>
+<% if bootstrap_three? %></div><% end %>

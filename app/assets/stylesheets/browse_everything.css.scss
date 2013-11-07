@@ -27,56 +27,67 @@
   }
 }
 
-.ev-body {
-  padding: 0;
-}
-
-.ev-providers {
-  padding: 4px;
-  background-color: lightgray;
-}
-
-.ev-providers, .ev-files {
-  li { @include ev-link; }
-  .ev-selected {
-    @include border-highlight(black);
-  }
-}
-
-.modal-body {
-  overflow: hidden;
-}
-
-.ev-files {
-  position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
-
-  li { 
-    overflow: hidden;
-    text-overflow: ellipsis;
-    .ev-file-name {
-//      padding: 0px 6px;
-      white-space: nowrap;
-    }
-    border-top: none;
-  }
-
-  &.detail {
-  }
-
-  &.list ul {
-    @include content-columns(3);
-  }
-}
-
-.ev-container li {
-  cursor: pointer;
-}
-
 #browse-everything {
+  overflow-y: hidden;
+  position: fixed !important;
   margin: 0 0 0 -37.5%;
   left: 50%;
   width: 75%;
-  height: 75%;
+
+  .modal-body {
+    overflow: hidden;
+  }
+
+  .modal-footer {
+    margin: 0px;
+  }
+
+  .row {
+    margin: inherit;
+  }
+  
+  .ev-files {
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    li { 
+      overflow: hidden;
+      text-overflow: ellipsis;
+      .ev-file-name {
+  //      padding: 0px 6px;
+        white-space: nowrap;
+      }
+      border-top: none;
+    }
+
+    &.detail {
+    }
+
+    &.list ul {
+      @include content-columns(3);
+    }
+  }
+
+  .ev-container li {
+    cursor: pointer;
+  }
+
+  .ev-body {
+    padding: 0;
+  }
+
+  .ev-providers {
+    padding: 4px;
+    background-color: lightgray;
+  }
+
+  .ev-providers, .ev-files {
+    height: 50vh;
+    li { @include ev-link; }
+    .ev-selected {
+      @include border-highlight(black);
+    }
+  }
+
 }
