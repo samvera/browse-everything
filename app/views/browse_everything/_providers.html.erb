@@ -1,8 +1,8 @@
-  <ul class="unstyled">
+  <ul class="<%=bs3('list-')%>unstyled">
     <% browser.providers.each_pair do |key, provider| %>
       <li>
         <span class="ev-container">
-          <i class="icon-<%=provider.icon%>"></i>
+          <i class="<%=bs2or3('icon','glyphicon glyphicon')%>-<%=provider.icon%>"></i>
           <%= link_to(provider.name, browse_everything_engine.contents_path(key)) %>
         </span>
       </li>

@@ -1,9 +1,9 @@
-<div class="hero-unit">
+<div class="<%=bs2or3('hero-unit','jumbotron')%>">
   <h1>Welcome!</h1>
 
   <p>Please click the button below to start pickin' files!</p>
 
-  <%= form_tag(browse_everything_file_handler_path, id: 'main_form', method: 'post') do %>
+  <%= form_tag('/file', id: 'main_form', method: 'post') do %>
     <%= button_tag("Browse", type: 'button', class: 'btn btn-large btn-success', id: "browse-btn",
       'data-toggle' => 'browse-everything', 'data-route' => browse_everything_engine.root_path,
       'data-target' => '#main_form' ) %>
