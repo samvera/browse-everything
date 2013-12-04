@@ -61,7 +61,7 @@ You must register your application with each cloud provider separately:
 
 ### CSS and JavaScript Modifications
 
-Add `@import "browse_everything` to your application.css.scss
+Add `@import "browse_everything";` to your application.css.scss
 
 Add `//= require browse_everything` to your application.js
 
