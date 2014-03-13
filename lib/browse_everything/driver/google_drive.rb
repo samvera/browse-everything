@@ -83,6 +83,25 @@ module BrowseEverything
 
       private
 
+      #As per issue http://stackoverflow.com/questions/12572723/rails-google-client-api-unable-to-exchange-a-refresh-token-for-access-token
+
+      #patch start
+      def token_expired?(token)
+        client=@client
+        result = client.execute( api_method: drive.files.list, parameters: {} )
+        (result.status != 200)
+      end
+
+      def exchange_refresh_token( refresh_token )
+        client=oauth_client
+        client.authorization.grant_type = 'refresh_token'
+        client.authorization.refresh_token = refresh_token
+        client.authorization.fetch_access_token!
+        client.authorization
+        client
+      end
+      #patch end
+
       def oauth_client
         if @client.nil?
           callback = connector_response_url(config[:url_options])
@@ -92,6 +111,9 @@ module BrowseEverything
           @client.authorization.scope = "https://www.googleapis.com/auth/drive"
           @client.authorization.redirect_uri = callback
           @client.authorization.update_token!(@token) if @token.present?
+           #Patch start
+          @client = exchange_refresh_token(@token["refresh_token"]) if @token.present? && token_expired?(@token)
+          #Patch end
         end
         #todo error checking here
         @client
