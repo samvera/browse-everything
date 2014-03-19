@@ -149,6 +149,7 @@ is a plain object with the following properties:
 | url                | The URL of the selected remote file.                                                 |
 | auth_header        | Any headers that need to be added to the request in order to access the remote file. |
 | expires            | The expiration date/time of the specified URL.                                       |
+| file_name          | The base name (filename.ext) of the selected file.                                   |
 
 ### Examples
 

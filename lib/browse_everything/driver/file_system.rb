@@ -50,7 +50,7 @@ module BrowseEverything
       end
 
       def link_for(path)
-        "file://#{File.expand_path(path)}"
+        ["file://#{File.expand_path(path)}", { file_name: File.basename(path) }]
       end
 
       def authorized?
