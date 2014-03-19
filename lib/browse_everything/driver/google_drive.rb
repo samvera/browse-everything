@@ -61,7 +61,8 @@ module BrowseEverything
         api_result = oauth_client.execute(api_method: api_method, parameters: {fileId: id})
         download_url = JSON.parse(api_result.response.body)["downloadUrl"]
         auth_header = {'Authorization' => "Bearer #{oauth_client.authorization.access_token.to_s}"}
-        [download_url,{ auth_header: auth_header, expires: 1.hour.from_now }]
+        extras = { auth_header: auth_header, expires: 1.hour.from_now, file_name:api_result.data.title }
+        [download_url, extras]
       end
 
       def auth_link

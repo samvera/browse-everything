@@ -41,10 +41,10 @@ module BrowseEverything
 
       def link_for(path)
         file = box_client.file(path)
-        file.create_shared_link
-        link = file.shared_link
-        extras = link.unshared_at.nil? ? {} : { expires: link.unshared_at }
-        [link.download_url,extras]
+        download_url = file.download_url
+        auth_header = {'Authorization' => "Bearer #{@token}"}
+        extras = { auth_header: auth_header, expires: 1.hour.from_now , file_name:file.name }
+        [download_url,extras]
       end
 
       def details(f)
