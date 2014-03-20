@@ -22,7 +22,7 @@ describe BrowseEverything::Driver::Base do
     specify { subject.details('/path/to/foo.txt').should be_nil }
   end
   context "#link_for" do
-    specify { subject.link_for('/path/to/foo.txt').should == '/path/to/foo.txt' }
+    specify { subject.link_for('/path/to/foo.txt').should == ['/path/to/foo.txt', { file_name: 'foo.txt' }] }
   end
 end
 

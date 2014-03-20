@@ -35,7 +35,7 @@ module BrowseEverything
       end
 
       def link_for(path)
-        path
+        [path, { file_name: File.basename(path) }]
       end
 
       def authorized?
