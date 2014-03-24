@@ -4,6 +4,8 @@ class BrowseEverythingController < ActionController::Base
   layout 'browse_everything'
   helper BrowseEverythingHelper
 
+  after_filter {session["#{provider_name}_token"] = provider.token unless provider.nil? }
+  
   def index
     render :layout => !request.xhr?
   end
