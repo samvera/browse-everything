@@ -191,7 +191,85 @@ http_interactions:
   recorded_at: Fri, 20 Sep 2013 15:39:01 GMT
 - request:
     method: get
+    uri: https://api.dropbox.com/1/media/auto/Writer/Writer%20FAQ.txt
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Accept: ! '*/*'
+      User-Agent: OfficialDropboxRubySDK/1.6.1
+      Authorization: Bearer FakeDropboxAccessToken01234567890ABCDEF_AAAAAAA987654321
+      Connection: close
+      Host: api.dropbox.com
+  response:
+    status:
+      code: '200'
+      message: OK
+    headers:
+      Server: nginx
+      Date: Fri, 20 Sep 2013 15:39:01 GMT
+      Content-Type: text/javascript
+      Transfer-Encoding: chunked
+      Connection: close
+      set-cookie: ! 'gvc=MjEyNTM5NjUyNDAyMDIwODUzNTU0MTY0NzA0ODU4MzczNTU0NDI%3D; expires=Wed,
+        19 Sep 2018 15:39:01
+
+        GMT; Path=/; httponly'
+      x-server-response-time: '68'
+      x-dropbox-request-id: d8dbc2e2080168d6e34d85165aa69c0e
+      pragma: no-cache
+      cache-control: no-cache
+      x-dropbox-http-protocol: None
+      x-frame-options: SAMEORIGIN
+      X-RequestId: e03a6c0ded5f7088ba59ecd9e97234a6
+    body:
+      encoding: UTF-8
+      string: ! '{"url": "https://dl.dropboxusercontent.com/1/view/FakeDropboxAccessPath/Writer/Writer%20FAQ.txt",
+        "expires": "Fri, 20 Sep 2013 19:39:01 +0000"}'
+    http_version: '1.1'
+  recorded_at: Fri, 20 Sep 2013 15:39:01 GMT
+- request:
+    method: get
     uri: https://api.dropbox.com/1/media/auto/Writer/Markdown%20Test.txt?
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Accept: ! '*/*'
+      User-Agent: OfficialDropboxRubySDK/1.6.1
+      Authorization: Bearer FakeDropboxAccessToken01234567890ABCDEF_AAAAAAA987654321
+      Connection: close
+      Host: api.dropbox.com
+  response:
+    status:
+      code: '200'
+      message: OK
+    headers:
+      Server: nginx
+      Date: Fri, 20 Sep 2013 15:39:02 GMT
+      Content-Type: text/javascript
+      Transfer-Encoding: chunked
+      Connection: close
+      set-cookie: ! 'gvc=NjgwODYwOTI2NTA5OTAyNzE3NzE4MDU3MzY0NTQ3NTYyNTYyNDE%3D; expires=Wed,
+        19 Sep 2018 15:39:02
+
+        GMT; Path=/; httponly'
+      x-server-response-time: '78'
+      x-dropbox-request-id: b6fd9a3c039d2aea3def25f8f2f5ac3a
+      pragma: no-cache
+      cache-control: no-cache
+      x-dropbox-http-protocol: None
+      x-frame-options: SAMEORIGIN
+      X-RequestId: 30d2c0cf0122795ebce9bd5f26ce0c60
+    body:
+      encoding: UTF-8
+      string: ! '{"url": "https://dl.dropboxusercontent.com/1/view/FakeDropboxAccessPath/Writer/Markdown%20Test.txt",
+        "expires": "Fri, 20 Sep 2013 19:39:02 +0000"}'
+    http_version: '1.1'
+  recorded_at: Fri, 20 Sep 2013 15:39:02 GMT
+- request:
+    method: get
+    uri: https://api.dropbox.com/1/media/auto/Writer/Markdown%20Test.txt
     body:
       encoding: UTF-8
       string: ''
