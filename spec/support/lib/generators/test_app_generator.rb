@@ -2,6 +2,11 @@ require 'rails/generators'
 
 class TestAppGenerator < Rails::Generators::Base
   source_root File.expand_path("../../../../support", __FILE__)
+  
+  def run_config_generator
+    generate "browse_everything:config"
+  end
+  
   def inject_css
     copy_file "../internal/app/assets/stylesheets/application.css", "app/assets/stylesheets/application.css.scss"
     remove_file "app/assets/stylesheets/application.css"
@@ -26,16 +31,9 @@ class TestAppGenerator < Rails::Generators::Base
     insert_into_file "config/routes.rb", :after => ".draw do" do
       %{
 
-  mount BrowseEverything::Engine => '/browse'
   root :to => "file_handler#index"
   post '/file', :to => "file_handler#update"
       }
-    end
-  end
-
-  def create_bev_configuration
-    create_file "config/browse_everything_providers.yml" do
-      YAML.dump({ 'file_system' => { :home => Rails.root.to_s }})
     end
   end
 
@@ -44,7 +42,4 @@ class TestAppGenerator < Rails::Generators::Base
     copy_file "app/views/file_handler/index.html.erb", "app/views/file_handler/index.html.erb"
   end
 
-  def copy_example_config
-    copy_file "config/browse_everything_providers.yml.example", "config/browse_everything_providers.yml.example"
-  end
 end

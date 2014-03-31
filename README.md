@@ -28,6 +28,11 @@ Or install it yourself as:
 
 ## Usage
 
+If you want to auto-generate a sample config/browse_everything_providers.yml and automatically add BrowseEverything to your routes, run this generator:
+`rails g browse_anything:config`
+
+You will still need to do the CSS and Javascript modifications described below.  You will also need to create views that use the browse-everything functionality, see section on Views below for more info.
+
 ### Configuration
 
 To use the gem you will need to configure the providers by providing applcation keys that are required by each provider
