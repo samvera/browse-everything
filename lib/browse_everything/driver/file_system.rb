@@ -13,7 +13,7 @@ module BrowseEverything
       end
 
       def contents(path='')
-        relative_path = path.sub(%r{^[/.]+},'')
+        relative_path = path.sub(%r{^[\/.]+},'')
         real_path = File.join(config[:home], relative_path)
         result = []
         if File.directory?(real_path)
