@@ -124,7 +124,7 @@ For example, after picking two files from dropbox, the JSON would look similar t
 
 If you used the _target_ option (via the data-target attribute or via the target option on the javascript method) to provide a target form, results info will be written into that form as hidden fields.  If you submit that form, the results will look like this:
 ```ruby
-selected_files: {
+"selected_files" => {
   "0"=>{
     "url"=>"https://dl.dropbox.com/fake/filepicker-demo.txt.txt", 
     "expires"=>"2014-03-31T20:37:36.214Z", 
