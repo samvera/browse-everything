@@ -109,7 +109,7 @@ is a plain object with the following properties:
 
 For example, after picking two files from dropbox, 
 
-If you're using javascript to handle the results, the data will look like this when the user finishes selecting files:
+If you initialized browse-everything via JavaScript, the results data passed to the `.done()` callback will look like this:
 ```json
 [
   {
@@ -123,8 +123,9 @@ If you're using javascript to handle the results, the data will look like this w
   }
 ]
 ```
+See [JavaScript Methods](https://github.com/projecthydra/browse-everything/wiki/JavaScript-Methods) for more info on using javascript to trigger browse-everything. 
 
-If you used the _target_ option (via the data-target attribute or via the target option on the javascript method) to provide a target form, results info will be written into that form as hidden fields.  If you submit that form, the results will look like this:
+If you initialized browse-everything via data-attributes and set the _target_ option (via the _data-target_ attribute or via the _target_ option on the javascript method), the results data be written as hidden fields in the `<form>` you've specified as the target.  When the user submits that form, the results will look like this:
 ```ruby
 "selected_files" => {
   "0"=>{
