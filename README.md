@@ -25,64 +25,51 @@ And then execute:
 Or install it yourself as:
 
     $ gem install browse-everything
+   
+### Configuring the gem
+ 
+After installing the gem, run the generator
 
-## Usage
+    $ rails g browse_anything:config
+    
+This generator will set up the _config/browse_everything_providers.yml_ file and add the browse-everything engine to your application's routes.
 
-If you want to auto-generate a sample config/browse_everything_providers.yml and automatically add BrowseEverything to your routes, run this generator:
-`rails g browse_anything:config`
+If you prefer not to use the generator, or need info on how to set up providers in the browse_everything_providers.yml, use the info on [Configuring browse-everything](https://github.com/projecthydra/browse-everything/wiki/Configuring-browse-everything).  
 
-You will still need to do the CSS and Javascript modifications described below.  You will also need to create views that use the browse-everything functionality, see section on Views below for more info.
-
-### Configuration
-
-To use the gem you will need to configure the providers by providing applcation keys that are required by each provider
-
-An example config/browse_everything_providers.yml:
-
-```yaml
----
-file_system:
-  :home: /<location for server file drop>
-sky_drive:
-  :client_id: <your client id>
-  :client_secret: <your client secret>
-box:
-  :client_id: <your client id>
-  :client_secret: <your client secret>
-drop_box:
-  :app_key: <your client id>
-  :app_secret: <your app secret>
-google_drive:
-  :client_id: <your client id>
-  :client_secret: <your client secret>
-```
-
-You must register your application with each cloud provider separately:
-
-* Skydrive: [https://account.live.com/developers/applications/create](https://account.live.com/developers/applications/create)
-* Dropbox: [https://www.dropbox.com/developers/apps/create](https://www.dropbox.com/developers/apps/create)
-* Box: [https://app.box.com/developers/services/edit/](https://app.box.com/developers/services/edit/)
-* GoogleDrive: [https://code.google.com/apis/console](https://code.google.com/apis/console)
-
-### CSS and JavaScript Modifications
+### Include the CSS and JavaScript 
 
 Add `@import "browse_everything";` to your application.css.scss
 
 Add `//= require browse_everything` to your application.js
 
-### Routes
+## Usage
 
-Mount the engine in your routes.rb
-
-```
-  mount BrowseEverything::Engine => '/browse'
-```
+### Adding Providers
+In order to connect to a provider like [DropBox](http://www.dropbox.com), 
+[Skydrive](https://skydrive.live.com/), [Google Drive](http://drive.google.com), or
+[Box](http://www.box.com), you must provide API keys in _config/browse_everything_providers.yml_.  For info on how to edit this file, see [Configuring browse-everything](https://github.com/projecthydra/browse-everything/wiki/Configuring-browse-everything)
 
 ### Views
 
-browse-everything can be triggered in one of two ways:
+browse-everything can be triggered in two ways -- either via data attributes in an HTML tag or via JavaScript.  Either way, it accepts the same options:
+
+#### Options
+
+
+| Name            | type            | default         | description                                                    |
+|-----------------|-----------------|-----------------|----------------------------------------------------------------|
+| route           | path (required) | ''              | The base route of the browse-everything engine.                |
+| target          | xpath or jQuery | null            | A form object to add the results to as hidden fields.          |
+
+If a `target` is provided, browse-everything will automatically convert the JSON response to a series of hidden form fields
+that can be posted back to Rails to re-create the array on the server side.
+
 
 #### Via data attributes
+
+To trigger browse-everything using data attributes, set the _data-toggle_ attribute to "browse-everything" on the HTML tag.  This tells the javascript where to attach the browse-everything behaviors. Pass in the options using the _data-route_ and _data-target_ attributes, as in `data-target="#myForm"`.
+
+For example:
 
 ```html
 <button type="button" data-toggle="browse-everything" data-route="<%=browse_everything_engine.root_path%>" 
@@ -91,60 +78,24 @@ browse-everything can be triggered in one of two ways:
 
 #### Via JavaScript
 
+To trigger browse-everything via javascript, use the .browseEverything() method to attach the behaviors to DOM elements. 
+
 ```javascript
 $('#browse').browseEverything(options)
 ```
 
-#### Options
-
-Options can be passed via data attributes or JavaScript. For data attributes, append the option name to `data-`, 
-as in `data-target="#myForm"`.
-
-| Name            | type            | default         | description                                                    |
-|-----------------|-----------------|-----------------|----------------------------------------------------------------|
-| route           | path (required) | ''              | The base route of the browse-everything engine.                |
-| target          | xpath or jQuery | null            | A form object to add the results to as hidden fields.          |
-
-If a `target` is provided, browse-everything will automatically convert the JSON response to a series of hidden form fields
-that can be posted back to Rails to re-create the array on the server side. 
-
-#### Methods
-
-##### .browseEverything(options)
-
-Attaches the browsing behavior to the click event of the receiver.
-
+The options argument should be a JSON object with the route and (optionally) target values set.  For example:
 ```javascript
 $('#browse').browseEverything({
   route: "/browse",
   target: "#myForm"
-}).done(function(data) {
-  // User has submitted files; data contains an array of URLs and their options
-}).cancel(function() {
-  // User cancelled the browse operation
-}).fail(function(status, error, text) {
-  // URL retrieval experienced a techical failure
-});
+})
 ```
 
-##### .browseEverything()
+See [JavaScript Methods](https://github.com/projecthydra/browse-everything/wiki/JavaScript-Methods) for more info on using javascript to trigger browse-everything.
 
-Returns the existing callback object for the receiver, allowing for a mix of data attribute and JavaScript modes.
 
-```html
-<button type="button" data-toggle="browse-everything" data-route="/browse" 
-  data-target="#myForm" class="btn btn-large btn-success" id="browse">Browse!</button>
-
-<script>
-  $(document).ready(function() {
-    $('#browse').browseEverything().done(function(data) {
-      // Set the "done" callback for the already-defined #browse button
-    })
-  });
-</script>
-```
-
-#### Data Structure
+### The JSON Data 
 
 browse-everything returns a JSON data structure consisting of an array of URL specifications. Each URL specification
 is a plain object with the following properties:
@@ -155,6 +106,11 @@ is a plain object with the following properties:
 | auth_header        | Any headers that need to be added to the request in order to access the remote file. |
 | expires            | The expiration date/time of the specified URL.                                       |
 | file_name          | The base name (filename.ext) of the selected file.                                   |
+
+For example, after picking two files from dropbox, the JSON would look similar to this:
+```
+{"0"=>{"url"=>"https://dl.dropbox.com/fake/filepicker-demo.txt.txt", "expires"=>"2014-03-31T20:37:36.214Z", "file_name"=>"filepicker-demo.txt.txt"}, "1"=>{"url"=>"https://dl.dropbox.com/fake/Getting%20Started.pdf", "expires"=>"2014-03-31T20:37:36.731Z", "file_name"=>"Getting+Started.pdf"}}
+```
 
 ### Examples
 
