@@ -30,7 +30,7 @@ Or install it yourself as:
  
 After installing the gem, run the generator
 
-    $ rails g browse_anything:config
+    $ rails g browse_everything:config
     
 This generator will set up the _config/browse_everything_providers.yml_ file and add the browse-everything engine to your application's routes.
 
