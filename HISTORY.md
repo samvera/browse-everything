@@ -1,3 +1,7 @@
+### 0.4.0 (2014-04-01)
+- Added configuration generator
+- Improved documentation
+
 ### 0.3.0 (2014-03-24)
 - Additional response parameters
 - Refresh token fixes for Box, SkyDrive, and Google Drive
