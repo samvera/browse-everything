@@ -108,8 +108,18 @@ is a plain object with the following properties:
 | file_name          | The base name (filename.ext) of the selected file.                                   |
 
 For example, after picking two files from dropbox, the JSON would look similar to this:
-```
-{"0"=>{"url"=>"https://dl.dropbox.com/fake/filepicker-demo.txt.txt", "expires"=>"2014-03-31T20:37:36.214Z", "file_name"=>"filepicker-demo.txt.txt"}, "1"=>{"url"=>"https://dl.dropbox.com/fake/Getting%20Started.pdf", "expires"=>"2014-03-31T20:37:36.731Z", "file_name"=>"Getting+Started.pdf"}}
+```json
+[
+  {
+    "url": "https://dl.dropbox.com/fake/filepicker-demo.txt.txt",
+    "expires": "2014-03-31T20:37:36.214Z",
+    "file_name": "filepicker-demo.txt.txt"
+  }, {
+    "url": "https://dl.dropbox.com/fake/Getting%20Started.pdf",
+    "expires": "2014-03-31T20:37:36.731Z",
+    "file_name": "Getting+Started.pdf"
+  }
+]
 ```
 
 ### Examples
