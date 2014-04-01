@@ -107,7 +107,9 @@ is a plain object with the following properties:
 | expires            | The expiration date/time of the specified URL.                                       |
 | file_name          | The base name (filename.ext) of the selected file.                                   |
 
-For example, after picking two files from dropbox, the JSON would look similar to this:
+For example, after picking two files from dropbox, 
+
+If you're using javascript to handle the results, the data will look like this when the user finishes selecting files:
 ```json
 [
   {
