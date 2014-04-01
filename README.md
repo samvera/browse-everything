@@ -95,7 +95,7 @@ $('#browse').browseEverything({
 See [JavaScript Methods](https://github.com/projecthydra/browse-everything/wiki/JavaScript-Methods) for more info on using javascript to trigger browse-everything.
 
 
-### The JSON Data 
+### The Results (Data Structure) 
 
 browse-everything returns a JSON data structure consisting of an array of URL specifications. Each URL specification
 is a plain object with the following properties:
@@ -120,6 +120,22 @@ For example, after picking two files from dropbox, the JSON would look similar t
     "file_name": "Getting+Started.pdf"
   }
 ]
+```
+
+If you used the _target_ option (via the data-target attribute or via the target option on the javascript method) to provide a target form, results info will be written into that form as hidden fields.  If you submit that form, the results will look like this:
+```ruby
+selected_files: {
+  "0"=>{
+    "url"=>"https://dl.dropbox.com/fake/filepicker-demo.txt.txt", 
+    "expires"=>"2014-03-31T20:37:36.214Z", 
+    "file_name"=>"filepicker-demo.txt.txt"
+  }, 
+  "1"=>{
+    "url"=>"https://dl.dropbox.com/fake/Getting%20Started.pdf", 
+    "expires"=>"2014-03-31T20:37:36.731Z", 
+    "file_name"=>"Getting+Started.pdf"
+  }
+}
 ```
 
 ### Examples
