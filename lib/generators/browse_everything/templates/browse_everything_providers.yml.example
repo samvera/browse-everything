@@ -1,0 +1,16 @@
+#
+# To make browse-everything aware of a provider, uncomment the info for that provider and add your API key information.
+# The file_system provider can be a path to any directory on the server where your application is running.
+#
+# drop_box:
+#   :app_key: YOUR_DROPBOX_APP_KEY
+#   :app_secret: YOUR_DROPBOX_APP_SECRET
+# box:
+#   :client_id: YOUR_BOX_CLIENT_ID
+#   :client_secret: YOUR_BOX_CLIENT_SECRET
+# google_drive:
+#   :client_id: YOUR_GOOGLE_API_CLIENT_ID
+#   :client_secret: YOUR_GOOGLE_API_CLIENT_SECRET
+# sky_drive:
+#   :client_id: YOUR_MS_LIVE_CONNECT_CLIENT_ID
+#   :client_secret: YOUR_MS_LIVE_CONNECT_CLIENT_SECRET

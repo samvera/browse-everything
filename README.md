@@ -25,39 +25,12 @@ And then execute:
 Or install it yourself as:
 
     $ gem install browse-everything
+    
+And then run the generator
 
-## Usage
-
-### Configuration
-
-To use the gem you will need to configure the providers by providing applcation keys that are required by each provider
-
-An example config/browse_everything_providers.yml:
-
-```yaml
----
-file_system:
-  :home: /<location for server file drop>
-sky_drive:
-  :client_id: <your client id>
-  :client_secret: <your client secret>
-box:
-  :client_id: <your client id>
-  :client_secret: <your client secret>
-drop_box:
-  :app_key: <your client id>
-  :app_secret: <your app secret>
-google_drive:
-  :client_id: <your client id>
-  :client_secret: <your client secret>
-```
-
-You must register your application with each cloud provider separately:
-
-* Skydrive: [https://account.live.com/developers/applications/create](https://account.live.com/developers/applications/create)
-* Dropbox: [https://www.dropbox.com/developers/apps/create](https://www.dropbox.com/developers/apps/create)
-* Box: [https://app.box.com/developers/services/edit/](https://app.box.com/developers/services/edit/)
-* GoogleDrive: [https://code.google.com/apis/console](https://code.google.com/apis/console)
+    $ rails g browse_anything:config
+    
+Or manually configure using the info from the wiki page on [Configuring browse-everything](https://github.com/flyingzumwalt/browse-everything/wiki/Configuring-browse-everything)
 
 ### CSS and JavaScript Modifications
 
@@ -65,13 +38,7 @@ Add `@import "browse_everything";` to your application.css.scss
 
 Add `//= require browse_everything` to your application.js
 
-### Routes
-
-Mount the engine in your routes.rb
-
-```
-  mount BrowseEverything::Engine => '/browse'
-```
+## Usage
 
 ### Views
 
