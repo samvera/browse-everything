@@ -1,3 +1,7 @@
+### 0.4.1 (2014-04-03)
+- Bug fixes
+- TurboLinks compatibility
+
 ### 0.4.0 (2014-04-01)
 - Added configuration generator
 - Improved documentation
