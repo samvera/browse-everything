@@ -34,8 +34,7 @@ $(document).ready ->
       $(this).click () ->
         active = context[this]
         dialog.load active.opts.route, () -> dialog.modal('show')
-    else
-      context[this[0]].callback_proxy
+    context[this[0]].callback_proxy
 
   triggers = $('*[data-toggle=browse-everything]')
   triggers.each () -> $(this).browseEverything($(this).data())
