@@ -1,4 +1,4 @@
-$(document).ready ->
+ready = ->
   context = {}
   active = null
   dialog = $('div#browse-everything')
@@ -107,3 +107,6 @@ $(document).ready ->
       else
         window.setTimeout check_func, 1000
     check_func()
+
+$(document).ready(ready)
+$(document).on('page:load', ready)
