@@ -4,8 +4,7 @@ $(document).ready ->
   dialog = $('div#browse-everything')
 
   initialize = (obj,options) ->
-    if dialog.length == 0
-      dialog = $('<div id="browse-everything" class="ev-browser modal fade"></div>').hide().appendTo('body')
+    dialog = $('<div id="browse-everything" class="ev-browser modal fade"></div>').hide().appendTo('body')
     dialog.modal({ backdrop: 'static', show: false });
     context[obj] = 
       opts: $.extend(true, {}, options)
