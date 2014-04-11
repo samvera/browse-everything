@@ -6,8 +6,8 @@ require 'browse_everything/version'
 Gem::Specification.new do |spec|
   spec.name          = "browse-everything"
   spec.version       = BrowseEverything::VERSION
-  spec.authors       = ["Carolyn Cole", "Jessie Keck", "Michael B. Klein", "Thomas Scherz", "Xiaoming Wang"]
-  spec.email         = ["cam156@psu.edu", "jkeck@stanford.edu", "mbklein@gmail.com", "scherztc@ucmail.uc.edu", "xw5d@virginia.edu"]
+  spec.authors       = ["Carolyn Cole", "Jessie Keck", "Michael B. Klein", "Thomas Scherz", "Xiaoming Wang", "Jeremy Friesen"]
+  spec.email         = ["cam156@psu.edu", "jkeck@stanford.edu", "mbklein@gmail.com", "scherztc@ucmail.uc.edu", "xw5d@virginia.edu", "jeremy.n.friesen@gmail.com"]
   spec.description   = %q{AJAX/Rails engine file browser for cloud storage services}
   spec.summary       = %q{AJAX/Rails engine file browser for cloud storage services}
   spec.homepage      = "https://github.com/projecthydra/browse-everything"
@@ -19,14 +19,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "rails", ">= 3.1"
-  spec.add_dependency "sass-rails"
-  spec.add_dependency "bootstrap-sass"
-  spec.add_dependency "font-awesome-rails"
   spec.add_dependency "google_drive"
   spec.add_dependency "dropbox-sdk", ">= 1.6.2"
   spec.add_dependency "skydrive"
   spec.add_dependency "ruby-box"
   spec.add_dependency "google-api-client"
+  spec.add_development_dependency "sass-rails"
+  spec.add_development_dependency "bootstrap-sass"
+  spec.add_development_dependency "font-awesome-rails"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rspec-rails"
   spec.add_development_dependency "simplecov"
