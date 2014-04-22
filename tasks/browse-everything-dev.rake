@@ -7,6 +7,8 @@ namespace :app do
       puts "Updating gemfile"
 
       `echo "gem 'browse-everything', :path=>'../../../browse-everything'
+  gem 'bootstrap-sass'
+  gem 'font-awesome-rails'
   gem 'factory_girl_rails'
       " >> spec/internal/Gemfile`
       puts "Copying generator"

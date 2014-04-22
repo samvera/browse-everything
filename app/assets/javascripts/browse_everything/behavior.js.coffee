@@ -1,4 +1,4 @@
-$(document).on 'page:change' ->
+$(document).on 'page:change', ->
   context = {}
   active = null
   dialog = $('div#browse-everything')
