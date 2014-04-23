@@ -107,6 +107,3 @@ $(document).on 'page:change', ->
       else
         window.setTimeout check_func, 1000
     check_func()
-
-$ ->
-  $(document).trigger 'page:change'
