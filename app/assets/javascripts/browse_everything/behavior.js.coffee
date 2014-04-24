@@ -1,23 +1,25 @@
 $(document).on 'page:change', ->
-  context = {}
-  active = null
+  triggers = $('*[data-toggle=browse-everything]')
+  triggers.each () -> $(this).browseEverything($(this).data())
+
+$ ->
   dialog = $('div#browse-everything')
 
   initialize = (obj,options) ->
     if $('div#browse-everything').length == 0
       dialog = $('<div id="browse-everything" class="ev-browser modal fade"></div>').hide().appendTo('body')
     dialog.modal({ backdrop: 'static', show: false });
-    context[obj] = 
+    ctx =
       opts: $.extend(true, {}, options)
       callbacks:
         done: $.Callbacks()
         cancel: $.Callbacks()
         fail: $.Callbacks()
-    ctx = context[obj]
     ctx.callback_proxy = 
       done:   (func) -> ctx.callbacks.done.add(func)   ; return this
       cancel: (func) -> ctx.callbacks.cancel.add(func) ; return this
       fail:   (func) -> ctx.callbacks.fail.add(func)   ; return this
+    $(obj).data('context',ctx)
     ctx
 
   toHiddenFields = (data) ->
@@ -29,19 +31,17 @@ $(document).on 'page:change', ->
     $(elements.toArray().join("\n"))
 
   $.fn.browseEverything = (options) ->
+    ctx = $(this).data('context')
     if options?
-      initialize(this[0], options)
+      ctx = initialize(this[0], options)
       $(this).click () ->
-        active = context[this]
-        dialog.load active.opts.route, () -> dialog.modal('show')
-    context[this[0]].callback_proxy
-
-  triggers = $('*[data-toggle=browse-everything]')
-  triggers.each () -> $(this).browseEverything($(this).data())
+        dialog.data('context',ctx)
+        dialog.load ctx.opts.route, () -> dialog.modal('show')
+    ctx.callback_proxy
 
   $(document).on 'click', 'button.ev-cancel', (event) ->
     event.preventDefault()
-    active.callbacks.cancel.fire()
+    dialog.data('context').callbacks.cancel.fire()
     $('.ev-browser').modal('hide')
 
   $(document).on 'click', 'button.ev-submit', (event) ->
@@ -50,17 +50,18 @@ $(document).on 'page:change', ->
     $('body').css('cursor','wait')
     main_form = $(this).closest('form')
     resolver_url = main_form.data('resolver')
+    ctx = dialog.data('context')
     $.ajax resolver_url,
       type: 'POST'
       dataType: 'json'
       data: main_form.serialize()
     .done (data) ->
-      if active.opts.target?
+      if ctx.opts.target?
         fields = toHiddenFields({selected_files: data})
-        $(active.opts.target).append($(fields))
-      active.callbacks.done.fire(data)
+        $(ctx.opts.target).append($(fields))
+      ctx.callbacks.done.fire(data)
     .fail (xhr,status,error) ->
-      active.callbacks.fail.fire(status, error, xhr.responseText)
+      ctx.callbacks.fail.fire(status, error, xhr.responseText)
     .always ->
       $('body').css('cursor','default')
       $('.ev-browser').modal('hide')
