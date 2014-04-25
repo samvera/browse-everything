@@ -1,3 +1,7 @@
+### 0.4.2 (2014-04-25)
+- Fixed TurboLinks-related initialization bugs
+- Added TurboLinks testing options to internal test app
+
 ### 0.4.1 (2014-04-03)
 - Bug fixes
 - TurboLinks compatibility
