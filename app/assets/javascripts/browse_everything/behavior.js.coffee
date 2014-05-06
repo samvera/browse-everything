@@ -1,7 +1,3 @@
-$(document).on 'page:change', ->
-  triggers = $('*[data-toggle=browse-everything]')
-  triggers.each () -> $(this).browseEverything($(this).data())
-
 $ ->
   dialog = $('div#browse-everything')
 
@@ -108,3 +104,12 @@ $ ->
       else
         window.setTimeout check_func, 1000
     check_func()
+
+auto_toggle = ->
+  triggers = $('*[data-toggle=browse-everything]')
+  triggers.each () -> $(this).browseEverything($(this).data())
+
+if Turbolinks?
+  $(document).on 'page:change', auto_toggle
+else
+  $(document).ready auto_toggle
