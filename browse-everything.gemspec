@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "bootstrap-sass"
   spec.add_dependency "font-awesome-rails"
   spec.add_dependency "google-api-client"
-  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "rspec", "~> 2.0"
   spec.add_development_dependency "rspec-rails"
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "bundler", "~> 1.3"
