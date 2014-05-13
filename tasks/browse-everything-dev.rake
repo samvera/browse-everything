@@ -27,6 +27,13 @@ namespace :app do
 
   desc "Clean out the test rails app"
   task :clean do
+    if File.directory?('spec/internal')
+      within_test_app do
+        puts "Stopping Spring"
+        `spring stop`
+      end
+    end
+
     Rake::Task["app:stop"].invoke
     puts "Removing sample rails app"
     `rm -rf spec/internal`
