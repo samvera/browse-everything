@@ -1,3 +1,6 @@
+### 0.4.4 (2014-06-19)
+- Add browse-everything assets to asset precompile
+
 ### 0.4.3 (2014-05-07)
 - More robust Turbolinks/non-Turbolinks initialization support
 
