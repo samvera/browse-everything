@@ -83,7 +83,7 @@ $ ->
     event.preventDefault()
     target = $(this).closest('*[data-ev-location]')
     target_form = $('form.ev-submit-form')
-    file_location = target.data('ev-location')
+    file_location = target.data('ev-location').replace(/'/g, "&apos;")
     target.toggleClass('ev-selected')
     if target.hasClass('ev-selected')
       hidden_input = $("<input type='hidden' class='ev-url' name='selected_files[]' value='#{file_location}'>")
