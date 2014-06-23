@@ -23,7 +23,9 @@ $ ->
       .split('&')
       .map (t) -> t.split('=',2)
     elements = $(fields).map () ->
-      "<input type='hidden' name='#{decodeURIComponent(this[0])}' value='#{decodeURIComponent(this[1])}'/>"
+      $("<input type='hidden'/>")
+        .attr('name',decodeURIComponent(this[0]))
+        .val(decodeURIComponent(this[1]))[0].outerHTML
     $(elements.toArray().join("\n"))
 
   $.fn.browseEverything = (options) ->
@@ -83,10 +85,10 @@ $ ->
     event.preventDefault()
     target = $(this).closest('*[data-ev-location]')
     target_form = $('form.ev-submit-form')
-    file_location = target.data('ev-location').replace(/'/g, "&apos;")
+    file_location = target.data('ev-location')
     target.toggleClass('ev-selected')
     if target.hasClass('ev-selected')
-      hidden_input = $("<input type='hidden' class='ev-url' name='selected_files[]' value='#{file_location}'>")
+      hidden_input = $("<input type='hidden' class='ev-url' name='selected_files[]'/>").val(file_location)
       target_form.append(hidden_input)
     else
       $("form.ev-submit-form input[value='#{file_location}']").remove()
