@@ -65,7 +65,7 @@ class BrowseEverythingController < ActionController::Base
   end
 
   def provider_name
-    @provider_nane ||= params[:provider] || params[:state].to_s.split(/\|/).last
+    @provider_name ||= params[:provider] || params[:state].to_s.split(/\|/).last
   end
 
   helper_method :auth_link
