@@ -1,3 +1,6 @@
+### 0.4.5 (2014-06-20)
+- Fix for filenames with special entities in them
+
 ### 0.4.4 (2014-06-19)
 - Add browse-everything assets to asset precompile
 
