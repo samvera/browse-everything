@@ -8,10 +8,12 @@ $ ->
     ctx =
       opts: $.extend(true, {}, options)
       callbacks:
+        show: $.Callbacks()
         done: $.Callbacks()
         cancel: $.Callbacks()
         fail: $.Callbacks()
     ctx.callback_proxy = 
+      show:   (func) -> ctx.callbacks.show.add(func)   ; return this
       done:   (func) -> ctx.callbacks.done.add(func)   ; return this
       cancel: (func) -> ctx.callbacks.cancel.add(func) ; return this
       fail:   (func) -> ctx.callbacks.fail.add(func)   ; return this
@@ -34,7 +36,9 @@ $ ->
       ctx = initialize(this[0], options)
       $(this).click () ->
         dialog.data('context',ctx)
-        dialog.load ctx.opts.route, () -> dialog.modal('show')
+        dialog.load ctx.opts.route, () -> 
+          ctx.callbacks.show.fire()
+          dialog.modal('show')
     ctx.callback_proxy
 
   $(document).on 'click', 'button.ev-cancel', (event) ->
