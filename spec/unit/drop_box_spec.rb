@@ -12,7 +12,7 @@ describe BrowseEverything::Driver::DropBox, vcr: { cassette_name: 'dropbox', rec
     'code' => 'FakeDropboxAuthorizationCodeABCDEFG',
     'state' => 'GjDcUhPNZrZzdsw%2FghBy2A%3D%3D|drop_box'
   } }
-  let(:csrf_data) { {token: 'GjDcUhPNZrZzdsw%2FghBy2A%3D%3D'} }
+  let(:csrf_data) { {'token' => 'GjDcUhPNZrZzdsw%2FghBy2A%3D%3D'} }
 
   it "#validate_config" do
     expect { BrowseEverything::Driver::DropBox.new({}) }.to raise_error(BrowseEverything::InitializationError)
