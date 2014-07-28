@@ -1,12 +1,16 @@
 <% if provider.present? %>
-  <ul class="unstyled">
-    <% provider.contents(browse_path).each do |file| %>
-    <li data-ev-location="<%= file.location %>" title="<%= number_to_human_size(file.size).sub(/Bytes/,'bytes') %> • <%= file.mtime.strftime('%F %R') %>">
-      <span class="<%=file.container? ? 'ev-container' : 'ev-file'%> ev-file-name">
-        <%= link_to(file.name, browse_everything_engine.contents_path(provider_name,file.id)) %>
-      </span>
-    </li>
+  <table id="file-list">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Size</th>
+        <th>Kind</th>
+        <th>Modified</th>
+      </tr>
+    </thead>
+    <% provider.contents(browse_path).each_with_index do |file,index| %>
+      <% path = browse_everything_engine.contents_path(provider_name,file.id) %>
+      <%= render :partial => 'file', :locals => { :file => file, :index => index, :path => path } %>
     <% end %>
   </table>
 <% end %>
-

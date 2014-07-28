@@ -3,9 +3,9 @@ module BrowseEverything
     class Base
       include BrowseEverything::Engine.routes.url_helpers
 
-      attr_reader :config
+      attr_reader :config, :name
       attr_accessor :token
-
+      
       def initialize(config,session_info={})
         @config = config
         validate_config
@@ -20,7 +20,7 @@ module BrowseEverything
       end
 
       def name
-        self.class.name.split(/::/).last.titleize
+        @name ||= (@config[:name] || self.class.name.split(/::/).last.titleize)
       end
 
       def validate_config

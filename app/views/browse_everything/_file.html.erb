@@ -1,0 +1,18 @@
+<% unless file.name =~ /^\.+$/ %>
+<tr data-ev-location="<%= file.location %>" data-tt-id="<%=path%>" data-tt-parent-id="<%=File.dirname(path)%>" data-tt-branch="<%=file.container? ? 'true' : 'false'%>">
+  <td class="<%=file.container? ? 'ev-container' : 'ev-file'%> ev-file-name">
+    <span class="<%=file.container? ? 'folder' : 'file'%>">
+      <%= link_to(file.name, browse_everything_engine.contents_path(provider_name,file.id), {:class=>'ev-link'}) %>
+    </span>
+  </td>
+  <td class="ev-file-size">
+    <%= number_to_human_size(file.size).sub(/Bytes/,'bytes') %>
+  </td>
+  <td class="ev-file-kind">
+    <%= file.container? ? 'Folder' : file_type(file.name) %>
+  </td>
+  <td class="ev-file-date">
+    <%= file.mtime.strftime('%F %R') %>
+  </td>
+</tr>
+<% end %>

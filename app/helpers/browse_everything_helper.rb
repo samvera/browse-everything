@@ -8,4 +8,8 @@ module BrowseEverythingHelper
     fields.join("\n").html_safe
   end
 
+  def file_type(filename)
+    Rack::Mime.mime_type(File.extname(filename))
+  end
+
 end
