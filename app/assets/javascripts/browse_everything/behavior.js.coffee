@@ -8,10 +8,12 @@ $ ->
     ctx =
       opts: $.extend(true, {}, options)
       callbacks:
+        show: $.Callbacks()
         done: $.Callbacks()
         cancel: $.Callbacks()
         fail: $.Callbacks()
     ctx.callback_proxy = 
+      show:   (func) -> ctx.callbacks.show.add(func)   ; return this
       done:   (func) -> ctx.callbacks.done.add(func)   ; return this
       cancel: (func) -> ctx.callbacks.cancel.add(func) ; return this
       fail:   (func) -> ctx.callbacks.fail.add(func)   ; return this
@@ -28,13 +30,55 @@ $ ->
         .val(decodeURIComponent(this[1]))[0].outerHTML
     $(elements.toArray().join("\n"))
 
+  indicateSelected = () ->
+    $('input.ev-url').each () ->
+      $("*[data-ev-location='#{$(this).val()}']").addClass('ev-selected')
+
+  tableSetup = (table) ->
+    table.treetable
+      expandable: true
+      onNodeCollapse: ->
+        node = this;
+        table.treetable("unloadBranch", node)
+      onNodeExpand: ->
+        node = this
+        $('body').css('cursor','wait')
+        $.ajax
+          async: false # Must be false, otherwise loadBranch happens after showChildren?
+          url: $('a.ev-link',node.row).attr('href')
+          data:
+            accept: dialog.data('context').opts.accept
+            context: dialog.data('context').opts.context
+        .done (html) ->
+          rows = $('tbody tr',$(html))
+          table.treetable("loadBranch", node, rows)
+          sizeColumns(table)
+          indicateSelected()
+        .always ->
+          $('body').css('cursor','default')
+    sizeColumns(table)
+    
+  sizeColumns = (table) ->
+    full_width = $('.ev-files').width()
+    table.width(full_width)
+    set_size = (selector, pct) ->
+      $(selector, table).width(full_width * pct).css('width',full_width * pct).css('max-width',full_width * pct)
+    set_size '.ev-file', 0.4
+    set_size '.ev-size', 0.1
+    set_size '.ev-kind', 0.3
+    set_size '.ev-date', 0.2
+
+  $(window).on('resize', -> sizeColumns($('table#file-list')))
+
   $.fn.browseEverything = (options) ->
     ctx = $(this).data('context')
     if options?
       ctx = initialize(this[0], options)
       $(this).click () ->
         dialog.data('context',ctx)
-        dialog.load ctx.opts.route, () -> dialog.modal('show')
+        dialog.load ctx.opts.route, () -> 
+          ctx.callbacks.show.fire()
+          dialog.modal('show')
     ctx.callback_proxy
 
   $(document).on 'click', 'button.ev-cancel', (event) ->
@@ -49,6 +93,7 @@ $ ->
     main_form = $(this).closest('form')
     resolver_url = main_form.data('resolver')
     ctx = dialog.data('context')
+    $(main_form).find('input[name=context]').val(ctx.opts.context)
     $.ajax resolver_url,
       type: 'POST'
       dataType: 'json'
@@ -64,14 +109,29 @@ $ ->
       $('body').css('cursor','default')
       $('.ev-browser').modal('hide')
 
-  $(document).on 'click', '.ev-container a', (event) ->
+  $(document).on 'click', '.ev-files table tr', (event) ->
+    $('a.ev-link',this).click() unless event.target.nodeName == 'A'
+    
+  $(document).on 'click', '.ev-files .ev-container a.ev-link', (event) ->
+    event.stopPropagation()
+    event.preventDefault()
+    row = $(this).closest('tr')
+    action = if row.hasClass('expanded') then 'collapseNode' else 'expandNode'
+    node_id = $(this).attr('href')
+    $('table#file-list').treetable(action,node_id)
+
+  $(document).on 'click', '.ev-providers .ev-container a', (event) ->
     event.preventDefault()
     $('body').css('cursor','wait')
-    $.ajax($(this).attr('href'))
+    $.ajax 
+      url: $(this).attr('href'),
+      data:
+        accept: dialog.data('context').opts.accept
+        context: dialog.data('context').opts.context
     .done (data) ->
       $('.ev-files').html(data)
-      $('input.ev-url').each () ->
-        $("*[data-ev-location='#{$(this).val()}']").addClass('ev-selected')
+      indicateSelected();
+      tableSetup($('table#file-list'))
     .fail (xhr,status,error) ->
       $('.ev-files').html(xhr.responseText)
     .always ->

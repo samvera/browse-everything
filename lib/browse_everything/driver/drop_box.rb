@@ -62,7 +62,7 @@ module BrowseEverything
       private
       def auth_flow
         @csrf ||= {}
-        DropboxOAuth2Flow.new(config[:app_key], config[:app_secret], connector_response_url(config[:url_options]).to_s,@csrf,:token)
+        DropboxOAuth2Flow.new(config[:app_key], config[:app_secret], connector_response_url(config[:url_options]).to_s,@csrf,'token')
       end
 
       def client

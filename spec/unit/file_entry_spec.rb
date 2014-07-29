@@ -38,7 +38,7 @@ describe BrowseEverything::FileEntry do
   end
 
   it "#container?" do
-    expect(subject.container?).to be_false                                  
+    expect(subject.container?).to be false                                  
   end
 
 end

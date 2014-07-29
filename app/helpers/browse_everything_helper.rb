@@ -8,4 +8,11 @@ module BrowseEverythingHelper
     fields.join("\n").html_safe
   end
 
+  def is_acceptable?(file)
+    file_type = file.type
+    acceptable = params[:accept] || '*/*'
+    acceptable_types = acceptable.split(/,\s*/)
+    acceptable_types << 'application/x-directory'
+    acceptable_types.any? { |type| Rack::Mime.match?(file_type, type) }
+  end
 end

@@ -26,7 +26,7 @@ describe BrowseEverything::Browser do
   }
 
   describe "file config" do
-    before(:each) { File.stub(:read).and_return(file_config) }
+    before(:each) { allow(File).to receive(:read).and_return(file_config) }
     subject { BrowseEverything::Browser.new(url_options) }
 
     it "should have 2 providers" do
@@ -69,7 +69,7 @@ describe BrowseEverything::Browser do
     }
 
     it "should complain but continue" do
-      Rails.logger.should_receive(:warn).with('Unknown provider: foo')
+      allow(Rails.logger).to receive(:warn).with('Unknown provider: foo')
       expect(subject.providers.keys).to eq([:file_system,:drop_box])
     end
   end

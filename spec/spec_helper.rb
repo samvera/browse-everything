@@ -1,5 +1,6 @@
 require File.expand_path("config/environment", ENV['RAILS_ROOT'] || File.expand_path("../internal", __FILE__))
 require 'rspec'
+require 'rspec/its'
 require 'webmock/rspec'
 require 'simplecov'
 require 'vcr'
@@ -14,8 +15,10 @@ VCR.configure do |c|
   c.configure_rspec_metadata!
 end
 
-RSpec.configure do |c|
-  c.treat_symbols_as_metadata_keys_with_true_values = true
+RSpec.configure do |config|
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
 end
 
 module BrowserConfigHelper

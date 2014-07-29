@@ -3,6 +3,8 @@
 @import "bootstrap";
 @import "bootstrap-responsive";
 @import "font-awesome";
+@import "jquery.treetable";
+@import "jquery.treetable.theme.browse";
 
 @mixin border-highlight($color) {
   $bl: 3;
@@ -50,7 +52,7 @@
   
   .ev-files {
     position: relative;
-    overflow-x: hidden;
+    overflow-x: auto;
     overflow-y: auto;
 
     li { 
@@ -84,12 +86,34 @@
     background-color: lightgray;
   }
 
+  .ev-files {
+    .ev-selected .indenter {
+      @extend .fa;
+      @extend .fa-check;
+      @extend .icon-check;
+    }
+    table {
+      width: 100%;
+      max-width: 100%;
+      tr {
+        width: 100%;
+        max-width: 100%;
+        td {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+  
+  .ev-providers .ev-selected {
+    @include border-highlight(black);
+  }
+
   .ev-providers, .ev-files {
     height: 50vh;
     li { @include ev-link; }
-    .ev-selected {
-      @include border-highlight(black);
-    }
   }
 
 }

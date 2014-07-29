@@ -9,7 +9,7 @@ module BrowseEverything
       @size      = size
       @mtime     = mtime
       @container = container
-      @type      = type || @container ? 'directory' : Rack::Mime.mime_type(File.extname(name))
+      @type      = type || @container ? 'application/x-directory' : Rack::Mime.mime_type(File.extname(name))
     end
 
     def container?
