@@ -14,8 +14,10 @@ VCR.configure do |c|
   c.configure_rspec_metadata!
 end
 
-RSpec.configure do |c|
-  c.treat_symbols_as_metadata_keys_with_true_values = true
+RSpec.configure do |config|
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
 end
 
 module BrowserConfigHelper
