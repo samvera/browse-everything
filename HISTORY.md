@@ -1,3 +1,9 @@
+### 0.5.0 (2014-07-29)
+- New, prettier tree-oriented UI
+- Added app-specific `context` parameter
+- Added `accept` parameter to allow filtering of results based on MIME type
+- Added `show()` callback
+
 ### 0.4.5 (2014-06-20)
 - Fix for filenames with special entities in them
 
