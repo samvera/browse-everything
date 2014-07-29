@@ -42,17 +42,20 @@ $ ->
         table.treetable("unloadBranch", node)
       onNodeExpand: ->
         node = this
+        $('body').css('cursor','wait')
         $.ajax
-          type: 'POST'
-          data:
-            context: dialog.data('context').opts.context
           async: false # Must be false, otherwise loadBranch happens after showChildren?
           url: $('a.ev-link',node.row).attr('href')
+          data:
+            accept: dialog.data('context').opts.accept
+            context: dialog.data('context').opts.context
         .done (html) ->
           rows = $('tbody tr',$(html))
           table.treetable("loadBranch", node, rows)
           sizeColumns(table)
           indicateSelected()
+        .always ->
+          $('body').css('cursor','default')
     sizeColumns(table)
     
   sizeColumns = (table) ->
@@ -106,7 +109,11 @@ $ ->
       $('body').css('cursor','default')
       $('.ev-browser').modal('hide')
 
-  $(document).on 'click', '.ev-files .ev-container a', (event) ->
+  $(document).on 'click', '.ev-files table tr', (event) ->
+    $('a.ev-link',this).click() unless event.target.nodeName == 'A'
+    
+  $(document).on 'click', '.ev-files .ev-container a.ev-link', (event) ->
+    event.stopPropagation()
     event.preventDefault()
     row = $(this).closest('tr')
     action = if row.hasClass('expanded') then 'collapseNode' else 'expandNode'
@@ -116,9 +123,10 @@ $ ->
   $(document).on 'click', '.ev-providers .ev-container a', (event) ->
     event.preventDefault()
     $('body').css('cursor','wait')
-    $.ajax $(this).attr('href'),
-      type: 'POST'
+    $.ajax 
+      url: $(this).attr('href'),
       data:
+        accept: dialog.data('context').opts.accept
         context: dialog.data('context').opts.context
     .done (data) ->
       $('.ev-files').html(data)

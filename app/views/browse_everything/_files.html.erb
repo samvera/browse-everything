@@ -9,8 +9,10 @@
       </tr>
     </thead>
     <% provider.contents(browse_path).each_with_index do |file,index| %>
-      <% path = browse_everything_engine.contents_path(provider_name,file.id) %>
-      <%= render :partial => 'file', :locals => { :file => file, :index => index, :path => path } %>
+      <% if is_acceptable?(file) %>
+        <% path = browse_everything_engine.contents_path(provider_name,file.id) %>
+        <%= render :partial => 'file', :locals => { :file => file, :index => index, :path => path } %>
+      <% end %>
     <% end %>
   </table>
 <% end %>
