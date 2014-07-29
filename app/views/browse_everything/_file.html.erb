@@ -1,4 +1,4 @@
-<% unless file.name =~ /^\.+$/ %>
+<% unless file.relative_parent_path? %>
 <tr data-ev-location="<%= file.location %>" data-tt-id="<%=path%>" data-tt-parent-id="<%=File.dirname(path)%>" data-tt-branch="<%=file.container? ? 'true' : 'false'%>">
   <td class="<%=file.container? ? 'ev-container' : 'ev-file'%> ev-file-name">
     <span class="<%=file.container? ? 'folder' : 'file'%>">
