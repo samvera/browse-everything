@@ -56,10 +56,12 @@ browse-everything can be triggered in two ways -- either via data attributes in 
 #### Options
 
 
-| Name            | type            | default         | description                                                    |
+| Name            | Type            | Default         | Description                                                    |
 |-----------------|-----------------|-----------------|----------------------------------------------------------------|
 | route           | path (required) | ''              | The base route of the browse-everything engine.                |
 | target          | xpath or jQuery | null            | A form object to add the results to as hidden fields.          |
+| context         | text            | null            | App-specific context information (passed with each request)    |
+| accept          | MIME mask       | */*             | A list of acceptable MIME types to browse (e.g., 'video/*')    |
 
 If a `target` is provided, browse-everything will automatically convert the JSON response to a series of hidden form fields
 that can be posted back to Rails to re-create the array on the server side.
