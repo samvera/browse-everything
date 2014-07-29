@@ -4,7 +4,7 @@
 @import "bootstrap-responsive";
 @import "font-awesome";
 @import "jquery.treetable";
-@import "jquery.treetable.theme.default";
+@import "jquery.treetable.theme.browse";
 
 @mixin border-highlight($color) {
   $bl: 3;
@@ -87,13 +87,23 @@
   }
 
   .ev-files {
-    .indenter {
-      height: 14px;
-    }
     .ev-selected .indenter {
       @extend .fa;
       @extend .fa-check;
       @extend .icon-check;
+    }
+    table {
+      width: 100%;
+      max-width: 100%;
+      tr {
+        width: 100%;
+        max-width: 100%;
+        td {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
     }
   }
   
@@ -106,19 +116,4 @@
     li { @include ev-link; }
   }
 
-  .ev-files table {
-    border-style: none !important;
-    font-size: inherit !important;
-    tbody tr {
-      background-color: inherit !important;
-      border-style: none !important;
-      td {
-        padding-left: 0px !important;
-        border-style: none !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-  }
 }
