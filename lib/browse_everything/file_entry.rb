@@ -12,8 +12,8 @@ module BrowseEverything
       @type      = type || @container ? 'application/x-directory' : Rack::Mime.mime_type(File.extname(name))
     end
 
-    def is_relative_path?
-      name =~ /^\.\.?$/
+    def relative_parent_path?
+      name =~ /^\.\.?$/ ? true : false
     end
     
     def container?
