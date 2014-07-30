@@ -1,3 +1,6 @@
+### 0.5.1 (2014-07-30)
+- Fix for busted responsive layouts when using Bootstrap 2.x
+
 ### 0.5.0 (2014-07-29)
 - New, prettier tree-oriented UI
 - Added app-specific `context` parameter

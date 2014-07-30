@@ -1,7 +1,9 @@
 @import "bootstrap/variables";
 @import "bootstrap/mixins";
 @import "bootstrap";
-@import "bootstrap-responsive";
+// bootstrap-responsive isn't available with bootstrap 3. It's up to
+// the host application to import it if using bootstrap 2.
+// @import "bootstrap-responsive";
 @import "font-awesome";
 @import "jquery.treetable";
 @import "jquery.treetable.theme.browse";
