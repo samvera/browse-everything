@@ -4,7 +4,9 @@ $ ->
   initialize = (obj,options) ->
     if $('div#browse-everything').length == 0
       dialog = $('<div id="browse-everything" class="ev-browser modal fade"></div>').hide().appendTo('body')
-    dialog.modal({ backdrop: 'static', show: false });
+    dialog.modal
+      backdrop: 'static'
+      show:     false 
     ctx =
       opts: $.extend(true, {}, options)
       callbacks:
@@ -77,6 +79,8 @@ $ ->
       $(this).click () ->
         dialog.data('context',ctx)
         dialog.load ctx.opts.route, () -> 
+          action = -> $('.ev-providers select').change()
+          setTimeout action, 500
           ctx.callbacks.show.fire()
           dialog.modal('show')
     ctx.callback_proxy
@@ -120,11 +124,11 @@ $ ->
     node_id = $(this).attr('href')
     $('table#file-list').treetable(action,node_id)
 
-  $(document).on 'click', '.ev-providers .ev-container a', (event) ->
+  $(document).on 'change', '.ev-providers select', (event) ->
     event.preventDefault()
     $('body').css('cursor','wait')
     $.ajax 
-      url: $(this).attr('href'),
+      url: $(this).val(),
       data:
         accept: dialog.data('context').opts.accept
         context: dialog.data('context').opts.context

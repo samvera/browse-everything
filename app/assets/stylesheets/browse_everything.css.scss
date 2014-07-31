@@ -8,22 +8,8 @@
 @import "jquery.treetable";
 @import "jquery.treetable.theme.browse";
 
-@mixin border-highlight($color) {
-  $bl: 3;
-  @if $color == none {
-    $bl: 0
-  }
-  margin-left: #{4-$bl}px;
-  border-left: #{$bl}px solid $color;
-  padding-left: 4px;
-}
-
 @mixin ev-link {
   cursor: pointer;
-  @include border-highlight(none);
-  &:hover {
-    @include border-highlight(gray);
-  }
   a {
     color: inherit;
     background-color: inherit;
@@ -40,6 +26,10 @@
   background-color: initial; 
   width: 75%;
 
+  .modal-header {
+    padding: 8px;
+  }
+  
   .modal-body {
     overflow: hidden;
   }
@@ -85,7 +75,6 @@
 
   .ev-providers {
     padding: 4px;
-    background-color: lightgray;
   }
 
   .ev-files {
@@ -109,13 +98,13 @@
     }
   }
   
-  .ev-providers .ev-selected {
-    @include border-highlight(black);
-  }
-
-  .ev-providers, .ev-files {
+  .ev-files {
     height: 50vh;
     li { @include ev-link; }
+  }
+  
+  .ev-providers {
+    select { width: 30% }
   }
 
 }

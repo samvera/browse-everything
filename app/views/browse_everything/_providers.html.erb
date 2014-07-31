@@ -1,10 +1,10 @@
-  <ul class="<%=bs3('list-')%>unstyled">
+<form class="form-inline">
+  <label target="provider-select">Source:</label>
+  <select class="form-control" id="provider-select">
     <% browser.providers.each_pair do |key, provider| %>
-      <li>
-        <span class="ev-container">
-          <i class="<%=bs2or3('icon','glyphicon glyphicon')%>-<%=provider.icon%>"></i>
-          <%= link_to(provider.name, browse_everything_engine.contents_path(key)) %>
-        </span>
-      </li>
+      <option value="<%=browse_everything_engine.contents_path(key)%>">
+        <%= provider.name %>
+      </option>
     <% end %>
-  </ul>
+  </select>
+</form>
