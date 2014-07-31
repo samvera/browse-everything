@@ -49,6 +49,7 @@ $ ->
           async: false # Must be false, otherwise loadBranch happens after showChildren?
           url: $('a.ev-link',node.row).attr('href')
           data:
+            parent: node.row.data('tt-id')
             accept: dialog.data('context').opts.accept
             context: dialog.data('context').opts.context
         .done (html) ->
@@ -70,6 +71,9 @@ $ ->
     set_size '.ev-kind', 0.3
     set_size '.ev-date', 0.2
 
+  refreshFiles = ->
+    $('.ev-providers select').change()
+    
   $(window).on('resize', -> sizeColumns($('table#file-list')))
 
   $.fn.browseEverything = (options) ->
@@ -79,12 +83,13 @@ $ ->
       $(this).click () ->
         dialog.data('context',ctx)
         dialog.load ctx.opts.route, () -> 
-          action = -> $('.ev-providers select').change()
-          setTimeout action, 500
+          setTimeout refreshFiles, 500
           ctx.callbacks.show.fire()
           dialog.modal('show')
     ctx.callback_proxy
 
+  $(document).on 'ev.refresh', (event) -> refreshFiles()
+    
   $(document).on 'click', 'button.ev-cancel', (event) ->
     event.preventDefault()
     dialog.data('context').callbacks.cancel.fire()

@@ -1,3 +1,6 @@
+### 0.6.1 (2014-07-31)
+- Fix auto-refresh after authorizing cloud provider
+
 ### 0.6.0 (2014-07-31)
 - Move provider list from left column to dropdown in header
 
