@@ -1,3 +1,6 @@
+### 0.6.0 (2014-07-31)
+- Move provider list from left column to dropdown in header
+
 ### 0.5.2 (2014-07-30)
 - Allow MIME type filtering to work on Rack < 1.5.0
 
