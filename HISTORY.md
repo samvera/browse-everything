@@ -1,3 +1,6 @@
+### 0.5.2 (2014-07-30)
+- Allow MIME type filtering to work on Rack < 1.5.0
+
 ### 0.5.1 (2014-07-30)
 - Fix for busted responsive layouts when using Bootstrap 2.x
 
