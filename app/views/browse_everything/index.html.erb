@@ -1,11 +1,12 @@
 <% if bootstrap_three? %><div class="modal-content"><% end %>
-  <div class="modal-header"></div>
+  <div class="modal-header">
+    <div class="ev-providers">
+      <%= render :partial => 'providers' %>
+    </div>
+  </div>
   <div class="modal-body ev-body">
     <div class="ev-browser row<%=bs2('-fluid')%>">
-      <div class="<%=bs2or3('span','col-xs-')%>2 ev-providers nav nav-list">
-        <%= render :partial => 'providers' %>
-      </div>
-      <div class="<%=bs2or3('span','col-xs-')%>10 ev-files list">
+      <div class="<%=bs2or3('span','col-xs-')%>12 ev-files list">
         <%= render :partial => 'files' %>
       </div>
     </div>
