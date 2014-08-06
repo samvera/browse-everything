@@ -81,18 +81,18 @@
     padding: 4px;
   }
 
-  .bs2 .ev-selected .indenter {
-    @extend .icon-check;
+  .fa3 .ev-selected .indenter {
     font-family: FontAwesome;
     font-weight: normal;
     font-style: normal;
     text-decoration: inherit;
     -webkit-font-smoothing: antialiased;
     *margin-right: .3em;
+    @extend .icon-check;
   }
   
-  .bs3 .ev-selected .indenter {
-    text-decoration: inherit;
+  .fa4 .ev-selected .indenter {
+    background-color: inherit;
     @extend .fa;
     @extend .fa-check;
   }
