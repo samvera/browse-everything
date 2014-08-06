@@ -1,3 +1,6 @@
+### 0.6.2 (2014-08-06)
+- Fix Bootstrap/FontAwesome cross-version styling issues
+
 ### 0.6.1 (2014-07-31)
 - Fix auto-refresh after authorizing cloud provider
 
