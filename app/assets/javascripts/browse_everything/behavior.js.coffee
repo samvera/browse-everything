@@ -86,7 +86,15 @@ $ ->
           setTimeout refreshFiles, 500
           ctx.callbacks.show.fire()
           dialog.modal('show')
-    ctx.callback_proxy
+    if ctx
+      ctx.callback_proxy
+    else 
+      { 
+        show: -> this
+        done: -> this
+        cancel: -> this
+        fail: -> this 
+      }
 
   $(document).on 'ev.refresh', (event) -> refreshFiles()
     

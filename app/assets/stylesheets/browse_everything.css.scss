@@ -26,6 +26,10 @@
   background-color: initial; 
   width: 75%;
 
+  div {
+    background-color: white;
+  }
+  
   .modal-header {
     padding: 8px;
   }
@@ -77,12 +81,23 @@
     padding: 4px;
   }
 
+  .bs2 .ev-selected .indenter {
+    @extend .icon-check;
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: inherit;
+    -webkit-font-smoothing: antialiased;
+    *margin-right: .3em;
+  }
+  
+  .bs3 .ev-selected .indenter {
+    text-decoration: inherit;
+    @extend .fa;
+    @extend .fa-check;
+  }
+
   .ev-files {
-    .ev-selected .indenter {
-      @extend .fa;
-      @extend .fa-check;
-      @extend .icon-check;
-    }
     table {
       width: 100%;
       max-width: 100%;
