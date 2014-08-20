@@ -3,7 +3,8 @@ $ ->
 
   initialize = (obj,options) ->
     if $('div#browse-everything').length == 0
-      dialog = $('<div id="browse-everything" class="ev-browser modal fade"></div>').hide().appendTo('body')
+      dialog = $('<div tabindex="-1" id="browse-everything" class="ev-browser modal fade" aria-live="polite" role="dialog" aria-labelledby="beModalLabel"></div>').hide().appendTo('body')
+
     dialog.modal
       backdrop: 'static'
       show:     false 
@@ -55,12 +56,14 @@ $ ->
         .done (html) ->
           rows = $('tbody tr',$(html))
           table.treetable("loadBranch", node, rows)
+          $(node).focus()
           sizeColumns(table)
           indicateSelected()
         .always ->
           $('body').css('cursor','default')
+    table.focus()
     sizeColumns(table)
-    
+
   sizeColumns = (table) ->
     full_width = $('.ev-files').width()
     table.width(full_width)
@@ -86,6 +89,7 @@ $ ->
           setTimeout refreshFiles, 500
           ctx.callbacks.show.fire()
           dialog.modal('show')
+
     if ctx
       ctx.callback_proxy
     else 
@@ -125,6 +129,7 @@ $ ->
     .always ->
       $('body').css('cursor','default')
       $('.ev-browser').modal('hide')
+      $('#browse-btn').focus()
 
   $(document).on 'click', '.ev-files table tr', (event) ->
     $('a.ev-link',this).click() unless event.target.nodeName == 'A'
