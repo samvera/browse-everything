@@ -1,3 +1,3 @@
 <h2><%=t('browse_everything.auth_prompt.head', provider: provider.name)%></h2>
 <p><%=t('browse_everything.auth_prompt.text', provider: provider.name)%></p>
-<p><%= link_to t('browse_everything.auth_prompt.button_text', provider: provider.name), auth_link, class:"btn btn-primary ev-auth", target:'blank' %></p>
+<p><%= link_to t('browse_everything.auth_prompt.button_text', provider: provider.name), auth_link, class:"btn btn-primary ev-auth", target:'blank', id:'provider_auth' %></p>
