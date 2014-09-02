@@ -1,11 +1,16 @@
 <% if provider.present? %>
-  <table id="file-list" tabindex="-1">
+  <div class="progress" id="loading_progress" aria-live="polite">
+    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+      100% Complete
+    </div>
+  </div>
+  <table id="file-list" role="grid" tabindex="-1" title="Choose files to upload from the table below" aria-live="polite">
     <thead>
-      <tr>
-        <th>Name</th>
-        <th>Size</th>
-        <th>Kind</th>
-        <th>Modified</th>
+      <tr role="row" tabindex="-1">
+        <th role="columnheader">Name</th>
+        <th role="columnheader">Size</th>
+        <th role="columnheader">Kind</th>
+        <th role="columnheader">Modified</th>
       </tr>
     </thead>
     <% provider.contents(browse_path).each_with_index do |file,index| %>

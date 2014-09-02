@@ -46,22 +46,27 @@ $ ->
       onNodeExpand: ->
         node = this
         $('body').css('cursor','wait')
-        $.ajax
-          async: false # Must be false, otherwise loadBranch happens after showChildren?
-          url: $('a.ev-link',node.row).attr('href')
-          data:
-            parent: node.row.data('tt-id')
-            accept: dialog.data('context').opts.accept
-            context: dialog.data('context').opts.context
-        .done (html) ->
-          rows = $('tbody tr',$(html))
-          table.treetable("loadBranch", node, rows)
-          $(node).focus()
-          sizeColumns(table)
-          indicateSelected()
-        .always ->
-          $('body').css('cursor','default')
-    table.focus()
+        $("html").addClass("wait")
+        size = $(node.row).find('td.ev-file-size').text().trim()
+        start = 1
+        increment = 1
+        if (size.indexOf("MB") >-1)
+          start = 10
+          increment = 5
+        if (size.indexOf("KB") >-1)
+          start = 50
+          increment = 10
+        setProgress(start)
+        progressIntervalID = setInterval (->
+          start = start + increment
+          if start > 99
+            start = 99
+          setProgress(start)
+        ), 2000
+        setTimeout (->
+          loadFiles(node, table, progressIntervalID)
+        ), 10
+    $("#file-list tr:first").focus()
     sizeColumns(table)
 
   sizeColumns = (table) ->
@@ -73,6 +78,32 @@ $ ->
     set_size '.ev-size', 0.1
     set_size '.ev-kind', 0.3
     set_size '.ev-date', 0.2
+
+  loadFiles = (node, table, progressIntervalID)->
+    $.ajax
+      async: true # Must be false, otherwise loadBranch happens after showChildren?
+      url: $('a.ev-link',node.row).attr('href')
+      data:
+        parent: node.row.data('tt-id')
+        accept: dialog.data('context').opts.accept
+        context: dialog.data('context').opts.context
+    .done (html) ->
+      setProgress('100')
+      clearInterval progressIntervalID
+      rows = $('tbody tr',$(html))
+      table.treetable("loadBranch", node, rows)
+      $(node).show()
+      sizeColumns(table)
+      indicateSelected()
+    .always ->
+        clearInterval progressIntervalID
+        $('body').css('cursor','default')
+        $("html").removeClass("wait")
+
+  setProgress = (done)->
+    $('#loading_progress').css('width',done+'%')
+    $('#loading_progress').html(done+'% complete')
+    $('#loading_progress').attr('aria-valuenow', done)
 
   refreshFiles = ->
     $('.ev-providers select').change()
@@ -153,9 +184,13 @@ $ ->
     .done (data) ->
       $('.ev-files').html(data)
       indicateSelected();
+      $('#provider_auth').focus();
       tableSetup($('table#file-list'))
     .fail (xhr,status,error) ->
-      $('.ev-files').html(xhr.responseText)
+      if (xhr.responseText.indexOf("Refresh token has expired")>-1)
+        $('.ev-files').html("Your sessison has expired please clear your cookies.")
+      else
+        $('.ev-files').html(xhr.responseText)
     .always ->
       $('body').css('cursor','default')
 
