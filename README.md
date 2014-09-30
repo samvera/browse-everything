@@ -12,7 +12,7 @@ The gem uses [OAuth](http://oauth.net/) to connect to a user's account and
 generate a list of single use urls that your application can then use to 
 download the files.
 
-** This gem does not depend on hydra-head **
+**This gem does not depend on hydra-head**
 
 ## Installation
 
@@ -158,3 +158,7 @@ create a fully-functioning demo app in `spec/internal` (though you will have to 
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+## Help 
+
+For help with Questioning Authority, contact <hydra-tech@googlegroups.com>.
