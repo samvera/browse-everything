@@ -1,5 +1,5 @@
 [![Gem Version](https://badge.fury.io/rb/browse-everything.png)](http://badge.fury.io/rb/browse-everything)
-[![Build Status](https://travis-ci.org/projecthydra/browse-everything.png?branch=master)](https://travis-ci.org/projecthydra/browse-everything)
+[![Build Status](https://travis-ci.org/projecthydra-labs/browse-everything.svg?branch=master)](https://travis-ci.org/projecthydra-labs/browse-everything)
 
 # BrowseEverything
 
