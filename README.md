@@ -12,6 +12,8 @@ The gem uses [OAuth](http://oauth.net/) to connect to a user's account and
 generate a list of single use urls that your application can then use to 
 download the files.
 
+** This gem does not depend on hydra-head **
+
 ## Installation
 
 Add this line to your application's Gemfile:
