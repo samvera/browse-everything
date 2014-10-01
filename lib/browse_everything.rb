@@ -1,6 +1,7 @@
 require "rails"
 require "browse_everything/version"
 require "browse_everything/engine"
+require "browse_everything/retriever"
 
 module BrowseEverything
   class InitializationError < RuntimeError; end

@@ -1,0 +1,77 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://retrieve.cloud.example.com/some/dir/file.pdf
+    headers:
+      Accept: ! '*/*'
+      Authorization: Bearer ya29.kQCEAHj1bwFXr2AuGQJmSGRWQXpacmmYZs4kzCiXns3d6H1ZpIDWmdM8
+  response:
+    status:
+      code: '200'
+      message: OK
+    headers:
+      Server: nginx
+      Date: Wed, 01 Oct 2014 14:01:16 GMT
+      Content-Type: text/plain
+      Transfer-Encoding: chunked
+      Connection: close
+      pragma: no-cache
+      cache-control: no-cache
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        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
+        sJpTvyjt
+    http_version: '1.1'
+  recorded_at: Wed, 01 Oct 2014 14:01:16 GMT
+recorded_with: Handcoding
