@@ -38,7 +38,7 @@ module BrowseEverything
       end
 
       def link_for(path)
-        [client.media(path)['url'], { expires: 4.hours.from_now, file_name: File.basename(path) }]
+        [client.media(path)['url'], { expires: 4.hours.from_now, file_name: File.basename(path), file_size: client.metadata(path)['bytes'].to_i }]
       end
 
       def details(path)
