@@ -80,6 +80,6 @@ describe BrowseEverything::Driver::FileSystem do
 
   describe "#link_for('/path/to/file')" do
     subject { provider.link_for('/path/to/file') }
-    it { should == ["file:///path/to/file", {:file_name=>"file"}] }
+    it { should == ["file:///path/to/file", {:file_name=>"file", :file_size=>0}] }
   end
 end

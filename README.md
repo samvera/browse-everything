@@ -123,7 +123,7 @@ If you initialized browse-everything via JavaScript, the results data passed to 
   }, {
     "url": "https://dl.dropbox.com/fake/Getting%20Started.pdf",
     "expires": "2014-03-31T20:37:36.731Z",
-    "file_name": "Getting+Started.pdf"
+    "file_name": "Getting Started.pdf"
   }
 ]
 ```
@@ -140,9 +140,35 @@ If you initialized browse-everything via data-attributes and set the _target_ op
   "1"=>{
     "url"=>"https://dl.dropbox.com/fake/Getting%20Started.pdf", 
     "expires"=>"2014-03-31T20:37:36.731Z", 
-    "file_name"=>"Getting+Started.pdf"
+    "file_name"=>"Getting Started.pdf"
   }
 }
+```
+
+### Retrieving Files
+
+The `BrowseEverything::Retriever` class has two methods, `#retrieve` and `#download`, that
+can be used to retrieve selected content. `#retrieve` streams the file by yielding it, chunk
+by chunk, to a block, while `#download` saves it to a local file.
+
+Given the above response data:
+
+```ruby
+retriever = BrowseEverything::Retriever.new
+download_spec = params['selected_files']['1']
+
+# Retrieve the file, yielding each chunk to a block
+retriever.retrieve(download_spec) do |chunk, retrieved, total|
+  # do something with the `chunk` of data received, and/or
+  # display some progress using `retrieved` and `total` bytes.
+end
+
+# Download the file. If `target_file` isn't specified, the
+# retriever will create a tempfile and return the name.
+retriever.download(download_spec, target_file) do |filename, retrieved, total|
+  # The block is still useful for showing progress, but the
+  # first argument is the filename instead of a chunk of data.
+end
 ```
 
 ### Examples

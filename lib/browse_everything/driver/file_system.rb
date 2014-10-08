@@ -50,7 +50,9 @@ module BrowseEverything
       end
 
       def link_for(path)
-        ["file://#{File.expand_path(path)}", { file_name: File.basename(path) }]
+        full_path = File.expand_path(path)
+        file_size = File.size(full_path).to_i rescue 0
+        ["file://#{full_path}", { file_name: File.basename(path), file_size: file_size }]
       end
 
       def authorized?
