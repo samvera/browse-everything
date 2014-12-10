@@ -1,3 +1,8 @@
+### 0.7.0 (2014-12-10)
+- Add BrowseEverything::Retriever
+- Accessibility improvements
+- Bug fixes
+
 ### 0.6.3 (2014-08-06)
 - Treat FontAwesome version issues independently of Bootstrap version issues
 
