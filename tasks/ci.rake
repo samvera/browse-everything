@@ -1,7 +1,5 @@
 desc "Run all RSpec tests."
-task :ci do
+task :ci => ['engine_cart:generate'] do
   RSpec::Core::RakeTask.new(:spec)
-  Rake::Task["app:clean"].invoke
-  Rake::Task["app:generate"].invoke
   Rake::Task["spec"].invoke
 end
