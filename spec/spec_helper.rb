@@ -4,6 +4,8 @@ require 'rspec/its'
 require 'webmock/rspec'
 require 'simplecov'
 require 'vcr'
+require 'engine_cart'
+EngineCart.load_application!
 
 SimpleCov.start do
   add_filter "/spec/"
