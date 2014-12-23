@@ -1,3 +1,6 @@
+### 0.7.1 (2014-12-23)
+- Rails 4.2 support
+
 ### 0.7.0 (2014-12-10)
 - Add BrowseEverything::Retriever
 - Accessibility improvements
