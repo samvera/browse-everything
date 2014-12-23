@@ -5,6 +5,9 @@ require 'webmock/rspec'
 require 'simplecov'
 require 'vcr'
 require 'engine_cart'
+require 'capybara/rails'
+require 'capybara/rspec'
+
 EngineCart.load_application!
 
 SimpleCov.start do

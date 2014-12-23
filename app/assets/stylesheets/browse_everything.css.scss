@@ -88,13 +88,13 @@
     text-decoration: inherit;
     -webkit-font-smoothing: antialiased;
     *margin-right: .3em;
-    @extend .icon-check;
+    @extend .icon-check !optional;
   }
-  
+
   .fa4 .ev-selected .indenter {
     background-color: inherit;
     @extend .fa;
-    @extend .fa-check;
+    @extend .fa-check !optional;
   }
 
   .ev-files {
