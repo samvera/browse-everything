@@ -2,26 +2,26 @@ require File.expand_path('../../spec_helper',__FILE__)
 
 include BrowserConfigHelper
 
-describe BrowseEverything::Driver::DropBox, vcr: { cassette_name: 'dropbox', record: :none } do
+describe BrowseEverything::Driver::Dropbox, vcr: { cassette_name: 'dropbox', record: :none } do
   before(:all)  { stub_configuration   }
   after(:all)   { unstub_configuration }
 
   let(:browser) { BrowseEverything::Browser.new(url_options) }
-  let(:provider) { browser.providers['drop_box'] }
+  let(:provider) { browser.providers['dropbox'] }
   let(:auth_params) { {
     'code' => 'FakeDropboxAuthorizationCodeABCDEFG',
-    'state' => 'GjDcUhPNZrZzdsw%2FghBy2A%3D%3D|drop_box'
+    'state' => 'GjDcUhPNZrZzdsw%2FghBy2A%3D%3D|dropbox'
   } }
   let(:csrf_data) { {'token' => 'GjDcUhPNZrZzdsw%2FghBy2A%3D%3D'} }
 
   it "#validate_config" do
-    expect { BrowseEverything::Driver::DropBox.new({}) }.to raise_error(BrowseEverything::InitializationError)
+    expect { BrowseEverything::Driver::Dropbox.new({}) }.to raise_error(BrowseEverything::InitializationError)
   end
 
   describe "simple properties" do
     subject    { provider                 }
-    its(:name) { should == 'Drop Box'     }
-    its(:key)  { should == 'drop_box'     }
+    its(:name) { should == 'Dropbox'     }
+    its(:key)  { should == 'dropbox'     }
     its(:icon) { should be_a(String)      }
   end
 
@@ -33,7 +33,7 @@ describe BrowseEverything::Driver::DropBox, vcr: { cassette_name: 'dropbox', rec
     context "#auth_link" do
       specify { subject.auth_link[0].should start_with('https://www.dropbox.com/1/oauth2/authorize') }
     end
-    
+
     it "should authorize" do
       subject.connect(auth_params,csrf_data)
       expect(subject).to be_authorized
@@ -59,7 +59,7 @@ describe BrowseEverything::Driver::DropBox, vcr: { cassette_name: 'dropbox', rec
         subject { contents[4] }
         its(:name)     { should == 'iPad intro.pdf'           }
         its(:size)     { should == 208218                 }
-        its(:location) { should == "drop_box:/iPad intro.pdf" }
+        its(:location) { should == "dropbox:/iPad intro.pdf" }
         its(:type)     { should == "application/pdf"          }
         specify        { should_not be_container              }
       end
@@ -75,21 +75,21 @@ describe BrowseEverything::Driver::DropBox, vcr: { cassette_name: 'dropbox', rec
       context "[1]" do
         subject { contents[1] }
         its(:name)     { should == 'About Writer.txt'      }
-        its(:location) { should == "drop_box:/Writer/About Writer.txt" }
+        its(:location) { should == "dropbox:/Writer/About Writer.txt" }
         its(:type)     { should == "text/plain"      }
         specify        { should_not be_container     }
       end
       context "[2]" do
         subject { contents[2] }
         its(:name)     { should == 'Markdown Test.txt'      }
-        its(:location) { should == "drop_box:/Writer/Markdown Test.txt" }
+        its(:location) { should == "dropbox:/Writer/Markdown Test.txt" }
         its(:type)     { should == "text/plain"      }
         specify        { should_not be_container     }
       end
       context "[3]" do
         subject { contents[3] }
         its(:name)     { should == 'Writer FAQ.txt'      }
-        its(:location) { should == "drop_box:/Writer/Writer FAQ.txt" }
+        its(:location) { should == "dropbox:/Writer/Writer FAQ.txt" }
         its(:type)     { should == "text/plain"      }
         specify        { should_not be_container     }
       end
@@ -104,13 +104,13 @@ describe BrowseEverything::Driver::DropBox, vcr: { cassette_name: 'dropbox', rec
   describe "#link_for" do
     before(:each) { provider.connect(auth_params,csrf_data) }
 
-    context "[0]" do 
+    context "[0]" do
       subject { provider.link_for('/Writer/Writer FAQ.txt') }
       specify { subject[0].should == "https://dl.dropboxusercontent.com/1/view/FakeDropboxAccessPath/Writer/Writer%20FAQ.txt" }
       specify { subject[1].should have_key(:expires) }
     end
 
-    context "[1]" do 
+    context "[1]" do
       subject { provider.link_for('/Writer/Markdown Test.txt') }
       specify { subject[0].should == "https://dl.dropboxusercontent.com/1/view/FakeDropboxAccessPath/Writer/Markdown%20Test.txt" }
       specify { subject[1].should have_key(:expires) }
