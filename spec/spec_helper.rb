@@ -1,5 +1,6 @@
 require File.expand_path("config/environment", ENV['RAILS_ROOT'] || File.expand_path("../internal", __FILE__))
 require 'rspec'
+require 'rspec/rails'
 require 'rspec/its'
 require 'webmock/rspec'
 require 'simplecov'

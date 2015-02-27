@@ -11,3 +11,4 @@ en:
     modal_form:
       submit: "Submit"
       cancel: "Cancel"
+    size_disabled: "This file can not be uploaded, since it is larger than the maximum file size %{max_size}"
