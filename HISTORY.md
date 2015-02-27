@@ -1,3 +1,7 @@
+### 0.8.0 (2015-02-27)
+- Add `max_upload_file_size` option to configuration
+- Disable selection of files that are larger than `max_upload_file_size`
+
 ### 0.7.1 (2014-12-23)
 - Rails 4.2 support
 
