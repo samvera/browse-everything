@@ -1,3 +1,6 @@
+### 0.8.1 (2015-03-03)
+- Use numeric size from Dropbox instead of string value
+
 ### 0.8.0 (2015-02-27)
 - Add `max_upload_file_size` option to configuration
 - Disable selection of files that are larger than `max_upload_file_size`
