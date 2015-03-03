@@ -58,7 +58,7 @@ describe BrowseEverything::Driver::DropBox, vcr: { cassette_name: 'dropbox', rec
       context "[4]" do
         subject { contents[4] }
         its(:name)     { should == 'iPad intro.pdf'           }
-        its(:size)     { should == '203.3 KB'                 }
+        its(:size)     { should == 208218                 }
         its(:location) { should == "drop_box:/iPad intro.pdf" }
         its(:type)     { should == "application/pdf"          }
         specify        { should_not be_container              }
