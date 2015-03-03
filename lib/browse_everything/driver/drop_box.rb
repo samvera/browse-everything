@@ -29,7 +29,7 @@ module BrowseEverything
             path,
             [self.key,path].join(':'),
             File.basename(path),
-            info['size'],
+            info['bytes'],
             Time.parse(info['modified']),
             info['is_dir']
           )
