@@ -3,7 +3,9 @@ require File.expand_path('../../spec_helper',__FILE__)
 describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record: :none,  } do
   subject { BrowseEverything::Retriever.new }
   let(:datafile) { File.expand_path('../../fixtures/file_system/file_1.pdf',__FILE__) }
+  let(:datafile_with_spaces) { File.expand_path('../../fixtures/file_system/file 1.pdf',__FILE__) }
   let(:data) { File.open(datafile,'rb',&:read) }
+  let(:data_with_spaces) { File.open(datafile_with_spaces, 'rb', &:read) }
   let(:size) { File.size(datafile) }
 
   context 'http://' do
@@ -18,7 +20,7 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
         }
       }
     }
-    
+
     context "#retrieve" do
       it "content" do
         content = ''
@@ -50,7 +52,12 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
           "url"=>"file://#{datafile}", 
           "file_name"=>"file.pdf", 
           "file_size"=>size.to_s
-        }
+        },
+	"1" => {
+	  "url" => "file://#{datafile_with_spaces}",
+	  "file_name" => "file.pdf",
+	  "file_size" => size.to_s
+	}
       }
     }
 
@@ -59,6 +66,12 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
         content = ''
         subject.retrieve(spec['0']) { |chunk, retrieved, total| content << chunk }
         expect(content).to eq(data)
+      end
+
+      it "content with spaces" do
+        content = ''
+	subject.retrieve(spec['1']) { |chunk, retrieved, total| content << chunk }
+	expect(content).to eq(data_with_spaces)
       end
 
       it "callbacks" do
