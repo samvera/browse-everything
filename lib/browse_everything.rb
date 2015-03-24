@@ -11,7 +11,7 @@ module BrowseEverything
   module Driver
     autoload :Base,        'browse_everything/driver/base'
     autoload :FileSystem,  'browse_everything/driver/file_system'
-    autoload :DropBox,     'browse_everything/driver/drop_box'
+    autoload :Dropbox,     'browse_everything/driver/dropbox'
     autoload :SkyDrive,    'browse_everything/driver/sky_drive'
     autoload :Box,         'browse_everything/driver/box'
     autoload :GoogleDrive, 'browse_everything/driver/google_drive'
@@ -23,6 +23,12 @@ module BrowseEverything
         @config = value
       elsif value.kind_of?(String)
         @config = YAML.load(File.read(value))
+
+        if @config.include? 'drop_box'
+          warn "[DEPRECATION] `drop_box` is deprecated.  Please use `dropbox` instead."
+          @config['dropbox'] = @config.delete('drop_box')
+        end
+
       else
         raise InitializationError, "Unrecognized configuration: #{value.inspect}"
       end

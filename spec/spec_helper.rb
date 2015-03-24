@@ -44,9 +44,9 @@ module BrowserConfigHelper
         client_id: "BoxClientId",
         client_secret: "BoxClientSecret"
       },
-      "drop_box" => { 
-        app_key: "DropBoxAppKey", 
-        app_secret: "DropBoxAppSecret"
+      "dropbox" => {
+        app_key: "DropboxAppKey",
+        app_secret: "DropboxAppSecret"
       },
       "google_drive" => {
         client_id: "GoogleClientId",

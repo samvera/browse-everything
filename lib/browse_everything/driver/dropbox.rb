@@ -2,15 +2,15 @@ require 'dropbox_sdk'
 
 module BrowseEverything
   module Driver
-    class DropBox < Base
+    class Dropbox < Base
 
       def icon
         'dropbox'
       end
-      
+
       def validate_config
         unless [:app_key,:app_secret].all? { |key| config[key].present? }
-          raise BrowseEverything::InitializationError, "DropBox driver requires :app_key and :app_secret"
+          raise BrowseEverything::InitializationError, "Dropbox driver requires :app_key and :app_secret"
         end
       end
 
@@ -46,7 +46,7 @@ module BrowseEverything
       end
 
       def auth_link
-        [ auth_flow.start('drop_box'), @csrf ]
+        [ auth_flow.start('dropbox'), @csrf ]
       end
 
       def connect(params,data)
