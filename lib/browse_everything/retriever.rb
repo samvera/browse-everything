@@ -30,7 +30,7 @@ module BrowseEverything
         raise ArugumentError, "Download spec expired at #{spec['expires']}"
       end
       
-      url = URI.parse(spec['url'])
+      url = Addressable::URI.parse(spec['url'])
       retrieved = 0
       case url.scheme
       when 'file'

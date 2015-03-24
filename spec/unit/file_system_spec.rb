@@ -36,13 +36,21 @@ describe BrowseEverything::Driver::FileSystem do
       end
       context "[2]" do
         subject { contents[2] }
+        its(:name)     { should == 'file 1.pdf'              }
+        its(:size)     { should == 2256                      }
+        its(:location) { should == "file_system:#{File.join(home,'file 1.pdf')}" }
+        its(:type)     { should == "application/pdf"         }
+        specify        { should_not be_container             }
+      end
+      context "[3]" do
+        subject { contents[3] }
         its(:name)     { should == 'file_1.pdf'              }
         its(:size)     { should == 2256                      }
         its(:location) { should == "file_system:#{File.join(home,'file_1.pdf')}" }
         its(:type)     { should == "application/pdf"         }
         specify        { should_not be_container             }
       end
-    end
+     end
 
     context "subdirectory" do
       let(:contents) { provider.contents('/dir_1') }
