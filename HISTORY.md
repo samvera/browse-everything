@@ -1,3 +1,8 @@
+### 0.8.2 (2015-04-15)
+- Add support for latest 4.1 and 4.2 Rails versions
+- Add support for %20 encoded URLs 
+- Use Dropbox name consistently
+
 ### 0.8.1 (2015-03-03)
 - Use numeric size from Dropbox instead of string value
 
