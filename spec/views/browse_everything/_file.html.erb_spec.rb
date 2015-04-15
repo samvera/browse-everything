@@ -13,6 +13,7 @@ describe 'browse_everything/_file.html.erb', type: :view do
 
 
   before do
+    allow(view).to receive(:browse_everything_engine).and_return(BrowseEverything::Engine.routes.url_helpers)
     allow(view).to receive(:file).and_return(file)
     allow(view).to receive(:provider).and_return(provider)
     allow(view).to receive(:path).and_return("path")
