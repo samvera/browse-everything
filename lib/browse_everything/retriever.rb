@@ -27,7 +27,7 @@ module BrowseEverything
     
     def retrieve(spec, &block)
       if spec.has_key?('expires') and Time.parse(spec['expires']) < Time.now
-        raise ArugumentError, "Download spec expired at #{spec['expires']}"
+        raise ArgumentError, "Download spec expired at #{spec['expires']}"
       end
       
       url = Addressable::URI.parse(spec['url'])
