@@ -31,7 +31,8 @@ module BrowserConfigHelper
   def url_options
     {
       protocol: 'http://',
-      host: 'browse-everything.example.edu'
+      host: 'browse-everything.example.edu',
+      script_name: ''
     }
   end
 
