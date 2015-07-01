@@ -51,7 +51,6 @@ module BrowseEverything
       end
 
       def auth_link
-        callback = connector_response_url(config[:url_options])
         oauth_client.authorize_url(callback.to_s)
       end
 

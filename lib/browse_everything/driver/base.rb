@@ -50,6 +50,18 @@ module BrowseEverything
         nil
       end
 
+      private
+
+        def callback
+          connector_response_url(callback_options)
+        end
+
+        # remove the script_name parameter from the url_options since that is causing issues
+        #   with the route not containing the engine path in rails 4.2.0
+        def callback_options
+          config[:url_options].reject {|k,v| k == :script_name}
+        end
+
     end
   end
 end

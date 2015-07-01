@@ -107,7 +107,6 @@ module BrowseEverything
 
       private
       def oauth_client
-        callback = connector_response_url(config[:url_options])
         Skydrive::Oauth::Client.new(config[:client_id], config[:client_secret], callback.to_s,"wl.skydrive")
         #todo error checking here
       end

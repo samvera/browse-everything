@@ -110,7 +110,6 @@ module BrowseEverything
 
       def oauth_client
         if @client.nil?
-          callback = connector_response_url(config[:url_options])
           @client = Google::APIClient.new
           @client.authorization.client_id = config[:client_id]
           @client.authorization.client_secret = config[:client_secret]
