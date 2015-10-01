@@ -38,7 +38,7 @@ http_interactions:
   recorded_at: Fri, 20 Sep 2013 15:38:46 GMT
 - request:
     method: get
-    uri: https://api.dropbox.com/1/metadata/auto/?file_limit=25000&include_deleted=false&list=true
+    uri: https://api.dropbox.com/1/metadata/auto/?file_limit=25000&include_deleted=false&include_media_info=false&list=true
     body:
       encoding: UTF-8
       string: ''
@@ -100,7 +100,7 @@ http_interactions:
   recorded_at: Fri, 20 Sep 2013 15:38:48 GMT
 - request:
     method: get
-    uri: https://api.dropbox.com/1/metadata/auto/Writer?file_limit=25000&include_deleted=false&list=true
+    uri: https://api.dropbox.com/1/metadata/auto/Writer?file_limit=25000&include_deleted=false&include_media_info=false&list=true
     body:
       encoding: UTF-8
       string: ''
@@ -308,7 +308,7 @@ http_interactions:
   recorded_at: Fri, 20 Sep 2013 15:39:02 GMT
 - request:
     method: get
-    uri: https://api.dropbox.com/1/metadata/auto/Writer/Writer%20FAQ.txt?file_limit=25000&include_deleted=false&list=true
+    uri: https://api.dropbox.com/1/metadata/auto/Writer/Writer%20FAQ.txt?file_limit=25000&include_deleted=false&include_media_info=false&list=true
     body:
       encoding: UTF-8
       string: ''
@@ -349,7 +349,7 @@ http_interactions:
   recorded_at: Fri, 20 Sep 2013 15:38:55 GMT
 - request:
     method: get
-    uri: https://api.dropbox.com/1/metadata/auto/Writer/Markdown%20Test.txt?file_limit=25000&include_deleted=false&list=true
+    uri: https://api.dropbox.com/1/metadata/auto/Writer/Markdown%20Test.txt?file_limit=25000&include_deleted=false&include_media_info=false&list=true
     body:
       encoding: UTF-8
       string: ''
