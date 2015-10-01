@@ -1,6 +1,10 @@
+### 0.8.3 (2015-09-30)
+- Improve compatibility with Rails 4.2.x
+- Minor bug fixes
+
 ### 0.8.2 (2015-04-15)
 - Add support for latest 4.1 and 4.2 Rails versions
-- Add support for %20 encoded URLs 
+- Add support for %20 encoded URLs
 - Use Dropbox name consistently
 
 ### 0.8.1 (2015-03-03)
