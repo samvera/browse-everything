@@ -1,3 +1,7 @@
+### 0.8.4 (2015-10-01)
+- Bug fixes for Box provider
+- Text fixture fixes for Dropbox provider
+
 ### 0.8.3 (2015-09-30)
 - Improve compatibility with Rails 4.2.x
 - Minor bug fixes
