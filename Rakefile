@@ -9,3 +9,5 @@ require 'rspec/core/rake_task'
 require 'engine_cart/rake_task'
 
 task :default => [:ci]
+require 'jasmine'
+load 'jasmine/tasks/jasmine.rake'
