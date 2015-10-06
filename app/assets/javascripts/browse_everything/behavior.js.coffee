@@ -42,13 +42,7 @@ $ ->
     $('input.ev-url').each () ->
       if this.value == $(row).data('ev-location')
         result = true
-    return result
-
-  toggleCheckbox = (box) ->
-    if box.value == "0"
-      $(box).prop('value', "1")
-    else
-      $(box).prop('value', "0")    
+    return result 
 
   toggleFileSelect = (row) ->
     row.toggleClass('ev-selected')
@@ -208,6 +202,12 @@ $ ->
         fail: -> this 
       }
 
+  $.fn.browseEverything.toggleCheckbox = (box) ->
+    if box.value == "0"
+      $(box).prop('value', "1")
+    else
+      $(box).prop('value', "0") 
+
   $(document).on 'ev.refresh', (event) -> refreshFiles()
     
   $(document).on 'click', 'button.ev-cancel', (event) ->
@@ -290,7 +290,7 @@ $ ->
   $(document).on 'change', 'input:checkbox', (event) ->
     event.stopPropagation()
     event.preventDefault()
-    toggleCheckbox(this)
+    $.fn.browseEverything.toggleCheckbox(this)
     action = this.value
     row = $(this).closest('tr')
     node_id = row.find('td.ev-file-name a.ev-link').attr('href')
