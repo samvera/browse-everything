@@ -23,6 +23,9 @@
       <% end %>
     <% end %>
   </td>
+  <td role="gridcell" class="ev-directory-select">
+    <%= check_box_tag(:select_all, "0", false, class: "ev-select-all") if file.container? %>
+  </td>
   <td role="gridcell" class="ev-file-size">
     <%= number_to_human_size(file.size).sub(/Bytes/,'bytes') %>
   </td>

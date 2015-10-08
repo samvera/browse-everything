@@ -37,6 +37,75 @@ $ ->
     $('input.ev-url').each () ->
       $("*[data-ev-location='#{$(this).val()}']").addClass('ev-selected')
 
+  fileIsSelected = (row) ->
+    result = false
+    $('input.ev-url').each () ->
+      if this.value == $(row).data('ev-location')
+        result = true
+    return result 
+
+  toggleFileSelect = (row) ->
+    row.toggleClass('ev-selected')
+    if row.hasClass('ev-selected')
+      selectFile(row)
+    else
+      unselectFile(row)
+    updateFileCount()
+
+  selectFile = (row) ->
+    target_form = $('form.ev-submit-form')
+    file_location = row.data('ev-location')
+    hidden_input = $("<input type='hidden' class='ev-url' name='selected_files[]'/>").val(file_location)
+    target_form.append(hidden_input)
+
+  unselectFile = (row) ->
+    target_form = $('form.ev-submit-form')
+    file_location = row.data('ev-location')
+    $("form.ev-submit-form input[value='#{file_location}']").remove()
+
+  updateFileCount = () ->
+    count = $('input.ev-url').length
+    files = if count == 1 then "file" else "files"
+    $('.ev-status').html("#{count} #{files} selected")
+
+  toggleBranchSelect = (row) ->
+    if row.hasClass('collapsed')
+      node_id = row.find('td.ev-file-name a.ev-link').attr('href')
+      $('table#file-list').treetable('expandNode',node_id)
+
+  selectAll = (rows) ->
+    rows.each () ->
+      if $(this).data('tt-branch')
+        box = $(this).find('#select_all')[0]
+        $(box).prop('checked', true)
+        $(box).prop('value', "1")
+        toggleBranchSelect($(this))
+      else
+        toggleFileSelect($(this))
+
+  selectChildRows = (row, action) ->
+    $('table#file-list tr').each () ->
+      if $(this).data('tt-parent-id')
+        re = RegExp($(row).data('tt-id'), 'i')
+        if $(this).data('tt-parent-id').match(re)
+          if $(this).data('tt-branch')
+            box = $(this).find('#select_all')[0]
+            $(box).prop('value', action)
+            if action == "1"
+              $(box).prop("checked", true)
+              node_id = $(this).find('td.ev-file-name a.ev-link').attr('href')
+              $('table#file-list').treetable('expandNode',node_id)
+            else
+              $(box).prop("checked", false)
+          else
+            if action == "1"
+              $(this).addClass('ev-selected')
+              selectFile($(this)) unless fileIsSelected($(this))
+            else
+              $(this).removeClass('ev-selected')
+              unselectFile($(this))
+            updateFileCount()
+
   tableSetup = (table) ->
     table.treetable
       expandable: true
@@ -95,6 +164,8 @@ $ ->
       $(node).show()
       sizeColumns(table)
       indicateSelected()
+      if $(node.row).find('#select_all')[0].checked
+        selectAll(rows)
     .always ->
         clearInterval progressIntervalID
         $('body').css('cursor','default')
@@ -131,6 +202,12 @@ $ ->
         fail: -> this 
       }
 
+  $.fn.browseEverything.toggleCheckbox = (box) ->
+    if box.value == "0"
+      $(box).prop('value', "1")
+    else
+      $(box).prop('value', "0") 
+
   $(document).on 'ev.refresh', (event) -> refreshFiles()
     
   $(document).on 'click', 'button.ev-cancel', (event) ->
@@ -161,9 +238,6 @@ $ ->
       $('body').css('cursor','default')
       $('.ev-browser').modal('hide')
       $('#browse-btn').focus()
-
-  $(document).on 'click', '.ev-files table tr', (event) ->
-    $('a.ev-link',this).click() unless event.target.nodeName == 'A'
     
   $(document).on 'click', '.ev-files .ev-container a.ev-link', (event) ->
     event.stopPropagation()
@@ -201,18 +275,7 @@ $ ->
   $(document).on 'click', '.ev-file a', (event) ->
     event.preventDefault()
     target = $(this).closest('*[data-ev-location]')
-    target_form = $('form.ev-submit-form')
-    file_location = target.data('ev-location')
-    target.toggleClass('ev-selected')
-    if target.hasClass('ev-selected')
-      hidden_input = $("<input type='hidden' class='ev-url' name='selected_files[]'/>").val(file_location)
-      target_form.append(hidden_input)
-    else
-      $("form.ev-submit-form input[value='#{file_location}']").remove()
-
-    count = $('input.ev-url').length
-    files = if count == 1 then "file" else "files"
-    $('.ev-status').html("#{count} #{files} selected")
+    toggleFileSelect(target)
 
   $(document).on 'click', '.ev-auth', (event) ->
     event.preventDefault()
@@ -223,6 +286,19 @@ $ ->
       else
         window.setTimeout check_func, 1000
     check_func()
+
+  $(document).on 'change', 'input:checkbox', (event) ->
+    event.stopPropagation()
+    event.preventDefault()
+    $.fn.browseEverything.toggleCheckbox(this)
+    action = this.value
+    row = $(this).closest('tr')
+    node_id = row.find('td.ev-file-name a.ev-link').attr('href')
+    if row.hasClass('collapsed')
+      $('table#file-list').treetable('expandNode',node_id)
+    else
+      selectChildRows(row, action)
+
 
 auto_toggle = ->
   triggers = $('*[data-toggle=browse-everything]')

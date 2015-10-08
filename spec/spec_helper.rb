@@ -8,6 +8,7 @@ require 'vcr'
 require 'engine_cart'
 require 'capybara/rails'
 require 'capybara/rspec'
+require 'support/rake'
 
 EngineCart.load_application!
 
