@@ -81,7 +81,7 @@ $ ->
         $(box).prop('value', "1")
         toggleBranchSelect($(this))
       else
-        toggleFileSelect($(this))
+        toggleFileSelect($(this)) unless fileIsSelected($(this))
 
   selectChildRows = (row, action) ->
     $('table#file-list tr').each () ->
