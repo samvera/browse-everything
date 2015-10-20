@@ -26,7 +26,7 @@ module BrowseEverything
           )
         end
         folder = path.empty? ? box_client.root_folder : box_client.folder(path)
-        result += folder.items.collect do |f|
+        result += folder.items(99999,0,['name','size','created_at']).collect do |f|
         BrowseEverything::FileEntry.new(
             File.join(path,f.name),#id here
             "#{self.key}:#{File.join(path,f.name)}",#single use link
