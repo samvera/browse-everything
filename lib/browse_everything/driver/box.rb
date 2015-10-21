@@ -3,6 +3,8 @@ module BrowseEverything
     class Box < Base
       require 'ruby-box'
 
+      ITEM_LIMIT = 99999
+      
       def icon
         'cloud'
       end
@@ -26,15 +28,15 @@ module BrowseEverything
           )
         end
         folder = path.empty? ? box_client.root_folder : box_client.folder(path)
-        result += folder.items(99999,0,['name','size','created_at']).collect do |f|
-        BrowseEverything::FileEntry.new(
-            File.join(path,f.name),#id here
-            "#{self.key}:#{File.join(path,f.name)}",#single use link
-            f.name,
-            f.size,
-            f.created_at,
-            f.type == 'folder'
-        )
+        result += folder.items(ITEM_LIMIT,0,['name','size','created_at']).collect do |f|
+          BrowseEverything::FileEntry.new(
+              File.join(path,f.name),#id here
+              "#{self.key}:#{File.join(path,f.name)}",#single use link
+              f.name,
+              f.size,
+              f.created_at,
+              f.type == 'folder'
+          )
         end
         result
       end
