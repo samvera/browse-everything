@@ -1,3 +1,8 @@
+### 0.9.0 (2015-10-21)
+- Add Select All and Recursive Select capabilities
+- Speed up Box API calls
+- Add Jasmine tests
+
 ### 0.8.4 (2015-10-01)
 - Bug fixes for Box provider
 - Text fixture fixes for Dropbox provider
