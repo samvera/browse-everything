@@ -1,3 +1,6 @@
+### 0.9.1 (2015-10-22)
+- Properly scope "Select All" checkbox triggers (Bug: @awead / Fix: @awead)
+
 ### 0.9.0 (2015-10-21)
 - Add Select All and Recursive Select capabilities
 - Speed up Box API calls
