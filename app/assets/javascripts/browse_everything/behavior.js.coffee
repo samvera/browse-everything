@@ -287,7 +287,7 @@ $ ->
         window.setTimeout check_func, 1000
     check_func()
 
-  $(document).on 'change', 'input:checkbox', (event) ->
+  $(document).on 'change', 'input.ev-select-all', (event) ->
     event.stopPropagation()
     event.preventDefault()
     $.fn.browseEverything.toggleCheckbox(this)
