@@ -22,7 +22,7 @@ module BrowseEverything
       if value.nil? or value.kind_of?(Hash)
         @config = value
       elsif value.kind_of?(String)
-        @config = YAML.load(File.read(value))
+        @config = YAML.load(ERB.new(File.read(value)).result)
 
         if @config.include? 'drop_box'
           warn "[DEPRECATION] `drop_box` is deprecated.  Please use `dropbox` instead."
