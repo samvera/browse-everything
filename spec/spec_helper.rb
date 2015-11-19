@@ -9,7 +9,9 @@ require 'engine_cart'
 require 'capybara/rails'
 require 'capybara/rspec'
 require 'support/rake'
+require 'coveralls'
 
+Coveralls.wear!
 EngineCart.load_application!
 
 SimpleCov.start do
