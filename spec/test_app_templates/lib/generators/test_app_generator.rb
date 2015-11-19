@@ -1,14 +1,14 @@
 require 'rails/generators'
 
 class TestAppGenerator < Rails::Generators::Base
-  source_root File.expand_path("../../../../support", __FILE__)
+  source_root File.expand_path("../../../../spec/support", __FILE__)
   
   def run_config_generator
     generate "browse_everything:config"
   end
   
   def inject_css
-    copy_file "../internal/app/assets/stylesheets/application.css", "app/assets/stylesheets/application.css.scss"
+    copy_file File.expand_path("app/assets/stylesheets/application.css", ENV['RAILS_ROOT']), "app/assets/stylesheets/application.css.scss"
     remove_file "app/assets/stylesheets/application.css"
     insert_into_file "app/assets/stylesheets/application.css.scss", :after => '*/' do
       %{\n\n@import "browse_everything"}

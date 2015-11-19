@@ -1,11 +1,11 @@
-require File.expand_path("config/environment", ENV['RAILS_ROOT'] || File.expand_path("../internal", __FILE__))
+require 'engine_cart'
+require File.expand_path("config/environment", EngineCart.destination)
 require 'rspec'
 require 'rspec/rails'
 require 'rspec/its'
 require 'webmock/rspec'
 require 'simplecov'
 require 'vcr'
-require 'engine_cart'
 require 'capybara/rails'
 require 'capybara/rspec'
 require 'support/rake'
