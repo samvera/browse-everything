@@ -1,4 +1,4 @@
-$ ->
+(($) ->
   dialog = $('div#browse-everything')
 
   initialize = (obj,options) ->
@@ -22,6 +22,38 @@ $ ->
       fail:   (func) -> ctx.callbacks.fail.add(func)   ; return this
     $(obj).data('context',ctx)
     ctx
+
+  $.fn.browseEverything = (options) ->
+    ctx = $(this).data('context')
+    if options?
+      ctx = initialize(this[0], options)
+      $(this).click () ->
+        dialog.data('context',ctx)
+        dialog.load ctx.opts.route, () ->
+          setTimeout refreshFiles, 500
+          ctx.callbacks.show.fire()
+          dialog.modal('show')
+
+    if ctx
+      ctx.callback_proxy
+    else
+      {
+        show: -> this
+        done: -> this
+        cancel: -> this
+        fail: -> this
+      }
+  $.fn.browseEverything.toggleCheckbox = (box) ->
+    if box.value == "0"
+      $(box).prop('value', "1")
+    else
+      $(box).prop('value', "0")
+) jQuery
+
+
+# DOM Ready
+$ ->
+  dialog = $('div#browse-everything')
 
   toHiddenFields = (data) ->
     fields = $.param(data)
@@ -180,33 +212,6 @@ $ ->
     $('.ev-providers select').change()
     
   $(window).on('resize', -> sizeColumns($('table#file-list')))
-
-  $.fn.browseEverything = (options) ->
-    ctx = $(this).data('context')
-    if options?
-      ctx = initialize(this[0], options)
-      $(this).click () ->
-        dialog.data('context',ctx)
-        dialog.load ctx.opts.route, () -> 
-          setTimeout refreshFiles, 500
-          ctx.callbacks.show.fire()
-          dialog.modal('show')
-
-    if ctx
-      ctx.callback_proxy
-    else 
-      { 
-        show: -> this
-        done: -> this
-        cancel: -> this
-        fail: -> this 
-      }
-
-  $.fn.browseEverything.toggleCheckbox = (box) ->
-    if box.value == "0"
-      $(box).prop('value', "1")
-    else
-      $(box).prop('value', "0") 
 
   $(document).on 'ev.refresh', (event) -> refreshFiles()
     
