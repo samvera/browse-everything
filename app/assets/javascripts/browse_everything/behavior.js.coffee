@@ -26,7 +26,7 @@ $ ->
   toHiddenFields = (data) ->
     fields = $.param(data)
       .split('&')
-      .map (t) -> t.replace('+',' ','g').split('=',2)
+      .map (t) -> t.replace(/\+/g,' ').split('=',2)
     elements = $(fields).map () ->
       $("<input type='hidden'/>")
         .attr('name',decodeURIComponent(this[0]))
