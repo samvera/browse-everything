@@ -1,6 +1,6 @@
 [![Gem Version](https://badge.fury.io/rb/browse-everything.png)](http://badge.fury.io/rb/browse-everything)
-[![Build Status](https://travis-ci.org/projecthydra-labs/browse-everything.svg?branch=master)](https://travis-ci.org/projecthydra-labs/browse-everything)
-[![Coverage Status](https://coveralls.io/repos/projecthydra-labs/browse-everything/badge.svg?branch=master&service=github)](https://coveralls.io/github/projecthydra-labs/browse-everything?branch=master)
+[![Build Status](https://travis-ci.org/projecthydra/browse-everything.svg?branch=master)](https://travis-ci.org/projecthydra/browse-everything)
+[![Coverage Status](https://coveralls.io/repos/projecthydra/browse-everything/badge.svg?branch=master&service=github)](https://coveralls.io/github/projecthydra/browse-everything?branch=master)
 
 # BrowseEverything
 
