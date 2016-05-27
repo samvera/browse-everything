@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: https://DropboxAppKey:DropboxAppSecret@api.dropbox.com/1/oauth2/token
+    uri: https://api.dropbox.com/1/oauth2/token
     body:
       encoding: UTF-8
       string: grant_type=authorization_code&code=FakeDropboxAuthorizationCodeABCDEFG&redirect_uri=http%3A%2F%2Fbrowse.example.edu%2Fbrowse%2Fconnect
