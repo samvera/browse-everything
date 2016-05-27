@@ -33,6 +33,7 @@ describe BrowseEverything::Driver::Dropbox, vcr: { cassette_name: 'dropbox', rec
     context "#auth_link" do
       specify { subject.auth_link[0].should start_with('https://www.dropbox.com/1/oauth2/authorize') }
       specify { subject.auth_link[0].should include('browse%2Fconnect') }
+      specify { subject.auth_link[0].should include('state') }
     end
 
     it "should authorize" do
