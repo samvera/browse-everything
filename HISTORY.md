@@ -1,3 +1,18 @@
+### 0.10.1 (2016-05-31)
+  Fix dropbox integration
+  Change badge URLs to reflect promotion out of labs
+  Fix String.prototype.replace() global flag deprecation warning
+  
+### 0.10.0 (2016-04-04)
+  Add browse_everything:install generator, delegating to the assets and config generators, to install the dependencies into the application
+  Extract browse_everything css into a separate file that can be included without also including bootstrap and font-awesome
+  Drop Ruby 1.9 support
+  Use bootstrap-sprockets instead
+  Disable bundler caching between test runs
+  Update to engine_cart v0.8.0
+  Add Coveralls support
+  Allow ERB in YAML config
+
 ### 0.9.1 (2015-10-22)
 - Properly scope "Select All" checkbox triggers (Bug: @awead / Fix: @awead)
 
