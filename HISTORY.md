@@ -1,3 +1,6 @@
+### 0.10.2 (2016-05-31)
+  Pin google-api-client to 0.8.x
+  
 ### 0.10.1 (2016-05-31)
   Fix dropbox integration
   Change badge URLs to reflect promotion out of labs
