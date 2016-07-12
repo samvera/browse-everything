@@ -304,7 +304,11 @@ auto_toggle = ->
   triggers = $('*[data-toggle=browse-everything]')
   triggers.each () -> $(this).browseEverything($(this).data())
 
-if Turbolinks?
-  $(document).on 'page:change', auto_toggle
+if Turbolinks? && Turbolinks.supported
+  # Use turbolinks:load for Turbolinks 5, otherwise use the old way
+  if (Turbolinks.BrowserAdapter)
+    $(document).on 'turbolinks:load', auto_toggle
+  else
+    $(document).on 'page:change', auto_toggle
 else
   $(document).ready auto_toggle
