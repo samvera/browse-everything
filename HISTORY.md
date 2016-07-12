@@ -1,3 +1,7 @@
+### 0.10.3 (2016-07-12)
+ Support turbolinks 5 and previous versions
+ Optionally adding state to url so box and dropbox will work
+
 ### 0.10.2 (2016-05-31)
   Pin google-api-client to 0.8.x
   
