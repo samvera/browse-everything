@@ -183,6 +183,7 @@ $ ->
 
   $.fn.browseEverything = (options) ->
     ctx = $(this).data('context')
+    options = $(this).data() unless (ctx? or options?)
     if options?
       ctx = initialize(this[0], options)
       $(this).click () ->
@@ -302,7 +303,9 @@ $ ->
 
 auto_toggle = ->
   triggers = $('*[data-toggle=browse-everything]')
-  triggers.each () -> $(this).browseEverything($(this).data())
+  triggers.each () -> 
+    ctx = $(this).data('context')
+    $(this).browseEverything($(this).data()) unless ctx?
 
 if Turbolinks? && Turbolinks.supported
   # Use turbolinks:load for Turbolinks 5, otherwise use the old way
