@@ -22,7 +22,12 @@ VCR.configure do |c|
   c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
   c.hook_into :webmock
   c.configure_rspec_metadata!
+  c.ignore_localhost = true
 end
+
+Capybara.default_driver = :rack_test      # This is a faster driver
+Capybara.javascript_driver = :poltergeist # This is slower
+Capybara.default_max_wait_time = ENV['TRAVIS'] ? 30 : 15
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
