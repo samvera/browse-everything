@@ -43,5 +43,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "capybara"
   spec.add_development_dependency "jasmine", '~> 2.3'
   spec.add_development_dependency "coveralls"
-
+  spec.add_development_dependency "poltergeist", "~> 1.10"
 end

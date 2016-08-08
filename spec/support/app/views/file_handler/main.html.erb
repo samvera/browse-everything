@@ -13,7 +13,7 @@
   <p id="status">0 items selected</p>
 
   <script>
-    $(document).on('page:change', function() {
+    $(document).on('turbolinks:load', function() {
       $('#browse-btn').browseEverything()
         .done(function(data) { $('#status').html(data.length.toString() + " items selected") })
         .cancel(function()   { window.alert('Canceled!') });
