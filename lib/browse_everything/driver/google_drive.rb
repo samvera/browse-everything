@@ -1,8 +1,8 @@
 module BrowseEverything
   module Driver
     class GoogleDrive < Base
-
-      require 'google/api_client'
+      require 'google/apis/drive_v2'
+      require 'signet'
 
       def icon
         'google-plus-sign'
@@ -18,6 +18,8 @@ module BrowseEverything
       end
 
       def contents(path='')
+        return to_enum(:contents, path)
+
         default_params = { }
         page_token = nil
         files = []
@@ -26,102 +28,93 @@ module BrowseEverything
             default_params[:q] = "'#{path}' in parents"
           end
           unless page_token.blank?
-            default_params[:pageToken] = page_token
+            default_params[:page_token] = page_token
           end
-          api_result = oauth_client.execute( api_method: drive.files.list, parameters: default_params )
-          response = JSON.parse(api_result.response.body)
-          page_token = response["nextPageToken"]
-          response["items"].select do |file|
+          response = drive.list_files(default_params)
+          page_token = response.next_page_token
+          response.items.select do |file|
             path.blank? ? (file["parents"].blank? or file["parents"].any?{|p| p["isRoot"] }) : true
           end.each do |file|
-            files << details(file, path)
+            d = details(file, path)
+            yield d if d
           end
         end while !page_token.blank?
-        files.compact
       end
 
       def details(file, path='')
-        if file["downloadUrl"] or file["mimeType"] == "application/vnd.google-apps.folder"
+        if file.web_content_link or file.mime_type == "application/vnd.google-apps.folder"
           BrowseEverything::FileEntry.new(
-            file["id"],
-            "#{self.key}:#{file["id"]}",
-            file["title"],
-            (file["fileSize"] || 0),
-            Time.parse(file["modifiedDate"]),
-            file["mimeType"] == "application/vnd.google-apps.folder",
-            file["mimeType"] == "application/vnd.google-apps.folder" ?
+            file.id,
+            "#{self.key}:#{file.id}",
+            file.name,
+            file.size.to_i,
+            file.modified_time,
+            file.mime_type == "application/vnd.google-apps.folder",
+            file.mime_type == "application/vnd.google-apps.folder" ?
                                   "directory" :
-                                  file["mimeType"]
+                                  file.mime_type
           )
         end
       end
 
       def link_for(id)
-        api_method = drive.files.get
-        api_result = oauth_client.execute(api_method: api_method, parameters: {fileId: id})
-        download_url = JSON.parse(api_result.response.body)["downloadUrl"]
-        auth_header = {'Authorization' => "Bearer #{oauth_client.authorization.access_token.to_s}"}
+        file = drive.get_file(id)
+        auth_header = {'Authorization' => "Bearer #{client.authorization.access_token.to_s}"}
         extras = { 
           auth_header: auth_header,
           expires: 1.hour.from_now, 
-          file_name: api_result.data.title,
-          file_size: api_result.data.fileSize.to_i
+          file_name: file.name,
+          file_size: file.size.to_i
         }
-        [download_url, extras]
+        [file.web_content_link, extras]
       end
 
       def auth_link
-        oauth_client.authorization.authorization_uri.to_s
+        auth_client.authorization_uri
       end
 
       def authorized?
-        @token.present?
+        token.present?
       end
 
       def connect(params, data)
-        oauth_client.authorization.code = params[:code]
-        @token = oauth_client.authorization.fetch_access_token!
+        auth_client.code = params[:code]
+        self.token = auth_client.fetch_access_token!
       end
 
       def drive
-        oauth_client.discovered_api('drive', 'v2')
+        @drive ||= Google::Apis::DriveV3::DriveService.new.tap do |s|
+          s.authorization = authorization
+        end
       end
 
       private
 
-      #As per issue http://stackoverflow.com/questions/12572723/rails-google-client-api-unable-to-exchange-a-refresh-token-for-access-token
-
-      #patch start
-      def token_expired?(token)
-        client=@client
-        result = client.execute( api_method: drive.files.list, parameters: {} )
-        (result.status != 200)
+      def token_expired?
+        return true if token.nil?
+        token.expired?
       end
 
-      def exchange_refresh_token( refresh_token )
-        client=oauth_client
-        client.authorization.grant_type = 'refresh_token'
-        client.authorization.refresh_token = refresh_token
-        client.authorization.fetch_access_token!
-        client.authorization
-        client
-      end
-      #patch end
-
-      def oauth_client
-        if @client.nil?
-          @client = Google::APIClient.new
-          @client.authorization.client_id = config[:client_id]
-          @client.authorization.client_secret = config[:client_secret]
-          @client.authorization.scope = "https://www.googleapis.com/auth/drive"
-          @client.authorization.redirect_uri = callback
-          @client.authorization.update_token!(@token) if @token.present?
-           #Patch start
-          @client = exchange_refresh_token(@token["refresh_token"]) if @token.present? && token_expired?(@token)
-          #Patch end
+      def authorization
+        if auth_client?
+          auth_client
+        elsif token.present?
+          auth_client.update_token!(token)
+          self.token = auth_client.fetch_access_token! if token_expired?
+          auth_client
         end
-        #todo error checking here
-        @client
+      end
+
+      def auth_client
+        @auth_client ||= Signet::OAuth2::Client.new token_credential_uri: 'https://www.googleapis.com/oauth2/v3/token',
+                                                    authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
+                                                    scope: 'https://www.googleapis.com/auth/drive',
+                                                    client_id: config[:client_id],
+                                                    client_secret: config[:client_secret]
+      end
+
+      def auth_client?
+        !@auth_client.nil?
       end
 
     end
