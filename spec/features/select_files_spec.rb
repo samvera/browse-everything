@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'capybara/poltergeist'
 
 describe "Choosing files", :type => :feature do
@@ -32,5 +31,5 @@ describe "Choosing files", :type => :feature do
   context "when Turbolinks are disabled" do
     before { click_link('Enter Test App (No Turbolinks)') }
     it_behaves_like "browseable files"
-  end  
+  end
 end

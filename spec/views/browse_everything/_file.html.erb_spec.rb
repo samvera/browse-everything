@@ -1,7 +1,4 @@
-require File.expand_path('../../../spec_helper',__FILE__)
-
 describe 'browse_everything/_file.html.erb', type: :view do
-
   let(:file)  {
                 BrowseEverything::FileEntry.new(
                      'file_id_01234', 'my_provider:/location/pa/th/file.m4v',
@@ -16,7 +13,6 @@ describe 'browse_everything/_file.html.erb', type: :view do
                }
   let(:provider) { double("provider") }
   let(:page) { Capybara::Node::Simple.new(rendered) }
-
 
   before do
     allow(view).to receive(:browse_everything_engine).and_return(BrowseEverything::Engine.routes.url_helpers)
@@ -73,5 +69,4 @@ describe 'browse_everything/_file.html.erb', type: :view do
       end
     end
   end
-
 end
