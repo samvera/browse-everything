@@ -1,10 +1,7 @@
-require File.expand_path('../../spec_helper',__FILE__)
-
 describe BrowseEverything::FileEntry do
-
   let(:mtime) { Time.now }
   describe "regular file" do
-    subject { 
+    subject {
       BrowseEverything::FileEntry.new(
         'file_id_01234', 'my_provider:/location/pa/th/file.m4v',
         'file.m4v', '1.2 GB', mtime, false
@@ -12,7 +9,7 @@ describe BrowseEverything::FileEntry do
     }
 
     it "should be a BrowseEverything::FileEntry" do
-      expect(subject).to be_a BrowseEverything::FileEntry                     
+      expect(subject).to be_a BrowseEverything::FileEntry
     end
 
     it "#id" do
@@ -40,14 +37,14 @@ describe BrowseEverything::FileEntry do
     end
 
     it "#container?" do
-      expect(subject.container?).to be false                                  
+      expect(subject.container?).to be false
     end
-    
+
     it "#relative_parent_path?" do
-      expect(subject.relative_parent_path?).to be false                                  
+      expect(subject.relative_parent_path?).to be false
     end
   end
-  
+
   describe "directory" do
     subject {
       BrowseEverything::FileEntry.new(
@@ -61,14 +58,14 @@ describe BrowseEverything::FileEntry do
     end
 
     it "#container?" do
-      expect(subject.container?).to be true                                  
+      expect(subject.container?).to be true
     end
 
     it "#relative_parent_path?" do
-      expect(subject.relative_parent_path?).to be false                                  
+      expect(subject.relative_parent_path?).to be false
     end
   end
-  
+
   describe "parent path" do
     subject {
       BrowseEverything::FileEntry.new(
@@ -82,11 +79,11 @@ describe BrowseEverything::FileEntry do
     end
 
     it "#container?" do
-      expect(subject.container?).to be true                                  
+      expect(subject.container?).to be true
     end
 
     it "#relative_parent_path?" do
-      expect(subject.relative_parent_path?).to be true                                  
+      expect(subject.relative_parent_path?).to be true
     end
   end
 end

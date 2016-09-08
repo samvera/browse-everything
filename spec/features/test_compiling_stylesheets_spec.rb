@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe "Compiling the stylesheets", :type => :feature do
   it "should not raise errors" do
     visit '/'

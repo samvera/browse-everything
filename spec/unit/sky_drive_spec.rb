@@ -1,7 +1,3 @@
-require File.expand_path('../../spec_helper',__FILE__)
-
-
-
 describe BrowseEverything::Driver::SkyDrive do
   include BrowseEverything::Engine.routes.url_helpers
 
@@ -28,7 +24,6 @@ describe BrowseEverything::Driver::SkyDrive do
                   :headers  => {
                       "content-type"          =>  "application/json"})
 
-
     driver = BrowseEverything::Driver::SkyDrive.new(provider_yml)
     driver.connect({code:"code"},{})
     driver.authorized?.should == true
@@ -49,10 +44,8 @@ describe BrowseEverything::Driver::SkyDrive do
                   :headers  => {
                       "content-type"          =>  "application/json"})
 
-
     driver = BrowseEverything::Driver::SkyDrive.new(provider_yml)
     driver.connect({code:"code"},{})
     driver.authorized?.should == false
   end
-
 end

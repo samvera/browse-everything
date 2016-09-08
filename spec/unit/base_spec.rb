@@ -1,5 +1,3 @@
-require File.expand_path('../../spec_helper',__FILE__)
-
 include BrowserConfigHelper
 
 describe BrowseEverything::Driver::Base do
@@ -25,4 +23,3 @@ describe BrowseEverything::Driver::Base do
     specify { subject.link_for('/path/to/foo.txt').should == ['/path/to/foo.txt', { file_name: 'foo.txt' }] }
   end
 end
-
