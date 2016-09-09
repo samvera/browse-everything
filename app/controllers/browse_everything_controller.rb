@@ -5,7 +5,7 @@ class BrowseEverythingController < ActionController::Base
   helper BrowseEverythingHelper
 
   after_filter {session["#{provider_name}_token"] = provider.token unless provider.nil? }
-  
+
   def index
     render :layout => !request.xhr?
   end
@@ -13,7 +13,7 @@ class BrowseEverythingController < ActionController::Base
   def show
     render :layout => !request.xhr?
   end
-  
+
   def auth
     code = params[:code]
     session["#{provider_name}_token"] = provider.connect(params,session["#{provider_name}_data"])
@@ -21,14 +21,14 @@ class BrowseEverythingController < ActionController::Base
 
   def resolve
     selected_files = params[:selected_files] || []
-    @links = selected_files.collect { |file| 
-      p,f = file.split(/:/) 
+    @links = selected_files.collect { |file|
+      p,f = file.split(/:/)
       (url,extra) = browser.providers[p].link_for(f)
       result = { url: url }
       result.merge!(extra) unless extra.nil?
       result
     }
-    respond_to do |format|  
+    respond_to do |format|
       format.html { render :layout => false }
       format.json { render :json => @links }
     end
@@ -40,7 +40,7 @@ class BrowseEverythingController < ActionController::Base
     @auth_link ||= if provider.present?
       link, data = provider.auth_link
       session["#{provider_name}_data"] = data
-      link = "#{link}&state=#{provider.key}" unless link.include?("state")
+      link = "#{link}&state=#{provider.key}" unless link.to_s.include?('state')
       link
     else
       nil
