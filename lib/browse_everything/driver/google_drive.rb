@@ -36,19 +36,17 @@ module BrowseEverything
       end
 
       def details(file, path = '')
-        if file.web_content_link || file.mime_type == "application/vnd.google-apps.folder"
-          BrowseEverything::FileEntry.new(
-            file.id,
-            "#{self.key}:#{file.id}",
-            file.name,
-            file.size.to_i,
-            file.modified_time,
-            file.mime_type == "application/vnd.google-apps.folder",
-            file.mime_type == "application/vnd.google-apps.folder" ?
-                                  "directory" :
-                                  file.mime_type
-          )
-        end
+        mime_folder = file.mime_type == 'application/vnd.google-apps.folder'
+        return unless file.web_content_link || mime_folder
+        BrowseEverything::FileEntry.new(
+          file.id,
+          "#{self.key}:#{file.id}",
+          file.name,
+          file.size.to_i,
+          file.modified_time,
+          mime_folder,
+          mime_folder ? 'directory' : file.mime_type
+        )
       end
 
       def link_for(id)
@@ -90,7 +88,7 @@ module BrowseEverything
       end
 
       def authorization
-        return auth_client if auth_client?
+        return @auth_client unless @auth_client.nil?
         return nil unless token.present?
         auth_client.update_token!(token)
         self.token = auth_client.fetch_access_token! if token_expired?
@@ -105,12 +103,6 @@ module BrowseEverything
                                                     client_secret: config[:client_secret],
                                                     redirect_uri: callback
       end
-
-      def auth_client?
-        !@auth_client.nil?
-      end
-
     end
-
   end
 end
