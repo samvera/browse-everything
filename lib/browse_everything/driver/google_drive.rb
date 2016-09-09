@@ -102,7 +102,8 @@ module BrowseEverything
                                                     authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
                                                     scope: 'https://www.googleapis.com/auth/drive',
                                                     client_id: config[:client_id],
-                                                    client_secret: config[:client_secret]
+                                                    client_secret: config[:client_secret],
+                                                    redirect_uri: callback
       end
 
       def auth_client?
