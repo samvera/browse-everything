@@ -26,8 +26,8 @@ module BrowseEverything
           default_params[:page_token] = page_token unless page_token.blank?
           response = drive.list_files(default_params)
           page_token = response.next_page_token
-          response.items.select do |file|
-            path.blank? ? (file['parents'].blank? || file['parents'].any?{|p| p['isRoot'] }) : true
+          response.files.select do |file|
+            path.blank? ? (file.parents.blank? || file.parents.any?{|p| p.id == 'root' }) : true
           end.each do |file|
             d = details(file, path)
             yield d if d
