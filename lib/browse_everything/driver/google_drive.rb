@@ -1,7 +1,7 @@
 module BrowseEverything
   module Driver
     class GoogleDrive < Base
-      require 'google/apis/drive_v2'
+      require 'google/apis/drive_v3'
       require 'signet'
 
       def icon
@@ -18,7 +18,7 @@ module BrowseEverything
       end
 
       def contents(path = '')
-        return to_enum(:contents, path)
+        return to_enum(:contents, path) unless block_given?
         default_params = {}
         page_token = nil
         begin
