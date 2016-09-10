@@ -4,7 +4,7 @@ class BrowseEverythingController < ActionController::Base
   layout 'browse_everything'
   helper BrowseEverythingHelper
 
-  after_filter {session["#{provider_name}_token"] = provider.token unless provider.nil? }
+  after_filter { session["#{provider_name}_token"] = provider.token unless provider.nil? }
 
   def index
     render :layout => !request.xhr?
@@ -15,8 +15,7 @@ class BrowseEverythingController < ActionController::Base
   end
 
   def auth
-    code = params[:code]
-    session["#{provider_name}_token"] = provider.connect(params,session["#{provider_name}_data"])
+    session["#{provider_name}_token"] = provider.connect(params, session["#{provider_name}_data"])
   end
 
   def resolve
