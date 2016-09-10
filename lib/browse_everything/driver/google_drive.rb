@@ -19,7 +19,11 @@ module BrowseEverything
 
       def contents(path = '')
         return to_enum(:contents, path) unless block_given?
-        default_params = {}
+        default_params = {
+          order_by: 'folder,modifiedTime desc,name',
+          fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents)'
+        # page_size: 100
+        }
         page_token = nil
         begin
           default_params[:q] = "'#{path}' in parents" unless path.blank?
@@ -27,7 +31,7 @@ module BrowseEverything
           response = drive.list_files(default_params)
           page_token = response.next_page_token
           response.files.select do |file|
-            path.blank? ? (file.parents.blank? || file.parents.any?{|p| p.id == 'root' }) : true
+            path.blank? ? (file.parents.blank? || file.parents.any?{|p| p == 'root' }) : true
           end.each do |file|
             d = details(file, path)
             yield d if d
@@ -43,7 +47,7 @@ module BrowseEverything
           "#{self.key}:#{file.id}",
           file.name,
           file.size.to_i,
-          file.modified_time,
+          file.modified_time || DateTime.new,
           mime_folder,
           mime_folder ? 'directory' : file.mime_type
         )
