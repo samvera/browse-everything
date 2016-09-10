@@ -5,7 +5,7 @@ module BrowseEverything
 
       attr_reader :config, :name
       attr_accessor :token
-      
+
       def initialize(config,session_info={})
         @config = config
         validate_config
@@ -42,6 +42,7 @@ module BrowseEverything
         false
       end
 
+      # @return [Array{URI,Object}] 2 elements: the URI, and session data to store under "#{provider_name}_data"
       def auth_link
         []
       end
