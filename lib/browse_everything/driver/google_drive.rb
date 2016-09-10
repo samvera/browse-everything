@@ -82,16 +82,11 @@ module BrowseEverything
 
       private
 
-      def token_expired?
-        return true if token.nil?
-        token.expired?
-      end
-
       def authorization
         return @auth_client unless @auth_client.nil?
         return nil unless token.present?
         auth_client.update_token!(token)
-        self.token = auth_client.fetch_access_token! if token_expired?
+        self.token = auth_client.fetch_access_token! if auth_client.expired?
         auth_client
       end
 
