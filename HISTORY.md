@@ -1,3 +1,6 @@
+### 0.10.5 (2016-09-23)
+  Fix naming conflict that broke the `context` option in 0.10.4.
+
 ### 0.10.4 (2016-08-05)
   Don't wait for auto-toggle if the explicit browseEverything() call is seen first.
 
