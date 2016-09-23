@@ -20,7 +20,7 @@ $ ->
       done:   (func) -> ctx.callbacks.done.add(func)   ; return this
       cancel: (func) -> ctx.callbacks.cancel.add(func) ; return this
       fail:   (func) -> ctx.callbacks.fail.add(func)   ; return this
-    $(obj).data('context',ctx)
+    $(obj).data('ev-state',ctx)
     ctx
 
   toHiddenFields = (data) ->
@@ -154,8 +154,8 @@ $ ->
       url: $('a.ev-link',node.row).attr('href')
       data:
         parent: node.row.data('tt-id')
-        accept: dialog.data('context').opts.accept
-        context: dialog.data('context').opts.context
+        accept: dialog.data('ev-state').opts.accept
+        context: dialog.data('ev-state').opts.context
     .done (html) ->
       setProgress('100')
       clearInterval progressIntervalID
@@ -182,12 +182,12 @@ $ ->
   $(window).on('resize', -> sizeColumns($('table#file-list')))
 
   $.fn.browseEverything = (options) ->
-    ctx = $(this).data('context')
+    ctx = $(this).data('ev-state')
     options = $(this).data() unless (ctx? or options?)
     if options?
       ctx = initialize(this[0], options)
       $(this).click () ->
-        dialog.data('context',ctx)
+        dialog.data('ev-state',ctx)
         dialog.load ctx.opts.route, () -> 
           setTimeout refreshFiles, 500
           ctx.callbacks.show.fire()
@@ -213,7 +213,7 @@ $ ->
     
   $(document).on 'click', 'button.ev-cancel', (event) ->
     event.preventDefault()
-    dialog.data('context').callbacks.cancel.fire()
+    dialog.data('ev-state').callbacks.cancel.fire()
     $('.ev-browser').modal('hide')
 
   $(document).on 'click', 'button.ev-submit', (event) ->
@@ -222,7 +222,7 @@ $ ->
     $('body').css('cursor','wait')
     main_form = $(this).closest('form')
     resolver_url = main_form.data('resolver')
-    ctx = dialog.data('context')
+    ctx = dialog.data('ev-state')
     $(main_form).find('input[name=context]').val(ctx.opts.context)
     $.ajax resolver_url,
       type: 'POST'
@@ -254,8 +254,8 @@ $ ->
     $.ajax 
       url: $(this).val(),
       data:
-        accept: dialog.data('context').opts.accept
-        context: dialog.data('context').opts.context
+        accept: dialog.data('ev-state').opts.accept
+        context: dialog.data('ev-state').opts.context
     .done (data) ->
       $('.ev-files').html(data)
       indicateSelected();
@@ -304,7 +304,7 @@ $ ->
 auto_toggle = ->
   triggers = $('*[data-toggle=browse-everything]')
   triggers.each () -> 
-    ctx = $(this).data('context')
+    ctx = $(this).data('ev-state')
     $(this).browseEverything($(this).data()) unless ctx?
 
 if Turbolinks? && Turbolinks.supported
