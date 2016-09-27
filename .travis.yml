@@ -14,16 +14,20 @@ before_install:
   - "if [ $(phantomjs --version) != '2.1.1' ]; then tar -xvf $PWD/travis_phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C $PWD/travis_phantomjs; fi"
   - "phantomjs --version"
 rvm:
-  - 2.2
+  - "2.2.2"
+# rack 2 requires Ruby version >= 2.2.2
 env:
   global:
     - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
   matrix:
     - "RAILS_VERSION=4.1.10"
     - "RAILS_VERSION=4.2.1"
+    - "RAILS_VERSION=5.0.0.1"
 
 matrix:
   include:
+    - rvm: "2.3.0"
+      env: "RAILS_VERSION=5.0.0.1"
     - rvm: 2.1
       env: "RAILS_VERSION=4.2.1"
     - rvm: 2.0
