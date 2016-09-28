@@ -10,10 +10,10 @@ module BrowseEverything
 
       def validate_config
         unless config[:client_id]
-          raise BrowseEverything::InitializationError, "GoogleDrive driver requires a :client_id argument"
+          raise BrowseEverything::InitializationError, 'GoogleDrive driver requires a :client_id argument'
         end
         unless config[:client_secret]
-          raise BrowseEverything::InitializationError, "GoogleDrive driver requires a :client_secret argument"
+          raise BrowseEverything::InitializationError, 'GoogleDrive driver requires a :client_secret argument'
         end
       end
 
@@ -22,7 +22,7 @@ module BrowseEverything
         default_params = {
           order_by: 'folder,modifiedTime desc,name',
           fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,web_content_link)'
-        # page_size: 100
+          # page_size: 100
         }
         page_token = nil
         begin
@@ -31,7 +31,7 @@ module BrowseEverything
           response = drive.list_files(default_params)
           page_token = response.next_page_token
           response.files.select do |file|
-            path.blank? ? (file.parents.blank? || file.parents.any?{|p| p == 'root' }) : true
+            path.blank? ? (file.parents.blank? || file.parents.any? { |p| p == 'root' }) : true
           end.each do |file|
             d = details(file, path)
             yield d if d
@@ -39,11 +39,11 @@ module BrowseEverything
         end while !page_token.blank?
       end
 
-      def details(file, path = '')
+      def details(file, _path = '')
         mime_folder = file.mime_type == 'application/vnd.google-apps.folder'
         BrowseEverything::FileEntry.new(
           file.id,
-          "#{self.key}:#{file.id}",
+          "#{key}:#{file.id}",
           file.name,
           file.size.to_i,
           file.modified_time || DateTime.new,
@@ -72,7 +72,7 @@ module BrowseEverything
         token.present?
       end
 
-      def connect(params, data)
+      def connect(params, _data)
         auth_client.code = params[:code]
         self.token = auth_client.fetch_access_token!
       end

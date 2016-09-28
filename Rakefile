@@ -1,5 +1,5 @@
 #!/usr/bin/env rake
-require "bundler/gem_tasks"
+require 'bundler/gem_tasks'
 
 Dir.glob('tasks/*.rake').each { |r| import r }
 
@@ -15,4 +15,4 @@ task :setup_test_server do
   EngineCart.load_application!
 end
 
-task :default => [:ci]
+task default: [:ci]

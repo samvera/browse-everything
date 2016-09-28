@@ -4,8 +4,8 @@ class FileHandlerController < ApplicationController
 
   def main
   end
-    
+
   def update
-    render :json => params[:selected_files].to_json
+    render json: params[:selected_files].to_json
   end
 end

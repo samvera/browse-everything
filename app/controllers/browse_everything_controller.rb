@@ -1,17 +1,17 @@
-require File.expand_path('../../helpers/browse_everything_helper',__FILE__)
+require File.expand_path('../../helpers/browse_everything_helper', __FILE__)
 
 class BrowseEverythingController < ActionController::Base
   layout 'browse_everything'
   helper BrowseEverythingHelper
 
-  after_filter { session["#{provider_name}_token"] = provider.token unless provider.nil? }
+  after_action { session["#{provider_name}_token"] = provider.token unless provider.nil? }
 
   def index
-    render :layout => !request.xhr?
+    render layout: !request.xhr?
   end
 
   def show
-    render :layout => !request.xhr?
+    render layout: !request.xhr?
   end
 
   def auth
@@ -20,16 +20,16 @@ class BrowseEverythingController < ActionController::Base
 
   def resolve
     selected_files = params[:selected_files] || []
-    @links = selected_files.collect { |file|
-      p,f = file.split(/:/)
-      (url,extra) = browser.providers[p].link_for(f)
+    @links = selected_files.collect do |file|
+      p, f = file.split(/:/)
+      (url, extra) = browser.providers[p].link_for(f)
       result = { url: url }
       result.merge!(extra) unless extra.nil?
       result
-    }
+    end
     respond_to do |format|
-      format.html { render :layout => false }
-      format.json { render :json => @links }
+      format.html { render layout: false }
+      format.json { render json: @links }
     end
   end
 
@@ -37,13 +37,11 @@ class BrowseEverythingController < ActionController::Base
 
   def auth_link
     @auth_link ||= if provider.present?
-      link, data = provider.auth_link
-      session["#{provider_name}_data"] = data
-      link = "#{link}&state=#{provider.key}" unless link.to_s.include?('state')
-      link
-    else
-      nil
-    end
+                     link, data = provider.auth_link
+                     session["#{provider_name}_data"] = data
+                     link = "#{link}&state=#{provider.key}" unless link.to_s.include?('state')
+                     link
+                   end # else nil, implicitly
   end
 
   def browser

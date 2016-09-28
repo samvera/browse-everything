@@ -6,7 +6,7 @@ module BrowseEverything
       attr_reader :config, :name
       attr_accessor :token
 
-      def initialize(config,session_info={})
+      def initialize(config, _session_info = {})
         @config = config
         validate_config
       end
@@ -26,11 +26,11 @@ module BrowseEverything
       def validate_config
       end
 
-      def contents(path)
+      def contents(_path)
         []
       end
 
-      def details(path)
+      def details(_path)
         nil
       end
 
@@ -47,22 +47,21 @@ module BrowseEverything
         []
       end
 
-      def connect(params,data)
+      def connect(_params, _data)
         nil
       end
 
       private
 
-        def callback
-          connector_response_url(callback_options)
-        end
+      def callback
+        connector_response_url(callback_options)
+      end
 
-        # remove the script_name parameter from the url_options since that is causing issues
-        #   with the route not containing the engine path in rails 4.2.0
-        def callback_options
-          config[:url_options].reject {|k,v| k == :script_name}
-        end
-
+      # remove the script_name parameter from the url_options since that is causing issues
+      #   with the route not containing the engine path in rails 4.2.0
+      def callback_options
+        config[:url_options].reject { |k, _v| k == :script_name }
+      end
     end
   end
 end
