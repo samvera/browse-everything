@@ -13,7 +13,7 @@ describe "Choosing files", :type => :feature do
     it "selects files from the filesystem" do
       click_button('Browse')
       sleep(5)
-      click_link("README.rdoc")
+      click_link('Gemfile.lock')
       within(".modal-footer") do
         expect(page).to have_selector("span", text: "1 file selected")
         click_button("Submit")

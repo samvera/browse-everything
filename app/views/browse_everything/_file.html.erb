@@ -1,13 +1,10 @@
-<% unless file.relative_parent_path? %>
-
-  <% if file.container? || provider.config[:max_upload_file_size].blank? #never disable a folder or if no maximum is set
-     disabled = false
-   else
-     max_size = provider.config[:max_upload_file_size].to_i
-     disabled = file.size > max_size
-   end
-  %>
-
+<% if file.container? || provider.config[:max_upload_file_size].blank? # never disable a folder or if no maximum is set
+   disabled = false
+ else
+   max_size = provider.config[:max_upload_file_size].to_i
+   disabled = file.size > max_size
+ end
+%>
 <tr role="row" tabindex="-1" data-ev-location="<%= file.location %>" data-tt-id="<%=path%>" data-tt-parent-id="<%=parent%>" data-tt-branch="<%=file.container? ? 'true' : 'false'%>">
   <td role="gridcell" class="<%=file.container? ? 'ev-container' : 'ev-file'%> ev-file-name">
     <% if disabled %>
@@ -36,4 +33,3 @@
     <%= file.mtime.strftime('%F %R') %>
   </td>
 </tr>
-<% end %>
