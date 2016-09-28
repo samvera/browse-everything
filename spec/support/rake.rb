@@ -5,7 +5,7 @@ module RakeHelper
     @rake = Rake::Application.new
     Rake.application = @rake
     Rake::Task.define_task(:environment)
-    files.each {|file| load file}
+    files.each { |file| load file }
   end
 
   def run_task(task)

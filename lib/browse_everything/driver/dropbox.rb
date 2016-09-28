@@ -3,19 +3,18 @@ require 'dropbox_sdk'
 module BrowseEverything
   module Driver
     class Dropbox < Base
-
       def icon
         'dropbox'
       end
 
       def validate_config
-        unless [:app_key,:app_secret].all? { |key| config[key].present? }
+        unless [:app_key, :app_secret].all? { |key| config[key].present? }
           raise BrowseEverything::InitializationError, "Dropbox driver requires :app_key and :app_secret"
         end
       end
 
-      def contents(path='')
-        path.sub!(/^[\/.]+/,'')
+      def contents(path = '')
+        path.sub!(/^[\/.]+/, '')
         result = []
         unless path.empty?
           result << BrowseEverything::FileEntry.new(
@@ -27,7 +26,7 @@ module BrowseEverything
           path = info['path']
           BrowseEverything::FileEntry.new(
             path,
-            [self.key,path].join(':'),
+            [key, path].join(':'),
             File.basename(path),
             info['bytes'],
             Time.parse(info['modified']),
@@ -46,12 +45,12 @@ module BrowseEverything
       end
 
       def auth_link
-        [ auth_flow.start('dropbox'), @csrf ]
+        [auth_flow.start('dropbox'), @csrf]
       end
 
-      def connect(params,data)
+      def connect(params, data)
         @csrf = data
-        @token, user, state = auth_flow.finish(params)
+        @token, _user, _state = auth_flow.finish(params)
         @token
       end
 
@@ -60,15 +59,15 @@ module BrowseEverything
       end
 
       private
+
       def auth_flow
         @csrf ||= {}
-        DropboxOAuth2Flow.new(config[:app_key], config[:app_secret], callback.to_s,@csrf,'token')
+        DropboxOAuth2Flow.new(config[:app_key], config[:app_secret], callback.to_s, @csrf, 'token')
       end
 
       def client
         DropboxClient.new(token)
       end
     end
-
   end
 end

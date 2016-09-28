@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = BrowseEverything::VERSION
   spec.authors       = ["Carolyn Cole", "Jessie Keck", "Michael B. Klein", "Thomas Scherz", "Xiaoming Wang", "Jeremy Friesen"]
   spec.email         = ["cam156@psu.edu", "jkeck@stanford.edu", "mbklein@gmail.com", "scherztc@ucmail.uc.edu", "xw5d@virginia.edu", "jeremy.n.friesen@gmail.com"]
-  spec.description   = %q{AJAX/Rails engine file browser for cloud storage services}
-  spec.summary       = %q{AJAX/Rails engine file browser for cloud storage services}
+  spec.description   = 'AJAX/Rails engine file browser for cloud storage services'
+  spec.summary       = 'AJAX/Rails engine file browser for cloud storage services'
   spec.homepage      = "https://github.com/projecthydra/browse-everything"
   spec.license       = "Apache 2"
 

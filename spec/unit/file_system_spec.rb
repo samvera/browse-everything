@@ -36,7 +36,7 @@ describe BrowseEverything::Driver::FileSystem do
         subject { contents[2] }
         its(:name)     { should == 'file 1.pdf'              }
         its(:size)     { should == 2256                      }
-        its(:location) { should == "file_system:#{File.join(home,'file 1.pdf')}" }
+        its(:location) { should == "file_system:#{File.join(home, 'file 1.pdf')}" }
         its(:type)     { should == "application/pdf"         }
         specify        { should_not be_container             }
       end
@@ -44,11 +44,11 @@ describe BrowseEverything::Driver::FileSystem do
         subject { contents[3] }
         its(:name)     { should == 'file_1.pdf'              }
         its(:size)     { should == 2256                      }
-        its(:location) { should == "file_system:#{File.join(home,'file_1.pdf')}" }
+        its(:location) { should == "file_system:#{File.join(home, 'file_1.pdf')}" }
         its(:type)     { should == "application/pdf"         }
         specify        { should_not be_container             }
       end
-     end
+    end
 
     context "subdirectory" do
       let(:contents) { provider.contents('/dir_1') }
@@ -64,8 +64,8 @@ describe BrowseEverything::Driver::FileSystem do
       end
       context "[2]" do
         subject { contents[2] }
-        its(:name)     { should == 'file_2.txt'      }
-        its(:location) { should == "file_system:#{File.join(home,'dir_1/file_2.txt')}" }
+        its(:name)     { should == 'file_2.txt' }
+        its(:location) { should == "file_system:#{File.join(home, 'dir_1/file_2.txt')}" }
         its(:type)     { should == "text/plain"      }
         specify        { should_not be_container     }
       end
@@ -75,8 +75,8 @@ describe BrowseEverything::Driver::FileSystem do
       let(:contents) { provider.contents('/dir_1/dir_3/file_3.m4v') }
       context "[0]" do
         subject { contents[0] }
-        its(:name)     { should == 'file_3.m4v'      }
-        its(:location) { should == "file_system:#{File.join(home,'dir_1/dir_3/file_3.m4v')}" }
+        its(:name)     { should == 'file_3.m4v' }
+        its(:location) { should == "file_system:#{File.join(home, 'dir_1/dir_3/file_3.m4v')}" }
         its(:size)     { should == 3879              }
         its(:type)     { should == "video/mp4"       }
         specify        { should_not be_container     }
@@ -86,6 +86,6 @@ describe BrowseEverything::Driver::FileSystem do
 
   describe "#link_for('/path/to/file')" do
     subject { provider.link_for('/path/to/file') }
-    it { should == ["file:///path/to/file", {:file_name=>"file", :file_size=>0}] }
+    it { should == ["file:///path/to/file", { :file_name => "file", :file_size => 0 }] }
   end
 end

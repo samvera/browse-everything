@@ -45,27 +45,25 @@ module BrowserConfigHelper
   end
 
   def stub_configuration
-    BrowseEverything.configure({
-      "file_system" => {
-        home: File.expand_path('../fixtures/file_system',__FILE__)
+    BrowseEverything.configure("file_system" => {
+        home: File.expand_path('../fixtures/file_system', __FILE__)
       },
-      "box" => {
+                               "box" => {
         client_id: "BoxClientId",
         client_secret: "BoxClientSecret"
       },
-      "dropbox" => {
+                               "dropbox" => {
         app_key: "DropboxAppKey",
         app_secret: "DropboxAppSecret"
       },
-      "google_drive" => {
+                               "google_drive" => {
         client_id: "GoogleClientId",
         client_secret: "GoogleClientSecret"
       },
-      "sky_drive" => {
+                               "sky_drive" => {
         client_id: "SkyDriveClientId",
         client_secret: "SkyDriveClientSecret"
-      }
-    })
+      })
   end
 
   def unstub_configuration

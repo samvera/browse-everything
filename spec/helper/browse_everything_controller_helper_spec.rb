@@ -1,4 +1,4 @@
-require File.expand_path('../../spec_helper',__FILE__)
+require File.expand_path('../../spec_helper', __FILE__)
 
 include BrowserConfigHelper
 
@@ -6,7 +6,7 @@ describe BrowseEverythingController, type: :controller do
   before(:all)  { stub_configuration   }
   after(:all)   { unstub_configuration }
 
-  let(:helper_context) {controller.view_context}
+  let(:helper_context) { controller.view_context }
   let(:browser) { BrowseEverything::Browser.new(url_options) }
 
   before do
@@ -17,7 +17,7 @@ describe BrowseEverythingController, type: :controller do
     let(:provider) { browser.providers['dropbox'] }
 
     describe "auth_link" do
-      subject {helper_context.auth_link}
+      subject { helper_context.auth_link }
       it "has a single state" do
         expect(subject.scan(/state/).length).to eq 1
       end
@@ -28,7 +28,7 @@ describe BrowseEverythingController, type: :controller do
     let(:provider) { browser.providers['box'] }
 
     describe "auth_link" do
-      subject {helper_context.auth_link}
+      subject { helper_context.auth_link }
       it "has a single state" do
         expect(subject.scan(/state/).length).to eq 1
       end

@@ -19,9 +19,9 @@ module BrowseEverything
 
   class << self
     def configure(value)
-      if value.nil? or value.kind_of?(Hash)
+      if value.nil? || value.is_a?(Hash)
         @config = value
-      elsif value.kind_of?(String)
+      elsif value.is_a?(String)
         @config = YAML.load(ERB.new(File.read(value)).result)
 
         if @config.include? 'drop_box'
@@ -36,7 +36,7 @@ module BrowseEverything
 
     def config
       if @config.nil?
-        configure(File.join(Rails.root.to_s,'config','browse_everything_providers.yml'))
+        configure(File.join(Rails.root.to_s, 'config', 'browse_everything_providers.yml'))
       end
       @config
     end

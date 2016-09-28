@@ -11,7 +11,7 @@ describe BrowseEverything::Driver::Base do
     specify         { should_not be_authorized }
   end
   context "#connect" do
-    specify { subject.connect({},{}).should be_blank }
+    specify { subject.connect({}, {}).should be_blank }
   end
   context "#contents" do
     specify { subject.contents('').should be_empty }

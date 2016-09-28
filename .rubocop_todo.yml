@@ -6,78 +6,10 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: AlignWith, SupportedStyles.
-# SupportedStyles: either, start_of_block, start_of_line
-Lint/BlockAlignment:
-  Exclude:
-    - 'spec/unit/file_system_spec.rb'
-    - 'spec/views/browse_everything/_file.html.erb_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AlignWith, SupportedStyles, AutoCorrect.
-# SupportedStyles: start_of_line, def
-Lint/DefEndAlignment:
-  Exclude:
-    - 'lib/browse_everything/driver/sky_drive.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Lint/DeprecatedClassMethods:
-  Exclude:
-    - 'lib/browse_everything/driver/file_system.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AlignWith, SupportedStyles, AutoCorrect.
-# SupportedStyles: keyword, variable, start_of_line
-Lint/EndAlignment:
-  Exclude:
-    - 'app/controllers/browse_everything_controller.rb'
-
-# Offense count: 6
-Lint/ImplicitStringConcatenation:
-  Exclude:
-    - 'lib/generators/browse_everything/assets_generator.rb'
-    - 'lib/generators/browse_everything/config_generator.rb'
-    - 'lib/generators/browse_everything/install_generator.rb'
-
 # Offense count: 1
 Lint/Loop:
   Exclude:
     - 'lib/browse_everything/driver/google_drive.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Lint/StringConversionInInterpolation:
-  Exclude:
-    - 'lib/browse_everything/browser.rb'
-
-# Offense count: 7
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoreEmptyBlocks, AllowUnusedKeywordArguments.
-Lint/UnusedBlockArgument:
-  Exclude:
-    - 'lib/browse_everything/driver/base.rb'
-    - 'spec/unit/retriever_spec.rb'
-
-# Offense count: 10
-# Cop supports --auto-correct.
-# Configuration parameters: AllowUnusedKeywordArguments, IgnoreEmptyMethods.
-Lint/UnusedMethodArgument:
-  Exclude:
-    - 'lib/browse_everything/driver/base.rb'
-    - 'lib/browse_everything/driver/box.rb'
-    - 'lib/browse_everything/driver/google_drive.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
-    - 'lib/browse_everything/retriever.rb'
-
-# Offense count: 2
-Lint/UselessAssignment:
-  Exclude:
-    - 'lib/browse_everything/driver/dropbox.rb'
 
 # Offense count: 10
 Metrics/AbcSize:
@@ -114,15 +46,6 @@ Performance/StringReplacement:
     - 'lib/browse_everything/retriever.rb'
 
 # Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, Include.
-# SupportedStyles: action, filter
-# Include: app/controllers/**/*.rb
-Rails/ActionFilter:
-  Exclude:
-    - 'app/controllers/browse_everything_controller.rb'
-
-# Offense count: 1
 Rails/OutputSafety:
   Exclude:
     - 'app/helpers/browse_everything_helper.rb'
@@ -143,24 +66,6 @@ Rails/TimeZone:
     - 'spec/unit/sky_drive_spec.rb'
     - 'spec/views/browse_everything/_file.html.erb_spec.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.
-# SupportedLastArgumentHashStyles: always_inspect, always_ignore, ignore_implicit, ignore_explicit
-Style/AlignHash:
-  Exclude:
-    - 'spec/unit/retriever_spec.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: always, conditionals
-Style/AndOr:
-  Exclude:
-    - 'lib/browse_everything.rb'
-    - 'lib/browse_everything/driver/box.rb'
-    - 'lib/browse_everything/retriever.rb'
-
 # Offense count: 14
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
@@ -178,17 +83,6 @@ Style/BlockDelimiters:
     - 'spec/unit/retriever_spec.rb'
     - 'spec/views/browse_everything/_file.html.erb_spec.rb'
 
-# Offense count: 7
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: braces, no_braces, context_dependent
-Style/BracesAroundHashParameters:
-  Exclude:
-    - 'lib/browse_everything/driver/box.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
-    - 'lib/generators/browse_everything/config_generator.rb'
-    - 'spec/spec_helper.rb'
-
 # Offense count: 3
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact
@@ -197,35 +91,6 @@ Style/ClassAndModuleChildren:
     - 'lib/generators/browse_everything/assets_generator.rb'
     - 'lib/generators/browse_everything/config_generator.rb'
     - 'lib/generators/browse_everything/install_generator.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: is_a?, kind_of?
-Style/ClassCheck:
-  Exclude:
-    - 'lib/browse_everything.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/ClosingParenthesisIndentation:
-  Exclude:
-    - 'spec/views/browse_everything/_file.html.erb_spec.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: Keywords.
-# Keywords: TODO, FIXME, OPTIMIZE, HACK, REVIEW
-Style/CommentAnnotation:
-  Exclude:
-    - 'lib/browse_everything/driver/box.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/CommentIndentation:
-  Exclude:
-    - 'lib/browse_everything/driver/google_drive.rb'
 
 # Offense count: 18
 Style/Documentation:
@@ -245,85 +110,11 @@ Style/ElseAlignment:
   Exclude:
     - 'app/controllers/browse_everything_controller.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty, nil, both
-Style/EmptyElse:
-  Exclude:
-    - 'app/controllers/browse_everything_controller.rb'
-    - 'lib/browse_everything/driver/file_system.rb'
-
-# Offense count: 6
-# Cop supports --auto-correct.
-Style/EmptyLines:
-  Exclude:
-    - 'lib/browse_everything/driver/sky_drive.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/EmptyLinesAroundAccessModifier:
-  Exclude:
-    - 'lib/browse_everything/driver/dropbox.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, no_empty_lines
-Style/EmptyLinesAroundBlockBody:
-  Exclude:
-    - 'spec/unit/retriever_spec.rb'
-
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, no_empty_lines
-Style/EmptyLinesAroundClassBody:
-  Exclude:
-    - 'lib/browse_everything/driver/base.rb'
-    - 'lib/browse_everything/driver/dropbox.rb'
-    - 'lib/browse_everything/driver/file_system.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
-    - 'lib/browse_everything/retriever.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, no_empty_lines
-Style/EmptyLinesAroundModuleBody:
-  Exclude:
-    - 'app/helpers/bootstrap_version_helper.rb'
-    - 'lib/browse_everything/driver/dropbox.rb'
-    - 'lib/browse_everything/driver/file_system.rb'
-
-# Offense count: 15
-# Cop supports --auto-correct.
-# Configuration parameters: AllowForAlignment, ForceEqualSignAlignment.
-Style/ExtraSpacing:
-  Exclude:
-    - 'lib/browse_everything/driver/box.rb'
-    - 'spec/unit/dropbox_spec.rb'
-    - 'spec/unit/file_system_spec.rb'
-    - 'spec/unit/retriever_spec.rb'
-    - 'spec/unit/sky_drive_spec.rb'
-    - 'spec/views/browse_everything/_file.html.erb_spec.rb'
-
 # Offense count: 1
 # Configuration parameters: ExpectMatchingDefinition, Regex, IgnoreExecutableScripts.
 Style/FileName:
   Exclude:
     - 'lib/browse-everything.rb'
-
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
-# SupportedStyles: consistent, special_for_inner_method_call, special_for_inner_method_call_in_parentheses
-Style/FirstParameterIndentation:
-  Exclude:
-    - 'lib/browse_everything/driver/box.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
-    - 'spec/views/browse_everything/_file.html.erb_spec.rb'
 
 # Offense count: 5
 # Configuration parameters: MinBodyLength.
@@ -374,33 +165,6 @@ Style/IndentationConsistency:
     - 'lib/generators/browse_everything/config_generator.rb'
     - 'spec/unit/retriever_spec.rb'
 
-# Offense count: 9
-# Cop supports --auto-correct.
-# Configuration parameters: Width.
-Style/IndentationWidth:
-  Exclude:
-    - 'app/controllers/browse_everything_controller.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
-    - 'lib/generators/browse_everything/config_generator.rb'
-    - 'spec/unit/file_system_spec.rb'
-    - 'spec/views/browse_everything/_file.html.erb_spec.rb'
-
-# Offense count: 15
-# Cop supports --auto-correct.
-Style/LeadingCommentSpace:
-  Exclude:
-    - 'lib/browse_everything/driver/box.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
-    - 'spec/javascripts/support/jasmine_helper.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: require_parentheses, require_no_parentheses, require_no_parentheses_except_multiline
-Style/MethodDefParentheses:
-  Exclude:
-    - 'spec/unit/browse_everything_helper_spec.rb'
-
 # Offense count: 1
 Style/MultilineBlockChain:
   Exclude:
@@ -428,35 +192,9 @@ Style/MultilineMethodCallIndentation:
   Exclude:
     - 'spec/unit/sky_drive_spec.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/MutableConstant:
-  Exclude:
-    - 'lib/browse_everything/version.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/NegatedWhile:
-  Exclude:
-    - 'lib/browse_everything/retriever.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/Not:
-  Exclude:
-    - 'lib/browse_everything/retriever.rb'
-
-# Offense count: 4
 # Cop supports --auto-correct.
 Style/NumericLiterals:
   MinDigits: 7
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowSafeAssignment.
-Style/ParenthesesAroundCondition:
-  Exclude:
-    - 'lib/browse_everything/driver/sky_drive.rb'
 
 # Offense count: 7
 # Cop supports --auto-correct.
@@ -487,24 +225,6 @@ Style/PreferredHashMethods:
 
 # Offense count: 2
 # Cop supports --auto-correct.
-# Configuration parameters: AllowMultipleReturnValues.
-Style/RedundantReturn:
-  Exclude:
-    - 'lib/browse_everything/driver/sky_drive.rb'
-    - 'lib/browse_everything/retriever.rb'
-
-# Offense count: 5
-# Cop supports --auto-correct.
-Style/RedundantSelf:
-  Exclude:
-    - 'lib/browse_everything/driver/box.rb'
-    - 'lib/browse_everything/driver/dropbox.rb'
-    - 'lib/browse_everything/driver/file_system.rb'
-    - 'lib/browse_everything/driver/google_drive.rb'
-    - 'lib/browse_everything/retriever.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
 # SupportedStyles: slashes, percent_r, mixed
 Style/RegexpLiteral:
@@ -517,102 +237,6 @@ Style/RegexpLiteral:
 Style/RescueModifier:
   Exclude:
     - 'lib/browse_everything/driver/file_system.rb'
-
-# Offense count: 7
-# Cop supports --auto-correct.
-Style/SpaceAfterColon:
-  Exclude:
-    - 'lib/browse_everything/driver/sky_drive.rb'
-    - 'spec/unit/sky_drive_spec.rb'
-
-# Offense count: 71
-# Cop supports --auto-correct.
-Style/SpaceAfterComma:
-  Enabled: false
-
-# Offense count: 8
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: space, no_space
-Style/SpaceAroundEqualsInParameterDefault:
-  Exclude:
-    - 'lib/browse_everything/driver/base.rb'
-    - 'lib/browse_everything/driver/box.rb'
-    - 'lib/browse_everything/driver/dropbox.rb'
-    - 'lib/browse_everything/driver/file_system.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
-    - 'lib/browse_everything/file_entry.rb'
-    - 'lib/browse_everything/retriever.rb'
-
-# Offense count: 34
-# Cop supports --auto-correct.
-# Configuration parameters: AllowForAlignment.
-Style/SpaceAroundOperators:
-  Exclude:
-    - 'lib/browse_everything/driver/box.rb'
-    - 'spec/unit/file_system_spec.rb'
-    - 'spec/unit/retriever_spec.rb'
-    - 'spec/unit/sky_drive_spec.rb'
-    - 'spec/views/browse_everything/_file.html.erb_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: space, no_space
-Style/SpaceBeforeBlockBraces:
-  Exclude:
-    - 'lib/browse_everything/driver/google_drive.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/SpaceBeforeComment:
-  Exclude:
-    - 'lib/browse_everything/driver/box.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
-
-# Offense count: 11
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
-# SupportedStyles: space, no_space
-Style/SpaceInsideBlockBraces:
-  Exclude:
-    - 'lib/browse_everything/driver/base.rb'
-    - 'lib/browse_everything/driver/google_drive.rb'
-    - 'spec/helper/browse_everything_controller_helper_spec.rb'
-    - 'spec/support/rake.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/SpaceInsideBrackets:
-  Exclude:
-    - 'lib/browse_everything/driver/dropbox.rb'
-
-# Offense count: 35
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces, SupportedStyles.
-# SupportedStyles: space, no_space, compact
-Style/SpaceInsideHashLiteralBraces:
-  Exclude:
-    - 'lib/browse_everything/driver/box.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
-    - 'lib/generators/browse_everything/config_generator.rb'
-    - 'spec/unit/dropbox_spec.rb'
-    - 'spec/unit/file_system_spec.rb'
-    - 'spec/unit/retriever_spec.rb'
-    - 'spec/unit/sky_drive_spec.rb'
-    - 'spec/views/browse_everything/_file.html.erb_spec.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/SpaceInsideParens:
-  Exclude:
-    - 'lib/browse_everything/driver/box.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/SpaceInsidePercentLiteralDelimiters:
-  Exclude:
-    - 'lib/browse_everything/engine.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -628,65 +252,3 @@ Style/SpecialGlobalVars:
 # SupportedStyles: single_quotes, double_quotes
 Style/StringLiterals:
   Enabled: false
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: single_quotes, double_quotes
-Style/StringLiteralsInInterpolation:
-  Exclude:
-    - 'lib/browse_everything/driver/sky_drive.rb'
-
-# Offense count: 7
-# Cop supports --auto-correct.
-Style/Tab:
-  Exclude:
-    - 'spec/unit/retriever_spec.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: final_newline, final_blank_line
-Style/TrailingBlankLines:
-  Exclude:
-    - 'lib/browse-everything.rb'
-    - 'spec/support/app/controllers/file_handler_controller.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
-# SupportedStyles: comma, consistent_comma, no_comma
-Style/TrailingCommaInLiteral:
-  Exclude:
-    - 'spec/unit/retriever_spec.rb'
-
-# Offense count: 23
-# Cop supports --auto-correct.
-Style/TrailingWhitespace:
-  Exclude:
-    - 'app/helpers/bootstrap_version_helper.rb'
-    - 'lib/browse_everything/browser.rb'
-    - 'lib/browse_everything/driver/file_system.rb'
-    - 'lib/browse_everything/retriever.rb'
-    - 'spec/support/app/controllers/file_handler_controller.rb'
-    - 'spec/test_app_templates/lib/generators/test_app_generator.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/UnneededInterpolation:
-  Exclude:
-    - 'spec/unit/sky_drive_spec.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/UnneededPercentQ:
-  Exclude:
-    - 'browse-everything.gemspec'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: SupportedStyles, WordRegex.
-# SupportedStyles: percent, brackets
-Style/WordArray:
-  EnforcedStyle: percent
-  MinSize: -Infinity
