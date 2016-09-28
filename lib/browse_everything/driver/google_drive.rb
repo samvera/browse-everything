@@ -21,7 +21,7 @@ module BrowseEverything
         return to_enum(:contents, path) unless block_given?
         default_params = {
           order_by: 'folder,modifiedTime desc,name',
-          fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents)'
+          fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,web_content_link)'
         # page_size: 100
         }
         page_token = nil
@@ -41,7 +41,6 @@ module BrowseEverything
 
       def details(file, path = '')
         mime_folder = file.mime_type == 'application/vnd.google-apps.folder'
-        return unless file.web_content_link || mime_folder
         BrowseEverything::FileEntry.new(
           file.id,
           "#{self.key}:#{file.id}",
@@ -55,7 +54,7 @@ module BrowseEverything
 
       def link_for(id)
         file = drive.get_file(id)
-        auth_header = {'Authorization' => "Bearer #{client.authorization.access_token.to_s}"}
+        auth_header = { 'Authorization' => "Bearer #{auth_client.access_token}" }
         extras = {
           auth_header: auth_header,
           expires: 1.hour.from_now,
