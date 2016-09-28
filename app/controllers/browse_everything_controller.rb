@@ -7,11 +7,11 @@ class BrowseEverythingController < ActionController::Base
   after_action { session["#{provider_name}_token"] = provider.token unless provider.nil? }
 
   def index
-    render :layout => !request.xhr?
+    render layout: !request.xhr?
   end
 
   def show
-    render :layout => !request.xhr?
+    render layout: !request.xhr?
   end
 
   def auth
@@ -20,16 +20,16 @@ class BrowseEverythingController < ActionController::Base
 
   def resolve
     selected_files = params[:selected_files] || []
-    @links = selected_files.collect { |file|
+    @links = selected_files.collect do |file|
       p, f = file.split(/:/)
       (url, extra) = browser.providers[p].link_for(f)
       result = { url: url }
       result.merge!(extra) unless extra.nil?
       result
-    }
+    end
     respond_to do |format|
-      format.html { render :layout => false }
-      format.json { render :json => @links }
+      format.html { render layout: false }
+      format.json { render json: @links }
     end
   end
 

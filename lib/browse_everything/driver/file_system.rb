@@ -7,7 +7,7 @@ module BrowseEverything
 
       def validate_config
         unless config[:home]
-          raise BrowseEverything::InitializationError, "FileSystem driver requires a :home argument"
+          raise BrowseEverything::InitializationError, 'FileSystem driver requires a :home argument'
         end
       end
 

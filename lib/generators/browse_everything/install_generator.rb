@@ -2,11 +2,11 @@
 require 'rails/generators'
 
 class BrowseEverything::InstallGenerator < Rails::Generators::Base
-  class_option :'skip-assets', type: :boolean, default: false, desc: "Skip generating javascript and css assets into the application"
+  class_option :'skip-assets', type: :boolean, default: false, desc: 'Skip generating javascript and css assets into the application'
 
-  desc """
+  desc ''"
     This generator installs the browse everything configuration and assets into your application
-       """
+       "''
 
   source_root File.expand_path('../templates', __FILE__)
 

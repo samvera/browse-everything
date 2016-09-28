@@ -26,7 +26,7 @@ module BrowseEverything
     end
 
     def retrieve(spec)
-      if spec.has_key?('expires') && Time.parse(spec['expires']) < Time.now
+      if spec.key?('expires') && Time.parse(spec['expires']) < Time.now
         raise ArgumentError, "Download spec expired at #{spec['expires']}"
       end
 
@@ -44,7 +44,7 @@ module BrowseEverything
       when /https?/
         headers = spec['auth_header'] || {}
         headers.each_pair do |k, v|
-          headers[k] = v.gsub(/\+/, ' ')
+          headers[k] = v.tr('+', ' ')
         end
 
         HTTParty.get(url.to_s, headers: headers) do |chunk|

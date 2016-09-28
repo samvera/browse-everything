@@ -1,7 +1,7 @@
-require "rails"
-require "browse_everything/version"
-require "browse_everything/engine"
-require "browse_everything/retriever"
+require 'rails'
+require 'browse_everything/version'
+require 'browse_everything/engine'
+require 'browse_everything/retriever'
 
 module BrowseEverything
   class InitializationError < RuntimeError; end
@@ -25,7 +25,7 @@ module BrowseEverything
         @config = YAML.load(ERB.new(File.read(value)).result)
 
         if @config.include? 'drop_box'
-          warn "[DEPRECATION] `drop_box` is deprecated.  Please use `dropbox` instead."
+          warn '[DEPRECATION] `drop_box` is deprecated.  Please use `dropbox` instead.'
           @config['dropbox'] = @config.delete('drop_box')
         end
 

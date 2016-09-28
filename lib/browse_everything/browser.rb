@@ -4,7 +4,7 @@ module BrowseEverything
 
     def initialize(opts = {})
       url_options = {}
-      if opts.has_key?(:url_options)
+      if opts.key?(:url_options)
         url_options = opts.delete(:url_options)
       else
         url_options = opts

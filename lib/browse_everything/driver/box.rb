@@ -11,10 +11,10 @@ module BrowseEverything
 
       def validate_config
         unless config[:client_id]
-          raise BrowseEverything::InitializationError, "Box driver requires a :client_id argument"
+          raise BrowseEverything::InitializationError, 'Box driver requires a :client_id argument'
         end
         unless config[:client_secret]
-          raise BrowseEverything::InitializationError, "Box driver requires a :client_secret argument"
+          raise BrowseEverything::InitializationError, 'Box driver requires a :client_secret argument'
         end
       end
 
@@ -78,7 +78,7 @@ module BrowseEverything
           access_token: token
         )
         result = new_session.get("#{RubyBox::API_URL}/users/me")
-        result["status"] != 200
+        result['status'] != 200
       rescue RubyBox::AuthError => e
         Rails.logger.error("AuthError occured when checking token. Exception #{e.class.name} : #{e.message}. token as expired and need to refresh it")
         return true

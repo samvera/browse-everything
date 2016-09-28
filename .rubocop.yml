@@ -16,3 +16,6 @@ Rails:
 # Configuration parameters: AllowURI, URISchemes.
 Metrics/LineLength:
   Max: 180
+
+Style/NumericLiterals:
+  MinDigits: 7

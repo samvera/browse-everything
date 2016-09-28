@@ -9,7 +9,7 @@ module BrowseEverything
 
       def validate_config
         unless [:app_key, :app_secret].all? { |key| config[key].present? }
-          raise BrowseEverything::InitializationError, "Dropbox driver requires :app_key and :app_secret"
+          raise BrowseEverything::InitializationError, 'Dropbox driver requires :app_key and :app_secret'
         end
       end
 

@@ -13,10 +13,10 @@ module BrowseEverything
 
       def validate_config
         unless config[:client_id]
-          raise BrowseEverything::InitializationError, "SkyDrive driver requires a :client_id argument"
+          raise BrowseEverything::InitializationError, 'SkyDrive driver requires a :client_id argument'
         end
         unless config[:client_secret]
-          raise BrowseEverything::InitializationError, "SkyDrive driver requires a :client_secret argument"
+          raise BrowseEverything::InitializationError, 'SkyDrive driver requires a :client_secret argument'
         end
       end
 
@@ -28,7 +28,7 @@ module BrowseEverything
           folder = client.my_skydrive
         # TODO: do some loop to get down to my path
         else
-          folder = client.get("/#{path.gsub('-', '.')}/")
+          folder = client.get("/#{path.tr('-', '.')}/")
           result += [parent_folder_details(folder)] if folder.parent_id
         end
 
@@ -64,7 +64,7 @@ module BrowseEverything
         BrowseEverything::FileEntry.new(
           safe_id(file.parent_id),
           "#{key}:#{safe_id(file.parent_id)}",
-          "..",
+          '..',
           0,
           Time.now,
           true
@@ -101,7 +101,7 @@ module BrowseEverything
       private
 
       def oauth_client
-        Skydrive::Oauth::Client.new(config[:client_id], config[:client_secret], callback.to_s, "wl.skydrive")
+        Skydrive::Oauth::Client.new(config[:client_id], config[:client_secret], callback.to_s, 'wl.skydrive')
         # TODO: error checking here
       end
 
@@ -114,11 +114,11 @@ module BrowseEverything
       end
 
       def safe_id(id)
-        id.gsub(".", "-")
+        id.tr('.', '-')
       end
 
       def real_id(id)
-        id.gsub("-", ".")
+        id.tr('-', '.')
       end
     end
   end
