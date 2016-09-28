@@ -2,9 +2,7 @@
 require 'rails/generators'
 
 class BrowseEverything::AssetsGenerator < Rails::Generators::Base
-  desc ''"
-    This generator installs the browse_everything CSS assets into your application
-       "''
+  desc 'This generator installs the browse_everything CSS assets into your application'
 
   source_root File.expand_path('../templates', __FILE__)
 

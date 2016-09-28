@@ -2,11 +2,11 @@
 require 'rails/generators'
 
 class BrowseEverything::ConfigGenerator < Rails::Generators::Base
-  desc ''"
+  desc <<-END_OF_DESC
 This generator makes the following changes to your application:
  1. Creates config/browse_everything_providers.yml with a placeholder value
  2. Modifies your app's routes.rb to mount BrowseEverything at /browse
-       "''
+  END_OF_DESC
   source_root File.expand_path('../templates', __FILE__)
 
   def inject_routes

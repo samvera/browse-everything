@@ -5,11 +5,6 @@ AllCops:
     - db/migrate/**
     - db/schema.rb
 
-# Generators use conventional triple-quote syntax, false positive
-Lint/ImplicitStringConcatenation:
-  Exclude:
-    - 'lib/generators/browse_everything/*.rb'
-
 Rails:
   Enabled: true
 
