@@ -11,6 +11,12 @@
 # google_drive:
 #   :client_id: YOUR_GOOGLE_API_CLIENT_ID
 #   :client_secret: YOUR_GOOGLE_API_CLIENT_SECRET
+# s3:
+#   :app_key: YOUR_AWS_S3_KEY
+#   :app_secret: YOUR_AWS_S3_SECRET
+#   :bucket: YOUR_AWS_S3_BUCKET
+#   :region: YOUR_AWS_S3_REGION # default: us-east-1
+#   :signed_url: true # set to false for public urls
 # sky_drive:
 #   :client_id: YOUR_MS_LIVE_CONNECT_CLIENT_ID
 #   :client_secret: YOUR_MS_LIVE_CONNECT_CLIENT_SECRET
