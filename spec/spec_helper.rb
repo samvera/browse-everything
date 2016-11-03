@@ -63,6 +63,11 @@ module BrowserConfigHelper
                                'sky_drive' => {
                                  client_id: 'SkyDriveClientId',
                                  client_secret: 'SkyDriveClientSecret'
+                               },
+                               's3' => {
+                                 app_key: 'S3AppKey',
+                                 app_secret: 'S3AppSecret',
+                                 bucket: 's3.bucket'
                                })
   end
 
