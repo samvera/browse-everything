@@ -7,7 +7,7 @@ class BrowseEverythingController < ActionController::Base
   after_action { session["#{provider_name}_token"] = provider.token unless provider.nil? }
 
   def index
-    render layout: !request.xhr?
+    render :layout => !request.xhr?
   end
 
   def show

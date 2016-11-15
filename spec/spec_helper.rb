@@ -10,6 +10,7 @@ require 'capybara/rails'
 require 'capybara/rspec'
 require 'support/rake'
 require 'coveralls'
+require 'kaltura'
 
 Coveralls.wear!
 EngineCart.load_application!
@@ -68,6 +69,11 @@ module BrowserConfigHelper
                                  app_key: 'S3AppKey',
                                  app_secret: 'S3AppSecret',
                                  bucket: 's3.bucket'
+                               },
+                               'kaltura' => {
+                                  partner_id: 'KalturaClientId',
+                                  administrator_secret: 'KalturaAdminSecret',
+                                  service_url: 'KalturaServiceUrl'
                                })
   end
 

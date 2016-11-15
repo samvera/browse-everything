@@ -1,0 +1,66 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://www.kaltura.com/api_v3/?action=start&ks=&partnerId=1&secret=superdupersecret&service=session&type=2
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers: {}
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 26 Aug 2011 21:38:40 GMT
+      Server:
+      - Apache
+      Vary:
+      - Accept-Encoding
+      X-Me:
+      - pa-apache3
+      X-Ua-Compatible:
+      - IE=EmulateIE7
+      Content-Length:
+      - '230'
+      Content-Type:
+      - text/xml
+    body:
+      encoding: UTF-8
+      string: <?xml version="1.0" encoding="utf-8"?><xml><result>thisisavalidsession</result><executionTime>0.048589944839478</executionTime></xml>
+    http_version: '1.1'
+  recorded_at: Fri, 23 Sep 2016 18:46:02 GMT
+- request:
+    method: get
+    uri: http://www.kaltura.com/api_v3/?action=start&ks=&partnerId=2&secret=superdupersecret&service=session&type=2
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers: {}
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 26 Aug 2011 21:38:40 GMT
+      Server:
+      - Apache
+      Vary:
+      - Accept-Encoding
+      X-Me:
+      - pa-apache3
+      X-Ua-Compatible:
+      - IE=EmulateIE7
+      Content-Length:
+      - '227'
+      Content-Type:
+      - text/xml
+    body:
+      encoding: UTF-8
+      string: <?xml version="1.0" encoding="utf-8"?><xml><result><error><code>START_SESSION_ERROR</code><message>Error
+        while starting session for partner [2]</message></error></result><executionTime>0.040677070617676</executionTime></xml>
+    http_version: '1.1'
+  recorded_at: Fri, 23 Sep 2016 18:46:02 GMT
+recorded_with: VCR 3.0.3

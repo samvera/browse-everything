@@ -20,3 +20,7 @@
 # sky_drive:
 #   :client_id: YOUR_MS_LIVE_CONNECT_CLIENT_ID
 #   :client_secret: YOUR_MS_LIVE_CONNECT_CLIENT_SECRET
+# kaltura:
+#   :partner_id: YOUR_KLATURA_PARTNER_ID
+#   :administrator_secret: YOUR_KALTURA_ADMINSTRATOR_SECRET
+#   :service_url: YOUR_SERVICE_URL

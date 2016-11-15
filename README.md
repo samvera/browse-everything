@@ -7,7 +7,7 @@
 This Gem allows your rails application to access user files from cloud storage.
 Currently there are drivers implemented for [Dropbox](http://www.dropbox.com),
 [Skydrive](https://skydrive.live.com/), [Google Drive](http://drive.google.com),
-[Box](http://www.box.com), and a server-side directory share.
+[Box](http://www.box.com),[Kaltura](http://www.kaltura.com) and a server-side directory share.
 
 The gem uses [OAuth](http://oauth.net/) to connect to a user's account and
 generate a list of single use urls that your application can then use to
@@ -50,7 +50,7 @@ Add `//= require browse_everything` to your application.js
 ### Adding Providers
 In order to connect to a provider like [Dropbox](http://www.dropbox.com),
 [Skydrive](https://skydrive.live.com/), [Google Drive](http://drive.google.com), or
-[Box](http://www.box.com), you must provide API keys in _config/browse_everything_providers.yml_.  For info on how to edit this file, see [Configuring browse-everything](https://github.com/projecthydra/browse-everything/wiki/Configuring-browse-everything)
+[Box](http://www.box.com), [Kaltura](http://www.kaltura.com), you must provide API keys in _config/browse_everything_providers.yml_.  For info on how to edit this file, see [Configuring browse-everything](https://github.com/projecthydra/browse-everything/wiki/Configuring-browse-everything)
 
 ### Views
 
