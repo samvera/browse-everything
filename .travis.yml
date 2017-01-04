@@ -25,8 +25,8 @@ env:
 matrix:
   include:
     - rvm: "2.3.0"
-      env: "RAILS_VERSION=5.0.0.1"
-    - rvm: 2.1
-      env: "RAILS_VERSION=4.2.1"
-    - rvm: 2.0
-      env: "RAILS_VERSION=4.2.1"
+      env: "RAILS_VERSION=5.0.1"
+    - rvm: 2.2.6
+      env: "RAILS_VERSION=4.2.7.1"
+    - rvm: 2.4.0
+      env: "RAILS_VERSION=5.0.1"
