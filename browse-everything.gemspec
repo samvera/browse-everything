@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'rails', '>= 3.1'
+  spec.add_dependency 'addressable', '~> 2.5'
   spec.add_dependency 'google_drive'
   spec.add_dependency 'dropbox-sdk', '>= 1.6.2'
   spec.add_dependency 'skydrive'

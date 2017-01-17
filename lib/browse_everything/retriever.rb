@@ -1,5 +1,6 @@
 require 'httparty'
 require 'tempfile'
+require 'addressable'
 
 module BrowseEverything
   class Retriever
@@ -30,7 +31,7 @@ module BrowseEverything
         raise ArgumentError, "Download spec expired at #{spec['expires']}"
       end
 
-      url = Addressable::URI.parse(spec['url'])
+      url = ::Addressable::URI.parse(spec['url'])
       retrieved = 0
       case url.scheme
       when 'file'
