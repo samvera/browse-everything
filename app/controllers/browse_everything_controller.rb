@@ -4,6 +4,8 @@ class BrowseEverythingController < ActionController::Base
   layout 'browse_everything'
   helper BrowseEverythingHelper
 
+  protect_from_forgery with: :exception
+
   after_action { session["#{provider_name}_token"] = provider.token unless provider.nil? }
 
   def index
