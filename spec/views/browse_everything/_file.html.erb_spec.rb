@@ -30,28 +30,28 @@ describe 'browse_everything/_file.html.erb', type: :view do
     end
     context 'file not too big' do
       let(:config) { { max_upload_file_size: (5 * 1024 * 1024 * 1024) } }
-      it 'should draw link' do
+      it 'draws link' do
         expect(page).to have_selector('a.ev-link')
       end
     end
 
     context 'max not configured' do
       let(:config) { {} }
-      it 'should draw link' do
+      it 'draws link' do
         expect(page).to have_selector('a.ev-link')
       end
     end
 
     context 'file too big' do
       let(:config) { { max_upload_file_size: 1024 } }
-      it 'should draw link' do
+      it 'draws link' do
         expect(page).not_to have_selector('a.ev-link')
       end
     end
 
     context 'multi-select' do
       let(:config) { {} }
-      it 'should not have a checkbox' do
+      it 'does not have a checkbox' do
         expect(page).not_to have_selector('input.ev-select-all')
       end
     end
@@ -64,7 +64,7 @@ describe 'browse_everything/_file.html.erb', type: :view do
     end
     context 'multi-select' do
       let(:config) { {} }
-      it 'should have the select-all checkbox' do
+      it 'has the select-all checkbox' do
         expect(page).to have_selector('input.ev-select-all')
       end
     end

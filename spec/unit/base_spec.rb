@@ -1,25 +1,31 @@
 include BrowserConfigHelper
 
 describe BrowseEverything::Driver::Base do
-  subject { BrowseEverything::Driver::Base.new({}) }
+  let(:driver) { described_class.new({}) }
 
   describe 'simple properties' do
-    its(:name)      { should == 'Base'         }
-    its(:key)       { should == 'base'         }
-    its(:icon)      { should be_a(String)      }
-    its(:auth_link) { should be_empty          }
-    specify         { should_not be_authorized }
+    subject { driver }
+
+    its(:name)      { is_expected.to eq('Base')         }
+    its(:key)       { is_expected.to eq('base')         }
+    its(:icon)      { is_expected.to be_a(String)      }
+    its(:auth_link) { is_expected.to be_empty          }
+    specify         { is_expected.not_to be_authorized }
   end
-  context '#connect' do
-    specify { subject.connect({}, {}).should be_blank }
+  describe '#connect' do
+    subject { driver.connect({}, {}) }
+    it { is_expected.to be_blank }
   end
-  context '#contents' do
-    specify { subject.contents('').should be_empty }
+  describe '#contents' do
+    subject { driver.contents('') }
+    it { is_expected.to be_empty }
   end
-  context '#details' do
-    specify { subject.details('/path/to/foo.txt').should be_nil }
+  describe '#details' do
+    subject { driver.details('/path/to/foo.txt') }
+    it { is_expected.to be_nil }
   end
-  context '#link_for' do
-    specify { subject.link_for('/path/to/foo.txt').should == ['/path/to/foo.txt', { file_name: 'foo.txt' }] }
+  describe '#link_for' do
+    subject { driver.link_for('/path/to/foo.txt') }
+    it { is_expected.to contain_exactly('/path/to/foo.txt', file_name: 'foo.txt') }
   end
 end

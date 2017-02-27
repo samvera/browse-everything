@@ -1,5 +1,5 @@
 describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record: :none } do
-  subject { BrowseEverything::Retriever.new }
+  let(:retriever) { described_class.new }
   let(:datafile) { File.expand_path('../../fixtures/file_system/file_1.pdf', __FILE__) }
   let(:datafile_with_spaces) { File.expand_path('../../fixtures/file_system/file 1.pdf', __FILE__) }
   let(:data) { File.open(datafile, 'rb', &:read) }
@@ -22,23 +22,23 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
     context '#retrieve' do
       it 'content' do
         content = ''
-        subject.retrieve(spec['0']) { |chunk, _retrieved, _total| content << chunk }
+        retriever.retrieve(spec['0']) { |chunk, _retrieved, _total| content << chunk }
         expect(content).to eq(data)
       end
 
       it 'callbacks' do
-        expect { |block| subject.retrieve(spec['0'], &block) }.to yield_with_args(data, data.length, data.length)
+        expect { |block| retriever.retrieve(spec['0'], &block) }.to yield_with_args(data, data.length, data.length)
       end
     end
 
     context '#download' do
       it 'content' do
-        file = subject.download(spec['0'])
+        file = retriever.download(spec['0'])
         expect(File.open(file, 'rb', &:read)).to eq(data)
       end
 
       it 'callbacks' do
-        expect { |block| subject.download(spec['0'], &block) }.to yield_with_args(String, data.length, data.length)
+        expect { |block| retriever.download(spec['0'], &block) }.to yield_with_args(String, data.length, data.length)
       end
     end
   end
@@ -62,32 +62,30 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
     context '#retrieve' do
       it 'content' do
         content = ''
-        subject.retrieve(spec['0']) { |chunk, _retrieved, _total| content << chunk }
+        retriever.retrieve(spec['0']) { |chunk, _retrieved, _total| content << chunk }
         expect(content).to eq(data)
       end
 
       it 'content with spaces' do
         content = ''
-        subject.retrieve(spec['1']) { |chunk, _retrieved, _total| content << chunk }
+        retriever.retrieve(spec['1']) { |chunk, _retrieved, _total| content << chunk }
         expect(content).to eq(data_with_spaces)
       end
 
       it 'callbacks' do
-        expect { |block| subject.retrieve(spec['0'], &block) }.to yield_with_args(data, data.length, data.length)
+        expect { |block| retriever.retrieve(spec['0'], &block) }.to yield_with_args(data, data.length, data.length)
       end
     end
 
     context '#download' do
       it 'content' do
-        file = subject.download(spec['0'])
+        file = retriever.download(spec['0'])
         expect(File.open(file, 'rb', &:read)).to eq(data)
       end
 
       it 'callbacks' do
-        expect { |block| subject.download(spec['0'], &block) }.to yield_with_args(String, data.length, data.length)
+        expect { |block| retriever.download(spec['0'], &block) }.to yield_with_args(String, data.length, data.length)
       end
     end
   end
-
-  context ''
 end
