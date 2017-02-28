@@ -1,16 +1,28 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
+  TargetRubyVersion: 2.1
+  DisplayCopNames: true
+  Include:
+    - '**/Rakefile'
   Exclude:
-    - db/migrate/**
-    - db/schema.rb
+    - 'vendor/**/*'
 
 Rails:
   Enabled: true
 
 # Configuration parameters: AllowURI, URISchemes.
 Metrics/LineLength:
-  Max: 180
+  Max: 400
+
+RSpec/NestedGroups:
+  Enabled: false
+
+RSpec/FilePath:
+  Enabled: false
+
+RSpec/LeadingSubject:
+  Enabled: false
 
 Style/NumericLiterals:
   MinDigits: 7
