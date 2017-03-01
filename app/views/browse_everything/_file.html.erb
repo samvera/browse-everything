@@ -13,16 +13,22 @@
       </span>
       <span class="sr-only"><%= file.container? ? ', folder' : ', file' %> </span>
     <% else %>
-      <%= link_to browse_everything_engine.contents_path(provider_name,file.id), :class=>'ev-link' do %>
+      <%= link_to browse_everything_engine.contents_path(provider_name, file.id), :class=>'ev-link' do %>
         <span class="<%=file.container? ? 'folder' : 'file'%>" aria-hidden="true"/>
         <%= file.name %>
         <span class="sr-only"><%= file.container? ? ', folder' : ', file' %> </span>
       <% end %>
     <% end %>
   </td>
-  <td role="gridcell" class="ev-directory-select">
-    <%= check_box_tag(:select_all, "0", false, class: "ev-select-all") if file.container? %>
-  </td>
+  <% if file.container? %>
+    <td role="gridcell" class="ev-directory-select">
+      <%= check_box_tag(:select_all, "0", false, class: "ev-select-all") %>
+    </td>
+  <% else %>
+    <td role="gridcell" class="ev-file-select">
+      <%= check_box_tag(file.id.to_s.parameterize, "0", false, class: "ev-select-file") %>
+    </td>
+  <% end %>
   <td role="gridcell" class="ev-file-size">
     <%= number_to_human_size(file.size).sub(/Bytes/,'bytes') %>
   </td>

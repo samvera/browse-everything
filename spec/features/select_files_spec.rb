@@ -14,12 +14,13 @@ describe 'Choosing files', type: :feature do
       click_button('Browse')
       sleep(5)
       click_link('Gemfile.lock')
+      check('config-ru')
       within('.modal-footer') do
-        expect(page).to have_selector('span', text: '1 file selected')
+        expect(page).to have_selector('span', text: '2 files selected')
         click_button('Submit')
       end
       sleep(5)
-      expect(page).to have_selector('#status', text: '1 items selected')
+      expect(page).to have_selector('#status', text: '2 items selected')
     end
   end
 
