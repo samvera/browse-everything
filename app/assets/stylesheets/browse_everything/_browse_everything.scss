@@ -16,17 +16,17 @@
   margin: 0 0 0 -37.5%;
   left: 50%;
   top: 10%;
-  background-color: initial; 
+  background-color: initial;
   width: 75%;
 
   div {
     background-color: white;
   }
-  
+
   .modal-header {
     padding: 8px;
   }
-  
+
   .modal-body {
     overflow: hidden;
   }
@@ -38,17 +38,16 @@
   .row {
     margin: inherit;
   }
-  
+
   .ev-files {
     position: relative;
     overflow-x: auto;
     overflow-y: auto;
 
-    li { 
+    li {
       overflow: hidden;
       text-overflow: ellipsis;
       .ev-file-name {
-  //      padding: 0px 6px;
         white-space: nowrap;
       }
       border-top: none;
@@ -105,12 +104,12 @@
       }
     }
   }
-  
+
   .ev-files {
     height: 50vh;
     li { @include ev-link; }
   }
-  
+
   .ev-providers {
     select { width: 30% }
   }
