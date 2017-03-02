@@ -73,22 +73,6 @@
     padding: 4px;
   }
 
-  .fa3 .ev-selected .indenter {
-    font-family: FontAwesome;
-    font-weight: normal;
-    font-style: normal;
-    text-decoration: inherit;
-    -webkit-font-smoothing: antialiased;
-    *margin-right: .3em;
-    @extend .icon-check !optional;
-  }
-
-  .fa4 .ev-selected .indenter {
-    background-color: inherit;
-    @extend .fa;
-    @extend .fa-check !optional;
-  }
-
   .ev-files {
     table {
       width: 100%;
