@@ -11,7 +11,7 @@ module BrowseEverything
 
       def validate_config
         return if CONFIG_KEYS.all? { |key| config[key].present? }
-        raise BrowseEverything::InitializationError, 'Dropbox driver requires :app_key and :app_secret'
+        raise BrowseEverything::InitializationError, "Dropbox driver requires #{CONFIG_KEYS.inspect}"
       end
 
       # @return [Array<BrowseEverything::FileEntry>]
