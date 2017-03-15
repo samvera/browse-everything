@@ -13,7 +13,7 @@ Lint/Loop:
 
 # Offense count: 10
 Metrics/AbcSize:
-  Max: 43
+  Max: 31
 
 # Offense count: 3
 Metrics/CyclomaticComplexity:
