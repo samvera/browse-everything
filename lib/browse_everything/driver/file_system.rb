@@ -6,24 +6,32 @@ module BrowseEverything
       end
 
       def validate_config
-        unless config[:home]
-          raise BrowseEverything::InitializationError, 'FileSystem driver requires a :home argument'
-        end
+        return if config[:home].present?
+        raise BrowseEverything::InitializationError, 'FileSystem driver requires a :home argument'
       end
 
       def contents(path = '')
         relative_path = path.sub(%r{^[\/.]+}, '')
         real_path = File.join(config[:home], relative_path)
-        result = []
-        if File.directory?(real_path)
-          if relative_path.present?
-            result << details(File.expand_path('..', real_path), '..')
-          end
-          result += Dir[File.join(real_path, '*')].collect { |f| details(f) }
-        elsif File.exist?(real_path)
-          result += [details(real_path)]
+        entries = if File.directory?(real_path)
+                    make_directory_entry(relative_path, real_path)
+                  else
+                    [details(real_path)]
+                  end
+
+        sort_entries(entries)
+      end
+
+      def make_directory_entry(relative_path, real_path)
+        entries = []
+        if relative_path.present?
+          entries << details(File.expand_path('..', real_path), '..')
         end
-        result.sort do |a, b|
+        entries + Dir[File.join(real_path, '*')].collect { |f| details(f) }
+      end
+
+      def sort_entries(entries)
+        entries.sort do |a, b|
           if b.container?
             a.container? ? a.name.downcase <=> b.name.downcase : 1
           else
@@ -36,18 +44,32 @@ module BrowseEverything
         return nil unless File.exist?(path)
         info = File::Stat.new(path)
         BrowseEverything::FileEntry.new(
-          Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(config[:home])),
+          make_pathname(path),
           [key, path].join(':'),
-          display || File.basename(path),
+          make_display(path, display),
           info.size,
           info.mtime,
           info.directory?
         )
       end
 
+      def make_pathname(path)
+        Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(config[:home]))
+      end
+
+      def get_file_size(path)
+        File.size(path).to_i
+      rescue
+        0
+      end
+
+      def make_display(path, display)
+        display || File.basename(path)
+      end
+
       def link_for(path)
         full_path = File.expand_path(path)
-        file_size = File.size(full_path).to_i rescue 0
+        file_size = get_file_size(full_path)
         ["file://#{full_path}", { file_name: File.basename(path), file_size: file_size }]
       end
 
