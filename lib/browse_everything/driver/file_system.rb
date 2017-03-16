@@ -22,6 +22,31 @@ module BrowseEverything
         sort_entries(entries)
       end
 
+      def link_for(path)
+        full_path = File.expand_path(path)
+        file_size = file_size(full_path)
+        ["file://#{full_path}", { file_name: File.basename(path), file_size: file_size }]
+      end
+
+      def authorized?
+        true
+      end
+
+      def details(path, display = File.basename(path))
+        return nil unless File.exist?(path)
+        info = File::Stat.new(path)
+        BrowseEverything::FileEntry.new(
+          make_pathname(path),
+          [key, path].join(':'),
+          display,
+          info.size,
+          info.mtime,
+          info.directory?
+        )
+      end
+
+      private
+
       def make_directory_entry(relative_path, real_path)
         entries = []
         if relative_path.present?
@@ -40,41 +65,14 @@ module BrowseEverything
         end
       end
 
-      def details(path, display = nil)
-        return nil unless File.exist?(path)
-        info = File::Stat.new(path)
-        BrowseEverything::FileEntry.new(
-          make_pathname(path),
-          [key, path].join(':'),
-          make_display(path, display),
-          info.size,
-          info.mtime,
-          info.directory?
-        )
-      end
-
       def make_pathname(path)
         Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(config[:home]))
       end
 
-      def get_file_size(path)
+      def file_size(path)
         File.size(path).to_i
       rescue
         0
-      end
-
-      def make_display(path, display)
-        display || File.basename(path)
-      end
-
-      def link_for(path)
-        full_path = File.expand_path(path)
-        file_size = get_file_size(full_path)
-        ["file://#{full_path}", { file_name: File.basename(path), file_size: file_size }]
-      end
-
-      def authorized?
-        true
       end
     end
   end
