@@ -98,4 +98,19 @@
     select { width: 30% }
   }
 
+  .loading {
+    pointer-events: none;
+    opacity: 0.2;
+  }
+
+  .loading-progress {
+    position: absolute;
+    top: 8em;
+    left: 4em;
+  }
+
+  // Massively large text instead of something more artistic
+  .loading-text {
+    font-size: 4em;
+  }
 }
