@@ -26,3 +26,6 @@ RSpec/LeadingSubject:
 
 Style/NumericLiterals:
   MinDigits: 7
+
+Style/IndentationConsistency:
+  EnforcedStyle: rails

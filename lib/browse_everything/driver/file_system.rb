@@ -47,33 +47,33 @@ module BrowseEverything
 
       private
 
-      def make_directory_entry(relative_path, real_path)
-        entries = []
-        if relative_path.present?
-          entries << details(File.expand_path('..', real_path), '..')
+        def make_directory_entry(relative_path, real_path)
+          entries = []
+          if relative_path.present?
+            entries << details(File.expand_path('..', real_path), '..')
+          end
+          entries + Dir[File.join(real_path, '*')].collect { |f| details(f) }
         end
-        entries + Dir[File.join(real_path, '*')].collect { |f| details(f) }
-      end
 
-      def sort_entries(entries)
-        entries.sort do |a, b|
-          if b.container?
-            a.container? ? a.name.downcase <=> b.name.downcase : 1
-          else
-            a.container? ? -1 : a.name.downcase <=> b.name.downcase
+        def sort_entries(entries)
+          entries.sort do |a, b|
+            if b.container?
+              a.container? ? a.name.downcase <=> b.name.downcase : 1
+            else
+              a.container? ? -1 : a.name.downcase <=> b.name.downcase
+            end
           end
         end
-      end
 
-      def make_pathname(path)
-        Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(config[:home]))
-      end
+        def make_pathname(path)
+          Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(config[:home]))
+        end
 
-      def file_size(path)
-        File.size(path).to_i
-      rescue
-        0
-      end
+        def file_size(path)
+          File.size(path).to_i
+        rescue
+          0
+        end
     end
   end
 end

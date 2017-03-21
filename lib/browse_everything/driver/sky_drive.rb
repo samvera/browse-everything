@@ -100,26 +100,26 @@ module BrowseEverything
 
       private
 
-      def oauth_client
-        Skydrive::Oauth::Client.new(config[:client_id], config[:client_secret], callback.to_s, 'wl.skydrive')
-        # TODO: error checking here
-      end
+        def oauth_client
+          Skydrive::Oauth::Client.new(config[:client_id], config[:client_secret], callback.to_s, 'wl.skydrive')
+          # TODO: error checking here
+        end
 
-      def rehydrate_token
-        return @rehydrate_token if @rehydrate_token
-        token_str = @token[:token]
-        token_expires = @token[:expires_at]
-        Rails.logger.warn "\n\n Rehydrating: #{@token} #{token_str} #{token_expires}"
-        @rehydrate_token = oauth_client.get_access_token_from_hash(token_str, expires_at: token_expires)
-      end
+        def rehydrate_token
+          return @rehydrate_token if @rehydrate_token
+          token_str = @token[:token]
+          token_expires = @token[:expires_at]
+          Rails.logger.warn "\n\n Rehydrating: #{@token} #{token_str} #{token_expires}"
+          @rehydrate_token = oauth_client.get_access_token_from_hash(token_str, expires_at: token_expires)
+        end
 
-      def safe_id(id)
-        id.tr('.', '-')
-      end
+        def safe_id(id)
+          id.tr('.', '-')
+        end
 
-      def real_id(id)
-        id.tr('-', '.')
-      end
+        def real_id(id)
+          id.tr('-', '.')
+        end
     end
   end
 end

@@ -64,50 +64,50 @@ module BrowseEverything
 
       private
 
-      def oauth_client
-        RubyBox::Session.new(client_id: config[:client_id],
-                             client_secret: config[:client_secret])
-        # TODO: error checking here
-      end
+        def oauth_client
+          RubyBox::Session.new(client_id: config[:client_id],
+                               client_secret: config[:client_secret])
+          # TODO: error checking here
+        end
 
-      def token_expired?(token)
-        return false unless @token.present? && @token['token'].present?
-        new_session = RubyBox::Session.new(
-          client_id: config[:client_id],
-          client_secret: config[:client_secret],
-          access_token: token
-        )
-        result = new_session.get("#{RubyBox::API_URL}/users/me")
-        result['status'] != 200
-      rescue RubyBox::AuthError => e
-        Rails.logger.error("AuthError occured when checking token. Exception #{e.class.name} : #{e.message}. token as expired and need to refresh it")
-        return true
-      end
+        def token_expired?(token)
+          return false unless @token.present? && @token['token'].present?
+          new_session = RubyBox::Session.new(
+            client_id: config[:client_id],
+            client_secret: config[:client_secret],
+            access_token: token
+          )
+          result = new_session.get("#{RubyBox::API_URL}/users/me")
+          result['status'] != 200
+        rescue RubyBox::AuthError => e
+          Rails.logger.error("AuthError occured when checking token. Exception #{e.class.name} : #{e.message}. token as expired and need to refresh it")
+          return true
+        end
 
-      def refresh_token
-        refresh_token = @token['refresh_token']
-        token = @token['token']
-        session = RubyBox::Session.new(
-          client_id: config[:client_id],
-          client_secret: config[:client_secret],
-          access_token: token
-        )
-        access_token = session.refresh_token(refresh_token)
-        @token = { 'token' => access_token.token, 'refresh_token' => access_token.refresh_token }
-      end
+        def refresh_token
+          refresh_token = @token['refresh_token']
+          token = @token['token']
+          session = RubyBox::Session.new(
+            client_id: config[:client_id],
+            client_secret: config[:client_secret],
+            access_token: token
+          )
+          access_token = session.refresh_token(refresh_token)
+          @token = { 'token' => access_token.token, 'refresh_token' => access_token.refresh_token }
+        end
 
-      def box_client
-        refresh_token if token_expired?(@token['token'])
-        token = @token['token']
-        refresh_token = @token['refresh_token']
-        session = RubyBox::Session.new(
-          client_id: config[:client_id],
-          client_secret: config[:client_secret],
-          access_token: token,
-          refresh_token: refresh_token
-        )
-        RubyBox::Client.new(session)
-      end
+        def box_client
+          refresh_token if token_expired?(@token['token'])
+          token = @token['token']
+          refresh_token = @token['refresh_token']
+          session = RubyBox::Session.new(
+            client_id: config[:client_id],
+            client_secret: config[:client_secret],
+            access_token: token,
+            refresh_token: refresh_token
+          )
+          RubyBox::Client.new(session)
+        end
     end
   end
 end
