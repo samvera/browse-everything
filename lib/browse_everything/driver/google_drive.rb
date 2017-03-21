@@ -85,22 +85,22 @@ module BrowseEverything
 
       private
 
-      def authorization
-        return @auth_client unless @auth_client.nil?
-        return nil unless token.present?
-        auth_client.update_token!(token)
-        self.token = auth_client.fetch_access_token! if auth_client.expired?
-        auth_client
-      end
+        def authorization
+          return @auth_client unless @auth_client.nil?
+          return nil unless token.present?
+          auth_client.update_token!(token)
+          self.token = auth_client.fetch_access_token! if auth_client.expired?
+          auth_client
+        end
 
-      def auth_client
-        @auth_client ||= Signet::OAuth2::Client.new token_credential_uri: 'https://www.googleapis.com/oauth2/v3/token',
-                                                    authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
-                                                    scope: 'https://www.googleapis.com/auth/drive',
-                                                    client_id: config[:client_id],
-                                                    client_secret: config[:client_secret],
-                                                    redirect_uri: callback
-      end
+        def auth_client
+          @auth_client ||= Signet::OAuth2::Client.new token_credential_uri: 'https://www.googleapis.com/oauth2/v3/token',
+                                                      authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
+                                                      scope: 'https://www.googleapis.com/auth/drive',
+                                                      client_id: config[:client_id],
+                                                      client_secret: config[:client_secret],
+                                                      redirect_uri: callback
+        end
     end
   end
 end
