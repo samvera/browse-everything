@@ -118,8 +118,7 @@ $ ->
         table.treetable("unloadBranch", node)
       onNodeExpand: ->
         node = this
-        $('body').css('cursor','wait')
-        $("html").addClass("wait")
+        startWait()
         size = $(node.row).find('td.ev-file-size').text().trim()
         start = 1
         increment = 1
@@ -173,16 +172,27 @@ $ ->
         selectAll(rows)
     .always ->
         clearInterval progressIntervalID
-        $('body').css('cursor','default')
-        $("html").removeClass("wait")
+        stopWait()
 
   setProgress = (done)->
-    $('#loading_progress').css('width',done+'%')
-    $('#loading_progress').html(done+'% complete')
-    $('#loading_progress').attr('aria-valuenow', done)
+    $('.loading-text').text(done+'% complete')
 
   refreshFiles = ->
     $('.ev-providers select').change()
+
+  startWait = ->
+    $('.loading-progress').removeClass("hidden")
+    $('body').css('cursor','wait')
+    $("html").addClass("wait")
+    $(".ev-browser").addClass("loading")
+    $('.ev-submit').attr('disabled', true)
+
+  stopWait = ->
+    $('.loading-progress').addClass("hidden")
+    $('body').css('cursor','default')
+    $("html").removeClass("wait")
+    $(".ev-browser").removeClass("loading")
+    $('.ev-submit').attr('disabled', false)
 
   $(window).on('resize', -> sizeColumns($('table#file-list')))
 
@@ -224,7 +234,7 @@ $ ->
   $(document).on 'click', 'button.ev-submit', (event) ->
     event.preventDefault()
     $(this).button('loading')
-    $('body').css('cursor','wait')
+    startWait()
     main_form = $(this).closest('form')
     resolver_url = main_form.data('resolver')
     ctx = dialog.data('ev-state')
@@ -255,7 +265,7 @@ $ ->
 
   $(document).on 'change', '.ev-providers select', (event) ->
     event.preventDefault()
-    $('body').css('cursor','wait')
+    startWait()
     $.ajax
       url: $(this).val(),
       data:
@@ -272,7 +282,7 @@ $ ->
       else
         $('.ev-files').html(xhr.responseText)
     .always ->
-      $('body').css('cursor','default')
+      stopWait()
 
   $(document).on 'click', '.ev-providers a', (event) ->
     $('.ev-providers li').removeClass('ev-selected')
