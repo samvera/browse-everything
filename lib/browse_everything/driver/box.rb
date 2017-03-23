@@ -1,5 +1,6 @@
 module BrowseEverything
   module Driver
+    # Driver for accessing the Box API (https://www.box.com/home)
     class Box < Base
       require 'ruby-box'
 
@@ -10,103 +11,111 @@ module BrowseEverything
       end
 
       def validate_config
-        unless config[:client_id]
-          raise BrowseEverything::InitializationError, 'Box driver requires a :client_id argument'
-        end
-        unless config[:client_secret]
-          raise BrowseEverything::InitializationError, 'Box driver requires a :client_secret argument'
-        end
+        return if config[:client_id] && config[:client_secret]
+        raise BrowseEverything::InitializationError, 'Box driver requires both :client_id and :client_secret argument'
       end
 
-      def contents(path = '')
-        path.sub!(/^[\/.]+/, '')
-        result = []
-        unless path.empty?
-          result << BrowseEverything::FileEntry.new(
-            Pathname(path).join('..'),
-            '', '..', 0, Time.now, true
-          )
+      # @param [String] id of the file or folder in Box
+      # @return [Array<RubyBox::File>]
+      def contents(id = '')
+        if id.empty?
+          folder = box_client.root_folder
+          results = []
+        else
+          folder = box_client.folder_by_id(id)
+          results = [parent_directory(folder)]
         end
-        folder = path.empty? ? box_client.root_folder : box_client.folder(path)
-        result += folder.items(ITEM_LIMIT, 0, %w(name size created_at)).collect do |f|
-          BrowseEverything::FileEntry.new(
-            File.join(path, f.name), # id here
-            "#{key}:#{File.join(path, f.name)}", # single use link
-            f.name,
-            f.size,
-            f.created_at,
-            f.type == 'folder'
-          )
+
+        folder.items(ITEM_LIMIT, 0, %w(name size created_at)).collect do |f|
+          results << directory_entry(f)
         end
-        result
+        results
       end
 
-      def link_for(path)
-        file = box_client.file(path)
+      # @param [String] id of the file in Box
+      # @return [Array<String, Hash>]
+      def link_for(id)
+        file = box_client.file_by_id(id)
         download_url = file.download_url
         auth_header = { 'Authorization' => "Bearer #{@token}" }
         extras = { auth_header: auth_header, expires: 1.hour.from_now, file_name: file.name, file_size: file.size.to_i }
         [download_url, extras]
       end
 
+      # @return [String]
+      # Authorization url that is used to request the initial access code from Box
       def auth_link
-        oauth_client.authorize_url(callback.to_s)
+        box_session.authorize_url(callback.to_s)
       end
 
+      # @return [Boolean]
       def authorized?
-        @token.present? && @token['token'].present?
+        box_token.present? && box_refresh_token.present? && !token_expired?
       end
 
+      # @return [Hash]
+      # Gets the appropriate tokens from Box using the access code returned from :auth_link:
       def connect(params, _data)
-        access_token = oauth_client.get_access_token(params[:code])
-        @token = { 'token' => access_token.token, 'refresh_token' => access_token.refresh_token }
+        register_access_token(box_session.get_access_token(params[:code]))
       end
 
       private
 
-        def oauth_client
-          RubyBox::Session.new(client_id: config[:client_id],
-                               client_secret: config[:client_secret])
-          # TODO: error checking here
-        end
-
-        def token_expired?(token)
-          return false unless @token.present? && @token['token'].present?
-          new_session = RubyBox::Session.new(
-            client_id: config[:client_id],
-            client_secret: config[:client_secret],
-            access_token: token
-          )
-          result = new_session.get("#{RubyBox::API_URL}/users/me")
-          result['status'] != 200
-        rescue RubyBox::AuthError => e
-          Rails.logger.error("AuthError occured when checking token. Exception #{e.class.name} : #{e.message}. token as expired and need to refresh it")
-          return true
-        end
-
-        def refresh_token
-          refresh_token = @token['refresh_token']
-          token = @token['token']
-          session = RubyBox::Session.new(
-            client_id: config[:client_id],
-            client_secret: config[:client_secret],
-            access_token: token
-          )
-          access_token = session.refresh_token(refresh_token)
-          @token = { 'token' => access_token.token, 'refresh_token' => access_token.refresh_token }
+        def token_expired?
+          return true if expiration_time.nil?
+          Time.now.to_i > expiration_time
         end
 
         def box_client
-          refresh_token if token_expired?(@token['token'])
-          token = @token['token']
-          refresh_token = @token['refresh_token']
-          session = RubyBox::Session.new(
-            client_id: config[:client_id],
-            client_secret: config[:client_secret],
-            access_token: token,
-            refresh_token: refresh_token
-          )
-          RubyBox::Client.new(session)
+          if token_expired?
+            session = box_session(box_token)
+            register_access_token(session.refresh_token(box_refresh_token))
+          end
+          RubyBox::Client.new(box_session(box_token, box_refresh_token))
+        end
+
+        def box_session(token = nil, refresh_token = nil)
+          RubyBox::Session.new(client_id: config[:client_id],
+                               client_secret: config[:client_secret],
+                               access_token: token,
+                               refresh_token: refresh_token)
+        end
+
+        # If there is an active session, {@token} will be set by {BrowseEverythingController} using data stored in the
+        # session. However, if there is no prior session, or the token has expired, we reset it here using # a new
+        # access_token received from {#box_session}.
+        #
+        # @param [OAuth2::AccessToken] access_token
+        def register_access_token(access_token)
+          @token = {
+            'token' => access_token.token,
+            'refresh_token' => access_token.refresh_token,
+            'expires_at' => access_token.expires_at
+          }
+        end
+
+        def box_token
+          return unless @token
+          @token.fetch('token', nil)
+        end
+
+        def box_refresh_token
+          return unless @token
+          @token.fetch('refresh_token', nil)
+        end
+
+        def expiration_time
+          return unless @token
+          @token.fetch('expires_at', nil).to_i
+        end
+
+        # Used to represent the ".." parent directory of the folder
+        def parent_directory(folder)
+          BrowseEverything::FileEntry.new(Pathname(folder.name).join('..'), '', '..', 0, Time.current, true)
+        end
+
+        def directory_entry(f)
+          BrowseEverything::FileEntry.new(f.id, "#{key}:#{f.id}", f.name, f.size, f.created_at, f.type == 'folder')
         end
     end
   end
