@@ -7,7 +7,8 @@
 This Gem allows your rails application to access user files from cloud storage.
 Currently there are drivers implemented for [Dropbox](http://www.dropbox.com),
 [Skydrive](https://skydrive.live.com/), [Google Drive](http://drive.google.com),
-[Box](http://www.box.com), and a server-side directory share.
+[Box](http://www.box.com), [Amazon S3](https://aws.amazon.com/s3/),
+and a server-side directory share.
 
 The gem uses [OAuth](http://oauth.net/) to connect to a user's account and
 generate a list of single use urls that your application can then use to
