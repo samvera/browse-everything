@@ -44,7 +44,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'vcr'
   spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'factory_girl_rails'
-  spec.add_development_dependency 'engine_cart', '~> 0.10'
+  spec.add_development_dependency 'engine_cart', '~> 1.0'
   spec.add_development_dependency 'capybara'
   spec.add_development_dependency 'jasmine', '~> 2.3'
   spec.add_development_dependency 'coveralls'
