@@ -12,11 +12,12 @@
 #   :client_id: YOUR_GOOGLE_API_CLIENT_ID
 #   :client_secret: YOUR_GOOGLE_API_CLIENT_SECRET
 # s3:
-#   :app_key: YOUR_AWS_S3_KEY
-#   :app_secret: YOUR_AWS_S3_SECRET
 #   :bucket: YOUR_AWS_S3_BUCKET
-#   :region: YOUR_AWS_S3_REGION # default: us-east-1
-#   :signed_url: true # set to false for public urls
+#   :response_type: :signed_url # set to :public_url for public urls or :s3_uri for an s3://BUCKET/KEY uri
+#   :app_key: YOUR_AWS_S3_KEY       # :app_key, :app_secret, and :region can be specified
+#   :app_secret: YOUR_AWS_S3_SECRET # explicitly here, or left out to use system-configured
+#   :region: YOUR_AWS_S3_REGION     # defaults.
+#   See https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/
 # sky_drive:
 #   :client_id: YOUR_MS_LIVE_CONNECT_CLIENT_ID
 #   :client_secret: YOUR_MS_LIVE_CONNECT_CLIENT_SECRET
