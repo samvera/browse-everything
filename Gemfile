@@ -28,6 +28,8 @@ else
   end
 
   case ENV['RAILS_VERSION']
+  when /^5.1/
+    gem 'capybara', '~> 2.13.0'
   when /^4.2/
     gem 'responders', '~> 2.0'
     gem 'sass-rails', '>= 5.0'
