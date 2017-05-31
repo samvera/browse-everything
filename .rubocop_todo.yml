@@ -64,12 +64,10 @@ Rails/OutputSafety:
 Rails/TimeZone:
   Exclude:
     - 'lib/browse_everything/driver/google_drive.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
     - 'lib/browse_everything/retriever.rb'
     - 'spec/unit/browse_everything_helper_spec.rb'
     - 'spec/unit/file_entry_spec.rb'
     - 'spec/unit/retriever_spec.rb'
-    - 'spec/unit/sky_drive_spec.rb'
     - 'spec/views/browse_everything/_file.html.erb_spec.rb'
 
 # Offense count: 3
@@ -96,7 +94,6 @@ Style/FileName:
 Style/GuardClause:
   Exclude:
     - 'lib/browse_everything/driver/google_drive.rb'
-    - 'lib/browse_everything/driver/sky_drive.rb'
 
 # Offense count: 1
 Style/MultilineBlockChain:
@@ -108,22 +105,6 @@ Style/MultilineBlockChain:
 Style/MultilineBlockLayout:
   Exclude:
     - 'spec/unit/dropbox_spec.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: symmetrical, new_line, same_line
-Style/MultilineHashBraceLayout:
-  Exclude:
-    - 'spec/unit/sky_drive_spec.rb'
-
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
-# SupportedStyles: aligned, indented, indented_relative_to_receiver
-Style/MultilineMethodCallIndentation:
-  Exclude:
-    - 'spec/unit/sky_drive_spec.rb'
 
 # Offense count: 1
 # Configuration parameters: NamePrefix, NamePrefixBlacklist, NameWhitelist.
