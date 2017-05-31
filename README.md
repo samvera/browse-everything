@@ -18,8 +18,9 @@ download the files.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add this lines to your application's Gemfile:
 
+    gem 'jquery-rails'
     gem 'browse-everything'
 
 And then execute:
@@ -44,7 +45,13 @@ If you prefer not to use the generator, or need info on how to set up providers 
 
 Add `@import "browse_everything";` to your application.css.scss
 
-Add `//= require browse_everything` to your application.js
+In `app/assets/javascripts/application.js` include jquery and the BrowseEverything
+
+```javascript
+//= require jquery
+//= require browse_everything
+```
+
 
 ## Usage
 
