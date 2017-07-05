@@ -17,7 +17,10 @@ class TestAppGenerator < Rails::Generators::Base
 
   def inject_javascript
     insert_into_file 'app/assets/javascripts/application.js', after: '//= require_tree .' do
-      "\n//= require browse_everything"
+      %(
+        //= require jquery
+        //= require browse_everything
+      )
     end
   end
 
