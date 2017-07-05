@@ -7,7 +7,8 @@
 This Gem allows your rails application to access user files from cloud storage.
 Currently there are drivers implemented for [Dropbox](http://www.dropbox.com),
 [Skydrive](https://skydrive.live.com/), [Google Drive](http://drive.google.com),
-[Box](http://www.box.com), and a server-side directory share.
+[Box](http://www.box.com), [Amazon S3](https://aws.amazon.com/s3/),
+and a server-side directory share.
 
 The gem uses [OAuth](http://oauth.net/) to connect to a user's account and
 generate a list of single use urls that your application can then use to
@@ -17,8 +18,9 @@ download the files.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add this lines to your application's Gemfile:
 
+    gem 'jquery-rails'
     gem 'browse-everything'
 
 And then execute:
@@ -43,7 +45,13 @@ If you prefer not to use the generator, or need info on how to set up providers 
 
 Add `@import "browse_everything";` to your application.css.scss
 
-Add `//= require browse_everything` to your application.js
+In `app/assets/javascripts/application.js` include jquery and the BrowseEverything
+
+```javascript
+//= require jquery
+//= require browse_everything
+```
+
 
 ## Usage
 

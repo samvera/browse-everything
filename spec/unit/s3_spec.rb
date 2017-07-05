@@ -1,13 +1,43 @@
 include BrowserConfigHelper
 
 describe BrowseEverything::Driver::FileSystem do
-  before(:all)  { stub_configuration   }
-  after(:all)   { unstub_configuration }
-  let(:browser) { BrowseEverything::Browser.new(url_options) }
+  before(:all)   { stub_configuration   }
+  after(:all)    { unstub_configuration }
+  let(:browser)  { BrowseEverything::Browser.new(url_options) }
   let(:provider) { browser.providers['s3'] }
+  subject        { provider }
 
-  it '#validate_config' do
-    expect { BrowseEverything::Driver::S3.new({}) }.to raise_error(BrowseEverything::InitializationError)
+  describe 'defaults' do
+    its(:icon)   { is_expected.to eq('amazon')  }
+    its(:itself) { is_expected.to be_authorized }
+  end
+
+  describe 'configuration' do
+    it '#validate_config' do
+      expect { BrowseEverything::Driver::S3.new({}) }.to raise_error(BrowseEverything::InitializationError)
+    end
+
+    it 'rejects app_key if app_secret is missing' do
+      expect { BrowseEverything::Driver::S3.new(bucket: 'bucket', app_key: 'APP_KEY') }.to raise_error(BrowseEverything::InitializationError)
+    end
+
+    it 'rejects app_secret if app_key is missing' do
+      expect { BrowseEverything::Driver::S3.new(bucket: 'bucket', app_secret: 'APP_SECRET') }.to raise_error(BrowseEverything::InitializationError)
+    end
+
+    it 'accepts app_key and app_secret together' do
+      expect { BrowseEverything::Driver::S3.new(bucket: 'bucket', app_key: 'APP_KEY', app_secret: 'APP_SECRET') }.not_to raise_error
+    end
+
+    it 'rejects an invalid response type' do
+      expect { BrowseEverything::Driver::S3.new(bucket: 'bucket', response_type: :foo) }.to raise_error(BrowseEverything::InitializationError)
+    end
+
+    it 'deprecates :signed_url' do
+      driver = BrowseEverything::Driver::S3.new(bucket: 'bucket', signed_url: false)
+      expect(driver.config).not_to have_key(:signed_url)
+      expect(driver.config[:response_type]).to eq(:public_url)
+    end
   end
 
   describe '#contents' do
@@ -71,6 +101,33 @@ describe BrowseEverything::Driver::FileSystem do
         its(:type)     { is_expected.to eq('image/png')       }
         its(:size)     { is_expected.to eq(1_511_860) }
         specify        { is_expected.not_to be_container }
+      end
+
+      context '#link_for' do
+        subject { contents[2] }
+        before do
+          object = instance_double(Aws::S3::Object)
+          allow(object).to receive(:presigned_url).and_return('https://s3.amazonaws.com/presigned_url')
+          allow(object).to receive(:public_url).and_return('https://s3.amazonaws.com/public_url')
+          allow(object).to receive(:bucket_name).and_return('s3.bucket')
+          allow(object).to receive(:key).and_return('foo/quux.png')
+          allow(provider.bucket).to receive(:object).and_return(object)
+        end
+
+        it ':signed_url' do
+          provider.config[:response_type] = :signed_url
+          expect(provider.link_for('foo/quux.png')).to eq('https://s3.amazonaws.com/presigned_url')
+        end
+
+        it ':public_url' do
+          provider.config[:response_type] = :public_url
+          expect(provider.link_for('foo/quux.png')).to eq('https://s3.amazonaws.com/public_url')
+        end
+
+        it ':s3_uri' do
+          provider.config[:response_type] = :s3_uri
+          expect(provider.link_for('foo/quux.png')).to eq('s3://s3.bucket/foo/quux.png')
+        end
       end
     end
   end

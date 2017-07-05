@@ -16,7 +16,7 @@ module BrowseEverything
         begin
           driver_klass = BrowseEverything::Driver.const_get((config[:driver] || driver.to_s).camelize.to_sym)
           @providers[driver] = driver_klass.new(config.merge(url_options: url_options))
-        rescue
+        rescue NameError
           Rails.logger.warn "Unknown provider: #{driver}"
         end
       end

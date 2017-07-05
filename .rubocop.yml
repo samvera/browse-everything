@@ -11,6 +11,9 @@ AllCops:
 Rails:
   Enabled: true
 
+Metrics/ClassLength:
+  Max: 130
+  
 # Configuration parameters: AllowURI, URISchemes.
 Metrics/LineLength:
   Max: 400

@@ -53,7 +53,7 @@ module BrowseEverything
           yield(chunk, retrieved, spec['file_size'].to_i)
         end
       else
-        raise URI::BadURIError, "Unknown URI scheme: #{uri.scheme}"
+        raise URI::BadURIError, "Unknown URI scheme: #{url.scheme}"
       end
     end
   end
