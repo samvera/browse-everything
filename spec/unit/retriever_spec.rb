@@ -6,6 +6,24 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
   let(:data_with_spaces) { File.open(datafile_with_spaces, 'rb', &:read) }
   let(:size) { File.size(datafile) }
 
+  context 'with a non-URI' do
+    let(:spec) do
+      {
+        '0' => {
+          'url' => '/some/dir/file.pdf',
+          'file_name' => 'file.pdf',
+          'file_size' => size.to_s
+        }
+      }
+    end
+
+    describe '#retrieve' do
+      it 'raises an error' do
+        expect { retriever.retrieve(spec['0']) }.to raise_error(URI::BadURIError)
+      end
+    end
+  end
+
   context 'http://' do
     let(:spec) do
       {
