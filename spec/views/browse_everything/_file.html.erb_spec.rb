@@ -33,6 +33,10 @@ describe 'browse_everything/_file.html.erb', type: :view do
       it 'draws link' do
         expect(page).to have_selector('a.ev-link')
       end
+
+      it 'provides hover text' do
+        expect(page.find('td.ev-file')['title']).to eq(file.name)
+      end
     end
 
     context 'max not configured' do
