@@ -323,6 +323,10 @@ $ ->
 
 auto_toggle = ->
   triggers = $('*[data-toggle=browse-everything]')
+  $.ajaxSetup({
+      headers: { 'X-CSRF-TOKEN': (Rails || $.rails).csrfToken() || '' }
+  });
+
   triggers.each () ->
     ctx = $(this).data('ev-state')
     $(this).browseEverything($(this).data()) unless ctx?

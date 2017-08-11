@@ -47,6 +47,6 @@
   </td>
 
   <td role="gridcell" class="ev-file-date">
-    <%= file.mtime.strftime('%F %R') %>
+    <%= file.mtime.strftime('%F %R') if file.mtime %>
   </td>
 </tr>
