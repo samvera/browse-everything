@@ -25,14 +25,15 @@ VCR.configure do |c|
   c.ignore_localhost = true
 end
 
-Capybara.default_driver = :rack_test      # This is a faster driver
-Capybara.javascript_driver = :poltergeist # This is slower
-Capybara.default_max_wait_time = ENV['TRAVIS'] ? 30 : 15
+# Requires supporting ruby files with custom matchers and macros, etc,
+# in spec/support/ and its subdirectories.
+Dir[Pathname.new(File.expand_path('../support/**/*.rb', __FILE__))].each { |f| require f }
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = [:should, :expect]
   end
+  config.include WaitForAjax, type: :feature
 end
 
 module BrowserConfigHelper
