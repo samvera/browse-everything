@@ -53,7 +53,7 @@ module BrowseEverything
       end
 
       def link_for(id)
-        file = drive.get_file(id)
+        file = drive.get_file(id, fields: 'id, name, size, web_content_link')
         auth_header = { 'Authorization' => "Bearer #{auth_client.access_token}" }
         extras = {
           auth_header: auth_header,
