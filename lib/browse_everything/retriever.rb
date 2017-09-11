@@ -32,6 +32,7 @@ module BrowseEverything
       end
 
       url = ::Addressable::URI.parse(spec['url'])
+      file_size = spec.fetch('file_size', 0).to_i
       retrieved = 0
       case url.scheme
       when 'file'
@@ -39,7 +40,7 @@ module BrowseEverything
           until f.eof?
             chunk = f.read(chunk_size)
             retrieved += chunk.length
-            yield(chunk, retrieved, spec['file_size'].to_i)
+            yield(chunk, retrieved, file_size)
           end
         end
       when /https?/
@@ -48,9 +49,11 @@ module BrowseEverything
           headers[k] = v.tr('+', ' ')
         end
 
-        HTTParty.get(url.to_s, headers: headers) do |chunk|
+        stream_body = file_size > 500.megabytes
+
+        HTTParty.get(url.to_s, stream_body: stream_body, headers: headers) do |chunk|
           retrieved += chunk.length
-          yield(chunk, retrieved, spec['file_size'].to_i)
+          yield(chunk, retrieved, file_size)
         end
       else
         raise URI::BadURIError, "Unknown URI scheme: #{url.scheme}"
