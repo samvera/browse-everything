@@ -9,7 +9,7 @@
       </tr>
     </thead>
     <% provider.contents(browse_path).each_with_index do |file, index| %>
-      <% next if file.relative_parent_path? %>
+      <% next if file.relative_parent_path? or file.size.nil? %>
       <%= render :partial => 'file', :locals => { :file => file, :index => index,
         :path => browse_everything_engine.contents_path(provider_name, file.id), :parent => params[:parent] } %>
     <% end %>
