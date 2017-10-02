@@ -30,24 +30,24 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: ENV
     if ENV['BOX_DEVELOPER_TOKEN']
       {
         'token' => ENV['BOX_DEVELOPER_TOKEN'],
-        'expires_at' => Time.now + 1.hour
+        'expires_at' => Time.current + 1.hour
       }
     else
       {
         'token' => 'TOKEN',
         'refresh_token' => 'REFRESH_TOKEN',
-        'expires_at' => Time.now + 1.hour
+        'expires_at' => Time.current + 1.hour
       }
     end
   end
 
-  subject    { provider }
+  subject { provider }
 
-  before {
+  before do
     allow(provider).to receive(:refresh!) {
-      token['expires_at'] = Time.now + 2.hours
+      token['expires_at'] = Time.current + 2.hours
     }
-  }
+  end
 
   its(:name) { is_expected.to eq('Box') }
   its(:key)  { is_expected.to eq('box') }
@@ -63,7 +63,6 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: ENV
     subject { provider.auth_link }
 
     it { is_expected.to start_with('https://app.box.com/api/oauth2/authorize') }
-    #it { is_expected.to include('browse%2Fconnect') }
     it { is_expected.to include('response_type') }
   end
 
@@ -73,19 +72,19 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: ENV
       it { is_expected.to be(false) }
     end
     context 'when the access tokens are registered and not expired' do
-      before { provider.token = token.merge('expires_at' => Time.now.to_i + 360) }
+      before { provider.token = token.merge('expires_at' => Time.current + 1.hour) }
       it { is_expected.to be(true) }
     end
     context 'when the access tokens are registered but no expiration time' do
-      before {
+      before do
         expired_token = token
         expired_token.delete('expires_at')
         provider.token = expired_token
-      }
+      end
       it { is_expected.to be(false) }
     end
     context 'when the access tokens are registered but expired' do
-      before { provider.token = token.merge('expires_at' => Time.now.to_i - 360) }
+      before { provider.token = token.merge('expires_at' => Time.current - 1.hour) }
       it { is_expected.to be(false) }
     end
   end

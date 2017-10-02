@@ -59,12 +59,11 @@ module BrowseEverything
       # @return [Hash]
       # Gets the appropriate tokens from Box using the access code returned from :auth_link:
       def connect(params, _data)
-        #register_access_token(box_session.get_access_token(params[:code]))
-        register_access_token(Boxr::get_tokens(params[:code], client_id: config[:client_id], client_secret: config[:client_secret]))
+        register_access_token(Boxr.get_tokens(params[:code], client_id: config[:client_id], client_secret: config[:client_secret]))
       end
 
       def refresh!
-        Boxr::refresh_tokens(box_refresh_token,
+        Boxr.refresh_tokens(box_refresh_token,
                             client_id: config[:client_id],
                             client_secret: config[:client_secret])
       end
@@ -73,17 +72,17 @@ module BrowseEverything
 
         def token_expired?
           return true if expiration_time.nil?
-          expiration_int = expiration_time.is_a?(String) ? Time.parse(expiration_time).to_i : expiration_time.to_i
-          Time.now.to_i > expiration_int
+          expiration_int = expiration_time.is_a?(String) ? Time.zone.parse(expiration_time).to_i : expiration_time.to_i
+          Time.current.to_i > expiration_int
         end
 
         def box_client
           refresh! if token_expired?
 
-          Boxr::Client.new( box_token,
-                            refresh_token: box_refresh_token,
-                            client_id: config[:client_id],
-                            client_secret: config[:client_secret])
+          Boxr::Client.new(box_token,
+                           refresh_token: box_refresh_token,
+                           client_id: config[:client_id],
+                           client_secret: config[:client_secret])
         end
 
         def box_session(token = nil, refresh_token = nil)
@@ -94,7 +93,7 @@ module BrowseEverything
         end
 
         def box_auth_url
-          Boxr::oauth_url('box', client_id: config[:client_id]).to_s
+          Boxr.oauth_url('box', client_id: config[:client_id]).to_s
         end
 
         # If there is an active session, {@token} will be set by {BrowseEverythingController} using data stored in the
@@ -106,7 +105,7 @@ module BrowseEverything
           @token = {
             'token' => access_token.access_token,
             'refresh_token' => access_token.refresh_token,
-            'expires_at' => (Time.now + access_token.expires_in)
+            'expires_at' => (Time.current + access_token.expires_in)
           }
         end
 
@@ -131,7 +130,7 @@ module BrowseEverything
         end
 
         def directory_entry(f)
-          BrowseEverything::FileEntry.new(f.id, "#{key}:#{f.id}", f.name, f.size, Time.parse(f.created_at), f.type == 'folder')
+          BrowseEverything::FileEntry.new(f.id, "#{key}:#{f.id}", f.name, f.size, Time.zone.parse(f.created_at), f.type == 'folder')
         end
     end
   end
