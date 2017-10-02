@@ -37,10 +37,11 @@ module BrowseEverything
       # @param [String] id of the file in Box
       # @return [Array<String, Hash>]
       def link_for(id)
+        refresh!
         file = box_client.file_from_id(id)
-        download_url = file.download_url
+        download_url = [Boxr::Client::FILES_URI, id, 'content'].join('/')
         auth_header = { 'Authorization' => "Bearer #{@token}" }
-        extras = { auth_header: auth_header, expires: 1.hour.from_now, file_name: file.name, file_size: file.size.to_i }
+        extras = { auth_header: auth_header, expires: expiration_time, file_name: file.name, file_size: file.size.to_i }
         [download_url, extras]
       end
 
@@ -52,7 +53,7 @@ module BrowseEverything
 
       # @return [Boolean]
       def authorized?
-        box_token.present? && box_refresh_token.present? && !token_expired?
+        box_token.present? && !token_expired?
       end
 
       # @return [Hash]
@@ -62,26 +63,27 @@ module BrowseEverything
         register_access_token(Boxr::get_tokens(params[:code], client_id: config[:client_id], client_secret: config[:client_secret]))
       end
 
+      def refresh!
+        Boxr::refresh_tokens(box_refresh_token,
+                            client_id: config[:client_id],
+                            client_secret: config[:client_secret])
+      end
+
       private
 
         def token_expired?
           return true if expiration_time.nil?
-          Time.now.to_i > Time.parse(expiration_time).to_i
+          expiration_int = expiration_time.is_a?(String) ? Time.parse(expiration_time).to_i : expiration_time.to_i
+          Time.now.to_i > expiration_int
         end
 
         def box_client
-          if token_expired?
-            # session = box_session(box_token)
-            # register_access_token(session.refresh_token(box_refresh_token))
-            Boxr::refresh_tokens(box_refresh_token,
-                                client_id: config[:client_id],
-                                client_secret: config[:client_secret])
-          end
+          refresh! if token_expired?
+
           Boxr::Client.new( box_token,
                             refresh_token: box_refresh_token,
                             client_id: config[:client_id],
                             client_secret: config[:client_secret])
-          #RubyBox::Client.new(box_session(box_token, box_refresh_token))
         end
 
         def box_session(token = nil, refresh_token = nil)
