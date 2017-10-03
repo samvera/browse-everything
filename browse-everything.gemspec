@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'addressable', '~> 2.5'
   spec.add_dependency 'google_drive'
   spec.add_dependency 'dropbox-sdk', '>= 1.6.2'
-  spec.add_dependency 'ruby-box'
+  spec.add_dependency 'boxr'
   spec.add_dependency 'sass-rails'
   spec.add_dependency 'bootstrap-sass', '~> 3.2'
   spec.add_dependency 'font-awesome-rails'
