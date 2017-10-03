@@ -12,7 +12,6 @@ module BrowseEverything
     autoload :Base,        'browse_everything/driver/base'
     autoload :FileSystem,  'browse_everything/driver/file_system'
     autoload :Dropbox,     'browse_everything/driver/dropbox'
-    autoload :SkyDrive,    'browse_everything/driver/sky_drive'
     autoload :Box,         'browse_everything/driver/box'
     autoload :GoogleDrive, 'browse_everything/driver/google_drive'
     autoload :S3,          'browse_everything/driver/s3'

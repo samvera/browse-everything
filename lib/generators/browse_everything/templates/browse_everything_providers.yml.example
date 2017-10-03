@@ -18,6 +18,3 @@
 #   :app_secret: YOUR_AWS_S3_SECRET # explicitly here, or left out to use system-configured
 #   :region: YOUR_AWS_S3_REGION     # defaults.
 #   See https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/
-# sky_drive:
-#   :client_id: YOUR_MS_LIVE_CONNECT_CLIENT_ID
-#   :client_secret: YOUR_MS_LIVE_CONNECT_CLIENT_SECRET
