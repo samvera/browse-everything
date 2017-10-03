@@ -3,7 +3,6 @@ module BrowseEverything
     # Driver for accessing the Box API (https://www.box.com/home)
     class Box < Base
       require 'boxr'
-      require 'ruby-box'
 
       ITEM_LIMIT = 99999
 
