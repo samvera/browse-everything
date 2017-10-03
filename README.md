@@ -1,6 +1,6 @@
 [![Gem Version](https://badge.fury.io/rb/browse-everything.png)](http://badge.fury.io/rb/browse-everything)
-[![Build Status](https://travis-ci.org/projecthydra/browse-everything.svg?branch=master)](https://travis-ci.org/projecthydra/browse-everything)
-[![Coverage Status](https://coveralls.io/repos/projecthydra/browse-everything/badge.svg?branch=master&service=github)](https://coveralls.io/github/projecthydra/browse-everything?branch=master)
+[![Build Status](https://travis-ci.org/samvera/browse-everything.svg?branch=master)](https://travis-ci.org/samvera/browse-everything)
+[![Coverage Status](https://coveralls.io/repos/samvera/browse-everything/badge.svg?branch=master&service=github)](https://coveralls.io/github/samvera/browse-everything?branch=master)
 
 # BrowseEverything
 
@@ -39,7 +39,7 @@ After installing the gem, run the generator
 
 This generator will set up the _config/browse_everything_providers.yml_ file and add the browse-everything engine to your application's routes.
 
-If you prefer not to use the generator, or need info on how to set up providers in the browse_everything_providers.yml, use the info on [Configuring browse-everything](https://github.com/projecthydra/browse-everything/wiki/Configuring-browse-everything).
+If you prefer not to use the generator, or need info on how to set up providers in the browse_everything_providers.yml, use the info on [Configuring browse-everything](https://github.com/samvera/browse-everything/wiki/Configuring-browse-everything).
 
 ### Include the CSS and JavaScript
 
@@ -58,7 +58,7 @@ In `app/assets/javascripts/application.js` include jquery and the BrowseEverythi
 ### Adding Providers
 In order to connect to a provider like [Dropbox](http://www.dropbox.com),
 [Google Drive](http://drive.google.com), or
-[Box](http://www.box.com), you must provide API keys in _config/browse_everything_providers.yml_.  For info on how to edit this file, see [Configuring browse-everything](https://github.com/projecthydra/browse-everything/wiki/Configuring-browse-everything)
+[Box](http://www.box.com), you must provide API keys in _config/browse_everything_providers.yml_.  For info on how to edit this file, see [Configuring browse-everything](https://github.com/samvera/browse-everything/wiki/Configuring-browse-everything)
 
 ### Views
 
@@ -103,7 +103,7 @@ $('#browse').browseEverything({
 })
 ```
 
-See [JavaScript Methods](https://github.com/projecthydra/browse-everything/wiki/JavaScript-Methods) for more info on using javascript to trigger browse-everything.
+See [JavaScript Methods](https://github.com/samvera/browse-everything/wiki/JavaScript-Methods) for more info on using javascript to trigger browse-everything.
 
 ### The Results (Data Structure)
 
@@ -133,7 +133,7 @@ If you initialized browse-everything via JavaScript, the results data passed to 
   }
 ]
 ```
-See [JavaScript Methods](https://github.com/projecthydra/browse-everything/wiki/JavaScript-Methods) for more info on using javascript to trigger browse-everything.
+See [JavaScript Methods](https://github.com/samvera/browse-everything/wiki/JavaScript-Methods) for more info on using javascript to trigger browse-everything.
 
 If you initialized browse-everything via data-attributes and set the _target_ option (via the _data-target_ attribute or via the _target_ option on the javascript method), the results data be written as hidden fields in the `<form>` you've specified as the target.  When the user submits that form, the results will look like this:
 ```ruby
@@ -193,4 +193,4 @@ create a fully-functioning demo app in `spec/internal` (though you will have to 
 
 ## Help
 
-For help with Questioning Authority, contact <hydra-tech@googlegroups.com>.
+For help with Browse Everything, contact <samvera-tech@googlegroups.com>.
