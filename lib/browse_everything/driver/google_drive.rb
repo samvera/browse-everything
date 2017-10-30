@@ -86,15 +86,15 @@ module BrowseEverything
       private
 
         def authorization
-          return @auth_client unless @auth_client.nil?
+          return auth_client unless auth_client.expired?
+          self.token = auth_client.fetch_access_token!
           return nil unless token.present?
           auth_client.update_token!(token)
-          self.token = auth_client.fetch_access_token! if auth_client.expired?
           auth_client
         end
 
         def auth_client
-          @auth_client ||= Signet::OAuth2::Client.new token_credential_uri: 'https://www.googleapis.com/oauth2/v3/token',
+          @auth_client ||= Signet::OAuth2::Client.new token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
                                                       authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
                                                       scope: 'https://www.googleapis.com/auth/drive',
                                                       client_id: config[:client_id],
