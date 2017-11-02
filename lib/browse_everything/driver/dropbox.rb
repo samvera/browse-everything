@@ -1,63 +1,99 @@
-require 'dropbox_sdk'
+require 'dropbox_api'
 
 module BrowseEverything
   module Driver
     class Dropbox < Base
-      CONFIG_KEYS = [:app_key, :app_secret].freeze
+      class FileEntryFactory
+        def self.build(metadata:, key:)
+          factory_klass = klass_for metadata
+          factory_klass.build(metadata: metadata, key: key)
+        end
+
+        class << self
+          private def klass_for(metadata)
+            case metadata
+            when DropboxApi::Metadata::File
+              FileFactory
+            else
+              ResourceFactory
+            end
+          end
+        end
+      end
+
+      class ResourceFactory
+        def self.build(metadata:, key:)
+          path = metadata.path_display
+          BrowseEverything::FileEntry.new(
+            path,
+            [key, path].join(':'),
+            File.basename(path),
+            nil,
+            nil,
+            true
+          )
+        end
+      end
+
+      class FileFactory
+        def self.build(metadata:, key:)
+          path = metadata.path_display
+          BrowseEverything::FileEntry.new(
+            path,
+            [key, path].join(':'),
+            File.basename(path),
+            metadata.size,
+            metadata.client_modified,
+            false
+          )
+        end
+      end
 
       def icon
         'dropbox'
       end
 
       def validate_config
-        return if CONFIG_KEYS.all? { |key| config[key].present? }
-        raise BrowseEverything::InitializationError, "Dropbox driver requires #{CONFIG_KEYS.inspect}"
+        raise BrowseEverything::InitializationError, 'Dropbox driver requires a :client_id argument' unless config[:client_id]
+        raise BrowseEverything::InitializationError, 'Dropbox driver requires a :client_secret argument' unless config[:client_secret]
       end
 
-      # @return [Array<BrowseEverything::FileEntry>]
       def contents(path = '')
-        path.sub!(%r{ /^[\/.]+/}, '')
-        result = add_directory_entry(path)
-        result += client.metadata(path)['contents'].collect { |info| make_file_entry(info) }
-        result
-      end
-
-      def add_directory_entry(path)
-        return [] if path.empty?
-        [BrowseEverything::FileEntry.new(
-          Pathname(path).join('..'),
-          '', '..', 0, Time.zone.now, true
-        )]
-      end
-
-      def make_file_entry(info)
-        path = info['path']
-        BrowseEverything::FileEntry.new(
-          path,
-          [key, path].join(':'),
-          File.basename(path),
-          info['bytes'],
-          Time.zone.parse(info['modified']),
-          info['is_dir']
-        )
-      end
-
-      def link_for(path)
-        [client.media(path)['url'], { expires: 4.hours.from_now, file_name: File.basename(path), file_size: client.metadata(path)['bytes'].to_i }]
+        result = client.list_folder(path)
+        result.entries.map { |entry| FileEntryFactory.build(metadata: entry, key: key) }
       end
 
       def details(path)
-        contents(path).first
+        metadata = client.get_metadata(path)
+        FileEntryFactory.build(metadata: metadata, key: key)
+      end
+
+      def download(path)
+        temp_file = Tempfile.open(File.basename(path), encoding: 'ascii-8bit')
+        client.download(path) do |chunk|
+          temp_file.write chunk
+        end
+        temp_file.close
+        temp_file
+      end
+
+      def uri_for(path)
+        temp_file = download(path)
+        uri = ::Addressable::URI.new(scheme: 'file', path: temp_file.path)
+        uri.to_s
+      end
+
+      def link_for(path)
+        [uri_for(path), {}]
       end
 
       def auth_link
-        [auth_flow.start('dropbox'), @csrf]
+        authenticator.authorize_url
       end
 
-      def connect(params, data)
-        @csrf = data
-        @token, _user, _state = auth_flow.finish(params)
-        @token
+      def connect(params, _data)
+        auth_bearer = authenticator.get_token(params[:code])
+        self.token = auth_bearer.token
       end
 
       def authorized?
@@ -66,13 +102,12 @@ module BrowseEverything
 
       private
 
-        def auth_flow
-          @csrf ||= {}
-          DropboxOAuth2Flow.new(config[:app_key], config[:app_secret], callback.to_s, @csrf, 'token')
+        def authenticator
+          @authenticator ||= DropboxApi::Authenticator.new(config[:client_id], config[:client_secret])
         end
 
         def client
-          DropboxClient.new(token)
+          DropboxApi::Client.new(token)
         end
     end
   end
