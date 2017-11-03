@@ -3,23 +3,23 @@ include BrowserConfigHelper
 describe BrowseEverything::Browser do
   let(:file_config) do
     {
-      file_system: { home: '/file/config/home' },
-      dropbox:    { app_key: 'FileConfigKey', app_secret: 'FileConfigSecret' }
+      file_system:  { home: '/file/config/home' },
+      dropbox:      { client_id: 'DropboxId', client_secret: 'DropboxClientSecret' }
     }.to_yaml
   end
 
   let(:global_config) do
     {
-      file_system: { home: '/global/config/home' },
-      dropbox:    { app_key: 'GlobalConfigKey', app_secret: 'GlobalConfigSecret' }
+      file_system:  { home: '/global/config/home' },
+      dropbox:      { client_id: 'DropboxId', client_secret: 'DropboxClientSecret' }
     }
   end
 
   let(:local_config) do
     {
-      file_system: { home: '/local/config/home' },
-      dropbox:    { app_key: 'LocalConfigKey', app_secret: 'LocalConfigSecret' },
-      url_options: url_options
+      file_system:  { home: '/local/config/home' },
+      dropbox:      { client_id: 'DropboxId', client_secret: 'DropboxClientSecret' },
+      url_options:  url_options
     }
   end
 
@@ -33,7 +33,7 @@ describe BrowseEverything::Browser do
     end
 
     it 'uses the file configuration' do
-      expect(browser.providers[:dropbox].config[:app_key]).to eq('FileConfigKey')
+      expect(browser.providers[:file_system].config[:home]).to eq('/file/config/home')
     end
   end
 
@@ -47,7 +47,7 @@ describe BrowseEverything::Browser do
     end
 
     it 'uses the global configuration' do
-      expect(browser.providers[:dropbox].config[:app_key]).to eq('GlobalConfigKey')
+      expect(browser.providers[:file_system].config[:home]).to eq('/global/config/home')
     end
   end
 
@@ -59,7 +59,7 @@ describe BrowseEverything::Browser do
     end
 
     it 'uses the local configuration' do
-      expect(browser.providers[:dropbox].config[:app_key]).to eq('LocalConfigKey')
+      expect(browser.providers[:file_system].config[:home]).to eq('/local/config/home')
     end
   end
 

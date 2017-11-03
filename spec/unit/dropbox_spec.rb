@@ -6,15 +6,21 @@ describe BrowseEverything::Driver::Dropbox, vcr: { cassette_name: 'dropbox', rec
 
   let(:browser) { BrowseEverything::Browser.new(url_options) }
   let(:provider) { browser.providers['dropbox'] }
-  let(:auth_params) do {
-    'code' => 'FakeDropboxAuthorizationCodeABCDEFG',
-    'state' => 'GjDcUhPNZrZzdsw%2FghBy2A%3D%3D|dropbox'
-  }
+  let(:provider_yml) do
+    {
+      client_id: 'client-id',
+      client_secret: 'client-secret'
+    }
   end
-  let(:csrf_data) { { 'token' => 'GjDcUhPNZrZzdsw%2FghBy2A%3D%3D' } }
 
-  it '#validate_config' do
-    expect { BrowseEverything::Driver::Dropbox.new({}) }.to raise_error(BrowseEverything::InitializationError)
+  describe '#validate_config' do
+    it 'raises and error with an incomplete configuration' do
+      expect { BrowseEverything::Driver::Dropbox.new({}) }.to raise_error(BrowseEverything::InitializationError)
+    end
+
+    it 'raises and error with a configuration without a client secret' do
+      expect { BrowseEverything::Driver::Dropbox.new(client_id: 'test-client-id') }.to raise_error(BrowseEverything::InitializationError)
+    end
   end
 
   describe 'simple properties' do
@@ -24,101 +30,64 @@ describe BrowseEverything::Driver::Dropbox, vcr: { cassette_name: 'dropbox', rec
     its(:icon) { is_expected.to be_a(String) }
   end
 
-  describe '#auth_link' do
-    subject { provider.auth_link[0] }
+  context 'with a valid configuration' do
+    let(:driver) { described_class.new(provider_yml) }
+    before { driver.connect({ code: 'code' }, {}) }
 
-    it { is_expected.to start_with('https://www.dropbox.com/1/oauth2/authorize') }
-    it { is_expected.to include('browse%2Fconnect') }
-    it { is_expected.to include('state') }
-  end
+    describe '#auth_link' do
+      subject { driver.auth_link }
+      it { is_expected.to start_with('https://www.dropbox.com/oauth2/authorize') }
+    end
 
-  describe 'authorization' do
-    subject { provider }
-    before { provider.connect(auth_params, csrf_data) }
-    it { is_expected.to be_authorized }
-  end
+    describe '#authorized?' do
+      subject { driver }
+      it { is_expected.to be_authorized }
+    end
 
-  describe '#contents' do
-    before { provider.connect(auth_params, csrf_data) }
+    describe '#contents' do
+      context 'within the root folder' do
+        let(:contents) { driver.contents }
 
-    context 'root directory' do
-      let(:contents) { provider.contents('') }
-
-      context '[0]' do
-        subject { contents[0] }
-        its(:name) { is_expected.to eq('Apps')   }
-        specify    { is_expected.to be_container }
-      end
-      context '[1]' do
-        subject { contents[1] }
-        its(:name) { is_expected.to eq('Books')  }
-        specify    { is_expected.to be_container }
-      end
-      context '[4]' do
-        subject { contents[4] }
-        its(:name)     { is_expected.to eq('iPad intro.pdf') }
-        its(:size)     { is_expected.to eq(208218) }
-        its(:location) { is_expected.to eq('dropbox:/iPad intro.pdf') }
-        its(:type)     { is_expected.to eq('application/pdf') }
-        specify        { is_expected.not_to be_container }
+        it 'retrieves all folders the root folders' do
+          expect(contents).not_to be_empty
+          folder_metadata = contents.first
+          expect(folder_metadata).to be_a BrowseEverything::FileEntry
+          expect(folder_metadata.id).to eq '/Photos'
+          expect(folder_metadata.location).to eq 'dropbox:/Photos'
+          expect(folder_metadata.name).to eq 'Photos'
+          expect(folder_metadata.size).to eq nil
+          expect(folder_metadata.mtime).to eq nil
+          expect(folder_metadata.container?).to eq true
+        end
       end
     end
 
-    context 'subdirectory' do
-      let(:contents) { provider.contents('/Writer') }
-      context '[0]' do
-        subject { contents[0] }
+    describe '#details' do
+      subject(:file_metadata) { driver.details('/Getting Started.pdf') }
 
-        its(:name) { is_expected.to eq('..')     }
-        specify    { is_expected.to be_container }
-      end
-      context '[1]' do
-        subject { contents[1] }
-
-        its(:name)     { is_expected.to eq('About Writer.txt') }
-        its(:location) { is_expected.to eq('dropbox:/Writer/About Writer.txt') }
-        its(:type)     { is_expected.to eq('text/plain') }
-        specify        { is_expected.not_to be_container }
-      end
-      context '[2]' do
-        subject { contents[2] }
-
-        its(:name)     { is_expected.to eq('Markdown Test.txt') }
-        its(:location) { is_expected.to eq('dropbox:/Writer/Markdown Test.txt') }
-        its(:type)     { is_expected.to eq('text/plain') }
-        specify        { is_expected.not_to be_container }
-      end
-      context '[3]' do
-        subject { contents[3] }
-
-        its(:name)     { is_expected.to eq('Writer FAQ.txt') }
-        its(:location) { is_expected.to eq('dropbox:/Writer/Writer FAQ.txt') }
-        its(:type)     { is_expected.to eq('text/plain') }
-        specify        { is_expected.not_to be_container }
+      it 'retrieves the metadata for a file' do
+        expect(file_metadata).to be_a BrowseEverything::FileEntry
+        expect(file_metadata.id).to eq '/Getting Started.pdf'
+        expect(file_metadata.location).to eq 'dropbox:/Getting Started.pdf'
+        expect(file_metadata.name).to eq 'Getting Started.pdf'
+        expect(file_metadata.size).to eq 249159
+        expect(file_metadata.mtime).to be_a Time
+        expect(file_metadata.container?).to eq false
       end
     end
 
-    context '#details' do
-      subject { provider.details('') }
-      its(:name) { is_expected.to eq('Apps') }
-    end
-  end
+    describe '#link_for' do
+      subject(:link_args) { driver.link_for('/Getting Started.pdf') }
 
-  describe '#link_for' do
-    before { provider.connect(auth_params, csrf_data) }
+      it 'provides link arguments for accessing the file' do
+        expect(link_args.first).to be_a String
+        expect(link_args.first).to start_with 'file:/'
+        expect(link_args.first).to include 'Getting Started.pdf'
 
-    context '[0]' do
-      let(:link) { provider.link_for('/Writer/Writer FAQ.txt') }
-
-      specify { expect(link[0]).to eq('https://dl.dropboxusercontent.com/1/view/FakeDropboxAccessPath/Writer/Writer%20FAQ.txt') }
-      specify { expect(link[1]).to have_key(:expires) }
-    end
-
-    context '[1]' do
-      let(:link) { provider.link_for('/Writer/Markdown Test.txt') }
-
-      specify { expect(link[0]).to eq('https://dl.dropboxusercontent.com/1/view/FakeDropboxAccessPath/Writer/Markdown%20Test.txt') }
-      specify { expect(link[1]).to have_key(:expires) }
+        File.open(link_args.first.gsub('file:', '')) do |downloaded_file|
+          expect(downloaded_file.read).not_to be_empty
+        end
+      end
     end
   end
 end

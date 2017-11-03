@@ -37,6 +37,16 @@ RSpec/MultipleExpectations:
 RSpec/LeadingSubject:
   Enabled: false
 
+RSpec/ExampleLength:
+  Exclude:
+    - 'spec/unit/dropbox_spec.rb'
+    - 'spec/features/select_files_spec.rb'
+    - 'spec/javascripts/jasmine_spec.rb'
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - 'spec/unit/dropbox_spec.rb'
+
 Style/NumericLiterals:
   MinDigits: 7
 
