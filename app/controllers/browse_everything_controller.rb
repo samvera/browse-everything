@@ -17,6 +17,7 @@ class BrowseEverythingController < ActionController::Base
   end
 
   def auth
+    provider.code = params[:code] if params[:code]
     session["#{provider_name}_token"] = provider.connect(params, session["#{provider_name}_data"])
   end
 
@@ -46,11 +47,15 @@ class BrowseEverythingController < ActionController::Base
                      end # else nil, implicitly
     end
 
+    def session_token(p)
+      return session["#{p.key}_token"] if session["#{p.key}_token"]
+    end
+
     def browser
       if @browser.nil?
         @browser = BrowseEverything::Browser.new(url_options)
         @browser.providers.values.each do |p|
-          p.token = session["#{p.key}_token"]
+          p.token = session_token(p)
         end
       end
       @browser

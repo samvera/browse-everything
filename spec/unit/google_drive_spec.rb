@@ -77,7 +77,7 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
       it 'exposes the authorization endpoint URI' do
         expect(uri).to be_a Addressable::URI
-        expect(uri.to_s).to eq 'https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=CLIENTID&redirect_uri=http://example.com:3000/browse/connect&response_type=code&scope=https://www.googleapis.com/auth/drive'
+        expect(uri.to_s).to eq 'https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=CLIENTID&redirect_uri=http://example.com:3000/browse/connect&response_type=code&scope=https://www.googleapis.com/auth/drive.readonly'
       end
     end
 

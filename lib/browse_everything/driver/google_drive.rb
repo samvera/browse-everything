@@ -4,6 +4,11 @@ module BrowseEverything
       require 'google/apis/drive_v3'
       require 'signet'
 
+      def code=(value)
+        auth_client.code = value
+        super(value)
+      end
+
       def icon
         'google-plus-sign'
       end
@@ -21,8 +26,8 @@ module BrowseEverything
         return to_enum(:contents, path) unless block_given?
         default_params = {
           order_by: 'folder,modifiedTime desc,name',
-          fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,web_content_link)'
-          # page_size: 100
+          fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,web_content_link)',
+          page_size: 1000
         }
         page_token = nil
         begin
@@ -69,11 +74,11 @@ module BrowseEverything
       end
 
       def authorized?
-        token.present?
+        auth_client.access_token.present? && !auth_client.expired?
       end
 
       def connect(params, _data)
-        auth_client.code = params[:code]
+        self.code = params[:code] if params[:code]
         self.token = auth_client.fetch_access_token!
       end
 
@@ -94,12 +99,17 @@ module BrowseEverything
         end
 
         def auth_client
-          @auth_client ||= Signet::OAuth2::Client.new token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
-                                                      authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
-                                                      scope: 'https://www.googleapis.com/auth/drive',
-                                                      client_id: config[:client_id],
-                                                      client_secret: config[:client_secret],
-                                                      redirect_uri: callback
+          @auth_client ||= (
+            auth_client = Signet::OAuth2::Client.new(token_credential_uri: 'https://www.googleapis.com/oauth2/v4/token',
+                                                     authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
+                                                     scope: Google::Apis::DriveV3::AUTH_DRIVE_READONLY,
+                                                     client_id: config[:client_id],
+                                                     client_secret: config[:client_secret],
+                                                     redirect_uri: callback)
+            auth_client.access_token = token['access_token'] if token.present?
+            auth_client.expires_at = Time.now + token['expires_in'] if token.present?
+            auth_client
+          )
         end
     end
   end
