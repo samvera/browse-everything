@@ -58,7 +58,7 @@ http_interactions:
   recorded_at: Mon, 30 Oct 2017 13:55:49 GMT
 - request:
     method: get
-    uri: https://www.googleapis.com/drive/v3/files?fields=nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,webContentLink)&orderBy=folder,modifiedTime%20desc,name
+    uri: https://www.googleapis.com/drive/v3/files?fields=nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,webContentLink)&orderBy=folder,modifiedTime%20desc,name&pageSize=1000
     body:
       encoding: UTF-8
       string: ''
@@ -147,7 +147,7 @@ http_interactions:
   recorded_at: Mon, 30 Oct 2017 13:55:50 GMT
 - request:
     method: get
-    uri: https://www.googleapis.com/drive/v3/files?fields=nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,webContentLink)&orderBy=folder,modifiedTime%20desc,name&pageToken=next-page-token
+    uri: https://www.googleapis.com/drive/v3/files?fields=nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,webContentLink)&orderBy=folder,modifiedTime%20desc,name&pageSize=1000&pageToken=next-page-token
     body:
       encoding: UTF-8
       string: ''
