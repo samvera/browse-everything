@@ -84,7 +84,7 @@ module BrowseEverything
           File.size(url.path)
         when /https?/
           response = HTTParty.head(parsed_spec[:url].to_s, headers: parsed_spec[:headers])
-          response.content_length
+          (response.content_length || parsed_spec[:file_size]).to_i
         else
           raise URI::BadURIError, "Unknown URI scheme: #{url.scheme}"
         end
