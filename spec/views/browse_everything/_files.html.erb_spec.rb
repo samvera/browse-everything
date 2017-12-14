@@ -1,4 +1,4 @@
-describe 'browse_everything/_file.html.erb', type: :view do
+describe 'browse_everything/_files.html.erb', type: :view do
   let(:file) do
     BrowseEverything::FileEntry.new(
       'file_id_01234', 'my_provider:/location/pa/th/file.m4v',
@@ -11,6 +11,7 @@ describe 'browse_everything/_file.html.erb', type: :view do
       'dir', 0, Time.now, true
     )
   end
+
   let(:provider) { double('provider') }
   let(:page) { Capybara::Node::Simple.new(rendered) }
 
@@ -21,9 +22,12 @@ describe 'browse_everything/_file.html.erb', type: :view do
     allow(view).to receive(:parent).and_return('parent')
     allow(view).to receive(:provider_name).and_return('my provider')
     allow(provider).to receive(:config).and_return(config)
+
+    assign(:provider_contents, provider_contents)
   end
 
   describe 'a file' do
+    let(:provider_contents) { [file] }
     before do
       allow(view).to receive(:file).and_return(file)
       render
@@ -62,6 +66,7 @@ describe 'browse_everything/_file.html.erb', type: :view do
   end
 
   describe 'a directory' do
+    let(:provider_contents) { [container] }
     before do
       allow(view).to receive(:file).and_return(container)
       render
