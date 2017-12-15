@@ -17,13 +17,13 @@ class BrowseEverythingController < ActionController::Base
   # Either render the link to authorization or render the files
   # provider#show method is invoked here
   def show
-    raise NotImplementedError, "No provider supported" if provider.nil?
-    raise NotAuthorizedError, "Not authorized" unless provider.authorized?
+    raise NotImplementedError, 'No provider supported' if provider.nil?
+    raise NotAuthorizedError, 'Not authorized' unless provider.authorized?
 
     @provider_contents = provider.contents(browse_path)
     render partial: 'files', layout: !request.xhr?
   rescue StandardError => error
-    # Log an error here
+    # Should an error be raised, log the error and redirect the use to reauthenticate
     logger.warn "Failed to retrieve the hosted files: #{error}"
     render partial: 'auth', layout: !request.xhr?
   end
@@ -84,8 +84,8 @@ class BrowseEverythingController < ActionController::Base
     end
 
     # Retrieve the Driver for each request
+    # @return [BrowseEverything::Driver::Base]
     def provider
-      #@provider ||= browser.providers[provider_name]
       browser.providers[provider_name]
     end
 

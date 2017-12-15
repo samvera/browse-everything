@@ -77,12 +77,12 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
       it 'exposes the authorization endpoint URI' do
         expect(uri).to be_a Addressable::URI
-        expect(uri.to_s).to eq 'https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=CLIENTID&redirect_uri=http://example.com:3000/browse/connect&response_type=code&scope=https://www.googleapis.com/auth/drive.readonly'
+        expect(uri.to_s).to eq 'https://accounts.google.com/o/oauth2/auth?access_type=offline&approval_prompt=force&client_id=CLIENTID&include_granted_scopes=true&redirect_uri=http://example.com:3000/browse/connect&response_type=code&scope=https://www.googleapis.com/auth/drive'
       end
     end
 
     describe '#drive' do
-      subject(:drive) { driver.drive }
+      subject(:drive) { driver.drive_service }
 
       it 'exposes the Google Drive API client' do
         expect(drive).to be_a Google::Apis::DriveV3::DriveService

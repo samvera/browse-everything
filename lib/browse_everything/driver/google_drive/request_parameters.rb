@@ -1,7 +1,5 @@
 # Manages request parameters for the request to the Google Drive API
-#
 class RequestParameters < OpenStruct
-
   # Overrides the constructor for an OpenStruct instance
   # Provides default parameters
   def initialize(params = {})
@@ -11,6 +9,8 @@ class RequestParameters < OpenStruct
 
   private
 
+    # The default query parameters for the Google Drive API
+    # @return [Hash]
     def default_params
       {
         order_by: 'modifiedByMeTime,modifiedTime,folder desc,name',

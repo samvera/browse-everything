@@ -2,17 +2,17 @@ describe 'browse_everything/_files.html.erb', type: :view do
   let(:file) do
     BrowseEverything::FileEntry.new(
       'file_id_01234', 'my_provider:/location/pa/th/file.m4v',
-      'file.m4v', 1024 * 1024 * 1024, Time.now, false
+      'file.m4v', 1024 * 1024 * 1024, Time.current, false
     )
   end
   let(:container) do
     BrowseEverything::FileEntry.new(
       'dir_id_01234', 'my_provider:/location/pa/th/dir',
-      'dir', 0, Time.now, true
+      'dir', 0, Time.current, true
     )
   end
 
-  let(:provider) { double('provider') }
+  let(:provider) { instance_double(BrowseEverything::Driver::Base) }
   let(:page) { Capybara::Node::Simple.new(rendered) }
 
   before do

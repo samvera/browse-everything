@@ -1,12 +1,12 @@
-
+# Object for handling session cookies containing cached values
 class BrowseEverythingSession
   class ProviderSession < Base
     class_attribute :sessions
     self.sessions = {}
 
     def self.for(session:, name:)
-      return self.sessions[name] if self.sessions[name]
-      self.sessions[name] = ProviderSession.new(session: session, name: name)
+      return sessions[name] if sessions[name]
+      sessions[name] = ProviderSession.new(session: session, name: name)
     end
 
     def initialize(session:, name:)

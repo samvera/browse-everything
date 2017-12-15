@@ -7,6 +7,7 @@ require_relative 'google_drive/request_parameters'
 module BrowseEverything
   module Driver
     class GoogleDrive < Base
+      attr_reader :credentials
 
       # The token here must be set using a Hash
       # @param value [String, Hash] the new access token
@@ -63,7 +64,7 @@ module BrowseEverything
           end
 
           @files += file_list.files.map do |gdrive_file|
-            file_details = details(gdrive_file, path)
+            details(gdrive_file, path)
           end
 
           request_params.page_token = file_list.next_page_token
@@ -77,7 +78,7 @@ module BrowseEverything
       # @return [Array<BrowseEverything::FileEntry>] file entries for the path
       def contents(path = '')
         @files = []
-        response = drive_service.batch do |drive|
+        drive_service.batch do |drive|
           request_params = RequestParameters.new
           request_params.q = "'#{path}' in parents" unless path.blank?
           list_files(drive, request_params, path: path)
@@ -103,7 +104,7 @@ module BrowseEverything
       # Provides a URL for authorizing against Google Drive
       # @return [String] the URL
       def auth_link
-        authorizer.get_authorization_url
+        Addressable::URI.parse(authorizer.get_authorization_url)
       end
 
       # Whether or not the current provider is authorized
@@ -173,19 +174,18 @@ module BrowseEverything
         # @see http://www.rubydoc.info/gems/googleauth/Google/Auth/Stores/FileTokenStore FileTokenStore for googleauth
         # @return [Tempfile] temporary file within which to cache credentials
         def file_token_store_path
-          tempfile = Tempfile.new('gdrive.yaml')
+          Tempfile.new('gdrive.yaml')
         end
 
         def scope
           Google::Apis::DriveV3::AUTH_DRIVE
         end
 
+        # Provides the user ID for caching access tokens
+        # (This is a hack which attempts to anonymize the access tokens)
+        # @return [String] the ID for the user
         def user_id
           'current_user'
-        end
-
-        def credentials
-          @credentials
         end
 
         # Please see https://developers.google.com/drive/v3/web/manage-downloads
@@ -202,7 +202,7 @@ module BrowseEverything
           client = Credentials.new
           client.client_id = client_id.id
           client.client_secret = client_id.secret
-          client.update_token!({ 'access_token' => access_token })
+          client.update_token!('access_token' => access_token)
           @credentials = client
         end
     end
