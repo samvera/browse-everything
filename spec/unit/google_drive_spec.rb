@@ -45,16 +45,48 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
     end
 
     describe '#contents' do
-      subject(:files) { driver.contents.to_a }
+      subject(:contents) { driver.contents.to_a }
+      let(:drive_service_class) { class_double(Google::Apis::DriveV3::DriveService).as_stubbed_const(transfer_nested_constants: true) }
+      let(:drive_service) { instance_double(Google::Apis::DriveV3::DriveService) }
+      let(:file_list) { instance_double(Google::Apis::DriveV3::FileList) }
+      let(:file1) { instance_double(Google::Apis::DriveV3::File) }
+      let(:file2) { instance_double(Google::Apis::DriveV3::File) }
+      let(:files) { [file1, file2] }
+
+      before do
+        allow(file1).to receive(:id).and_return('asset-id2')
+        allow(file2).to receive(:id).and_return('asset-id3')
+        allow(file1).to receive(:name).and_return('asset-name2.pdf')
+        allow(file2).to receive(:name).and_return('asset-name3.pdf')
+        allow(file1).to receive(:size).and_return('891764')
+        allow(file2).to receive(:size).and_return('641789')
+        allow(file1).to receive(:modified_time).and_return(DateTime.current)
+        allow(file2).to receive(:modified_time).and_return(DateTime.current)
+        allow(file1).to receive(:mime_type).and_return('application/pdf')
+        allow(file2).to receive(:mime_type).and_return('application/vnd.google-apps.folder')
+        allow(file_list).to receive(:files).and_return(files)
+        allow(file_list).to receive(:next_page_token).and_return(nil)
+        allow(drive_service).to receive(:list_files).and_yield(file_list, nil)
+        allow(drive_service).to receive(:batch).and_yield(drive_service)
+        allow(drive_service).to receive(:authorization=)
+        allow(drive_service).to receive(:tap).and_yield(drive_service).and_return(drive_service)
+        allow(drive_service_class).to receive(:new).and_return(drive_service)
+      end
 
       it 'retrieves files' do
-        expect(files).not_to be_empty
-        expect(files.first).to be_a BrowseEverything::FileEntry
-        expect(files.first.location).to eq 'google_drive:asset-id2'
-        expect(files.first.mtime).to be_a DateTime
-        expect(files.first.name).to eq 'asset-name2.pdf'
-        expect(files.first.size).to eq 891764
-        expect(files.first.type).to eq 'application/pdf'
+        expect(contents).not_to be_empty
+        expect(contents.first).to be_a BrowseEverything::FileEntry
+        expect(contents.first.location).to eq 'google_drive:asset-id2'
+        expect(contents.first.mtime).to be_a DateTime
+        expect(contents.first.name).to eq 'asset-name2.pdf'
+        expect(contents.first.size).to eq 891764
+        expect(contents.first.type).to eq 'application/pdf'
+        expect(contents.last).to be_a BrowseEverything::FileEntry
+        expect(contents.last.location).to eq 'google_drive:asset-id3'
+        expect(contents.last.mtime).to be_a DateTime
+        expect(contents.last.name).to eq 'asset-name3.pdf'
+        expect(contents.last.size).to eq 641789
+        expect(contents.last.type).to eq 'directory'
       end
     end
 
@@ -63,7 +95,7 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
       it 'generates the link for a Google Drive asset' do
         expect(link).to be_an Array
-        expect(link.first).to eq 'https://drive.google.com/uc?id=id&export=download'
+        expect(link.first).to eq 'https://www.googleapis.com/drive/v3/files/asset-id2?alt=media'
         expect(link.last).to be_a Hash
         expect(link.last).to include auth_header: { 'Authorization' => 'Bearer access-token' }
         expect(link.last).to include :expires
@@ -86,34 +118,6 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
       it 'exposes the Google Drive API client' do
         expect(drive).to be_a Google::Apis::DriveV3::DriveService
-      end
-
-      context 'with an expired token' do
-        let(:auth_client) { instance_double(Signet::OAuth2::Client) }
-        before do
-          allow(auth_client).to receive(:fetch_access_token!).and_return('test-renewed-token')
-          allow(auth_client).to receive(:expired?).and_return(true)
-          allow(driver).to receive(:auth_client).and_return(auth_client)
-        end
-
-        it 'exposes the Google Drive API client with a renewed authorization token', invalid: true do
-          expect(auth_client).to receive(:update_token!).with('test-renewed-token')
-          expect(drive).to be_a Google::Apis::DriveV3::DriveService
-        end
-      end
-
-      context 'with an empty token after expiry' do
-        let(:auth_client) { instance_double(Signet::OAuth2::Client) }
-        before do
-          allow(auth_client).to receive(:fetch_access_token!).and_return(nil)
-          allow(auth_client).to receive(:expired?).and_return(true)
-          allow(driver).to receive(:auth_client).and_return(auth_client)
-        end
-
-        it 'exposes the Google Drive API client with a renewed authorization token', invalid: true do
-          expect(drive).to be_a Google::Apis::DriveV3::DriveService
-          expect(drive.authorization).to be nil
-        end
       end
     end
   end
