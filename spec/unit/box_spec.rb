@@ -41,7 +41,7 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: :no
 
   describe '#validate_config' do
     it 'raises and error with an incomplete configuration' do
-      expect { BrowseEverything::Driver::Box.new({}) }.to raise_error(BrowseEverything::InitializationError)
+      expect { BrowseEverything::Driver::Box.new({}) }.to raise_error(BrowseEverythingHelper::InitializationError)
     end
   end
 

@@ -4,9 +4,6 @@ require 'browse_everything/engine'
 require 'browse_everything/retriever'
 
 module BrowseEverything
-  class InitializationError < RuntimeError; end
-  class NotAuthorizedError < StandardError; end
-
   autoload :Browser,   'browse_everything/browser'
   autoload :FileEntry, 'browse_everything/file_entry'
   module Driver

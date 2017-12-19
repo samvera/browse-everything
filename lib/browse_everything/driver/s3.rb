@@ -24,13 +24,13 @@ module BrowseEverything
 
       def validate_config
         if config.values_at(:app_key, :app_secret).compact.length == 1
-          raise BrowseEverything::InitializationError, 'Amazon S3 driver: If either :app_key or :app_secret is provided, both must be.'
+          raise BrowseEverythingHelper::InitializationError, 'Amazon S3 driver: If either :app_key or :app_secret is provided, both must be.'
         end
         unless RESPONSE_TYPES.include?(config[:response_type].to_sym)
-          raise BrowseEverything::InitializationError, "Amazon S3 driver: Valid response types: #{RESPONSE_TYPES.join(',')}"
+          raise BrowseEverythingHelper::InitializationError, "Amazon S3 driver: Valid response types: #{RESPONSE_TYPES.join(',')}"
         end
         return if CONFIG_KEYS.all? { |key| config[key].present? }
-        raise BrowseEverything::InitializationError, "Amazon S3 driver requires #{CONFIG_KEYS.join(',')}"
+        raise BrowseEverythingHelper::InitializationError, "Amazon S3 driver requires #{CONFIG_KEYS.join(',')}"
       end
 
       # @return [Array<BrowseEverything::FileEntry>]

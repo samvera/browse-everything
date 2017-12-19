@@ -27,8 +27,8 @@ module BrowseEverything
 
       # Validates the configuration for the Google Drive provider
       def validate_config
-        raise BrowseEverything::InitializationError, 'GoogleDrive driver requires a :client_id argument' unless config[:client_id]
-        raise BrowseEverything::InitializationError, 'GoogleDrive driver requires a :client_secret argument' unless config[:client_secret]
+        raise BrowseEverythingHelper::InitializationError, 'GoogleDrive driver requires a :client_id argument' unless config[:client_id]
+        raise BrowseEverythingHelper::InitializationError, 'GoogleDrive driver requires a :client_secret argument' unless config[:client_secret]
       end
 
       # Retrieve the file details

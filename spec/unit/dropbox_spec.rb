@@ -15,11 +15,11 @@ describe BrowseEverything::Driver::Dropbox, vcr: { cassette_name: 'dropbox', rec
 
   describe '#validate_config' do
     it 'raises and error with an incomplete configuration' do
-      expect { BrowseEverything::Driver::Dropbox.new({}) }.to raise_error(BrowseEverything::InitializationError)
+      expect { BrowseEverything::Driver::Dropbox.new({}) }.to raise_error(BrowseEverythingHelper::InitializationError)
     end
 
     it 'raises and error with a configuration without a client secret' do
-      expect { BrowseEverything::Driver::Dropbox.new(client_id: 'test-client-id') }.to raise_error(BrowseEverything::InitializationError)
+      expect { BrowseEverything::Driver::Dropbox.new(client_id: 'test-client-id') }.to raise_error(BrowseEverythingHelper::InitializationError)
     end
   end
 

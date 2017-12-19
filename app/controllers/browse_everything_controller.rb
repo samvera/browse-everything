@@ -17,8 +17,8 @@ class BrowseEverythingController < ActionController::Base
   # Either render the link to authorization or render the files
   # provider#show method is invoked here
   def show
-    raise NotImplementedError, 'No provider supported' if provider.nil?
-    raise NotAuthorizedError, 'Not authorized' unless provider.authorized?
+    raise BrowseEverythingHelper::NotImplementedError, 'No provider supported' if provider.nil?
+    raise BrowseEverythingHelper::NotAuthorizedError, 'Not authorized' unless provider.authorized?
 
     @provider_contents = provider.contents(browse_path)
     render partial: 'files', layout: !request.xhr?

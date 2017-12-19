@@ -23,15 +23,40 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
   describe '#validate_config' do
     it 'raises and error with an incomplete configuration' do
-      expect { BrowseEverything::Driver::GoogleDrive.new({}) }.to raise_error(BrowseEverything::InitializationError)
+      expect { BrowseEverything::Driver::GoogleDrive.new({}) }.to raise_error(BrowseEverythingHelper::InitializationError)
     end
 
     it 'raises and error with a configuration without a client secret' do
-      expect { BrowseEverything::Driver::GoogleDrive.new(client_id: 'test-client-id') }.to raise_error(BrowseEverything::InitializationError)
+      expect { BrowseEverything::Driver::GoogleDrive.new(client_id: 'test-client-id') }.to raise_error(BrowseEverythingHelper::InitializationError)
     end
   end
 
-  context 'with a valid configuration' do
+  context 'without valid credentials' do
+    let(:driver) { described_class.new(provider_yml) }
+
+    describe '#token=' do
+      let(:value) { 'test' }
+      it 'restores the credentials' do
+        allow(driver).to receive(:restore_credentials)
+        driver.token = value
+        expect(driver).to have_received(:restore_credentials).with('test')
+      end
+
+      context 'when set to a Hash' do
+        let(:value) { { 'access_token' => 'test' } }
+        before do
+          driver.token = value
+        end
+
+        it 'sets the access token value' do
+          expect(driver.token).to be_a String
+          expect(driver.token).to eq 'test'
+        end
+      end
+    end
+  end
+
+  context 'with a valid connection' do
     let(:driver) { described_class.new(provider_yml) }
 
     before do
@@ -87,6 +112,16 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
         expect(contents.last.name).to eq 'asset-name3.pdf'
         expect(contents.last.size).to eq 641789
         expect(contents.last.type).to eq 'directory'
+      end
+
+      context 'when an error is encountered while authenticating' do
+        before do
+          allow(drive_service).to receive(:list_files).and_yield(file_list, Google::Apis::Error.new('test error'))
+        end
+
+        it 'raises an exception' do
+          expect { driver.contents.to_a }.to raise_error(Google::Apis::Error, 'test error')
+        end
       end
     end
 
