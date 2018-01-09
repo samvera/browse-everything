@@ -4,8 +4,6 @@ require 'browse_everything/engine'
 require 'browse_everything/retriever'
 
 module BrowseEverything
-  class InitializationError < RuntimeError; end
-
   autoload :Browser,   'browse_everything/browser'
   autoload :FileEntry, 'browse_everything/file_entry'
   module Driver
@@ -16,6 +14,14 @@ module BrowseEverything
     autoload :GoogleDrive, 'browse_everything/driver/google_drive'
     autoload :S3,          'browse_everything/driver/s3'
   end
+  module Auth
+    module Google
+      autoload :Credentials,        'browse_everything/auth/google/credentials'
+      autoload :RequestParameters,  'browse_everything/auth/google/request_parameters'
+    end
+  end
+  class InitializationError < RuntimeError; end
+  class NotAuthorizedError < StandardError; end
 
   class << self
     def configure(value)

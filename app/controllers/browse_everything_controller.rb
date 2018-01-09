@@ -6,26 +6,40 @@ class BrowseEverythingController < ActionController::Base
 
   protect_from_forgery with: :exception
 
-  after_action { session["#{provider_name}_token"] = provider.token unless provider.nil? }
+  after_action do
+    provider_session.token = provider.token unless provider.nil? || provider.token.blank?
+  end
 
   def index
     render layout: !request.xhr?
   end
 
+  # Either render the link to authorization or render the files
+  # provider#show method is invoked here
   def show
-    render layout: !request.xhr?
+    raise BrowseEverythingHelper::NotImplementedError, 'No provider supported' if provider.nil?
+    raise BrowseEverythingHelper::NotAuthorizedError, 'Not authorized' unless provider.authorized?
+
+    @provider_contents = provider.contents(browse_path)
+    render partial: 'files', layout: !request.xhr?
+  rescue StandardError => error
+    # Should an error be raised, log the error and redirect the use to reauthenticate
+    logger.warn "Failed to retrieve the hosted files: #{error}"
+    render partial: 'auth', layout: !request.xhr?
   end
 
+  # Action for the OAuth2 callback
+  # Authenticate against the Google API and store the token in the session
   def auth
-    provider.code = params[:code] if params[:code]
-    session["#{provider_name}_token"] = provider.connect(params, session["#{provider_name}_data"])
+    # params contains the access code with with the key :code
+    provider_session.token = provider.connect(params, provider_session.data)
   end
 
   def resolve
     selected_files = params[:selected_files] || []
     @links = selected_files.collect do |file|
-      p, f = file.split(/:/)
-      (url, extra) = browser.providers[p].link_for(f)
+      provider_key, uri = file.split(/:/)
+      (url, extra) = browser.providers[provider_key].link_for(uri)
       result = { url: url }
       result.merge!(extra) unless extra.nil?
       result
@@ -38,39 +52,41 @@ class BrowseEverythingController < ActionController::Base
 
   private
 
+    def provider_session
+      @provider_session ||= BrowseEverythingSession::ProviderSession.new(session: session, name: provider_name)
+    end
+
     def auth_link
       @auth_link ||= if provider.present?
                        link, data = provider.auth_link
-                       session["#{provider_name}_data"] = data
+                       provider_session.data = data
                        link = "#{link}&state=#{provider.key}" unless link.to_s.include?('state')
                        link
                      end # else nil, implicitly
-    end
-
-    def session_token(p)
-      return session["#{p.key}_token"] if session["#{p.key}_token"]
-    end
-
-    def browser
-      if @browser.nil?
-        @browser = BrowseEverything::Browser.new(url_options)
-        @browser.providers.values.each do |p|
-          p.token = session_token(p)
-        end
-      end
-      @browser
     end
 
     def browse_path
       @path ||= params[:path] || ''
     end
 
-    def provider
-      @provider ||= browser.providers[provider_name]
+    # Browser state cannot persist between requests to the Controller
+    # Hence, a Browser must be reinstantiated for each request using the state provided in the session
+    def browser
+      BrowserFactory.build(session: session, url_options: url_options)
+    end
+
+    def provider_name_from_state
+      params[:state].to_s.split(/\|/).last
     end
 
     def provider_name
-      @provider_name ||= params[:provider] || params[:state].to_s.split(/\|/).last
+      @provider_name ||= params[:provider] || provider_name_from_state
+    end
+
+    # Retrieve the Driver for each request
+    # @return [BrowseEverything::Driver::Base]
+    def provider
+      browser.providers[provider_name]
     end
 
     helper_method :auth_link
