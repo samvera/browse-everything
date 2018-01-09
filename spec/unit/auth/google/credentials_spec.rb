@@ -1,4 +1,4 @@
-describe BrowseEverything::Driver::GoogleDrive::Credentials do
+describe BrowseEverything::Auth::Google::Credentials do
   subject(:credentials) { described_class.new }
   describe '#fetch_access_token' do
     before do

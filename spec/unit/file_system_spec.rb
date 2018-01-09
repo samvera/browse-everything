@@ -8,7 +8,7 @@ describe BrowseEverything::Driver::FileSystem do
   let(:provider) { browser.providers['file_system'] }
 
   it '#validate_config' do
-    expect { described_class.new({}) }.to raise_error(BrowseEverythingHelper::InitializationError)
+    expect { described_class.new({}) }.to raise_error(BrowseEverything::InitializationError)
   end
 
   describe 'simple properties' do

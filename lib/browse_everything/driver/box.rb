@@ -12,7 +12,7 @@ module BrowseEverything
 
       def validate_config
         return if config[:client_id] && config[:client_secret]
-        raise BrowseEverythingHelper::InitializationError, 'Box driver requires both :client_id and :client_secret argument'
+        raise InitializationError, 'Box driver requires both :client_id and :client_secret argument'
       end
 
       # @param [String] id of the file or folder in Box

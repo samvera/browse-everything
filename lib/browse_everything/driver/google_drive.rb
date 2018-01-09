@@ -1,8 +1,6 @@
 require 'google/apis/drive_v3'
 require 'googleauth'
 require 'googleauth/stores/file_token_store'
-require_relative 'google_drive/credentials'
-require_relative 'google_drive/request_parameters'
 
 module BrowseEverything
   module Driver
@@ -27,8 +25,8 @@ module BrowseEverything
 
       # Validates the configuration for the Google Drive provider
       def validate_config
-        raise BrowseEverythingHelper::InitializationError, 'GoogleDrive driver requires a :client_id argument' unless config[:client_id]
-        raise BrowseEverythingHelper::InitializationError, 'GoogleDrive driver requires a :client_secret argument' unless config[:client_secret]
+        raise InitializationError, 'GoogleDrive driver requires a :client_id argument' unless config[:client_id]
+        raise InitializationError, 'GoogleDrive driver requires a :client_secret argument' unless config[:client_secret]
       end
 
       # Retrieve the file details
@@ -79,7 +77,7 @@ module BrowseEverything
       def contents(path = '')
         @files = []
         drive_service.batch do |drive|
-          request_params = RequestParameters.new
+          request_params = Auth::Google::RequestParameters.new
           request_params.q = "'#{path}' in parents" unless path.blank?
           list_files(drive, request_params, path: path)
         end
@@ -199,7 +197,7 @@ module BrowseEverything
         # @param access_token [String] the access token redeemed using an authorization code
         # @return Credentials credentials restored from a cached access token
         def restore_credentials(access_token)
-          client = Credentials.new
+          client = Auth::Google::Credentials.new
           client.client_id = client_id.id
           client.client_secret = client_id.secret
           client.update_token!('access_token' => access_token)

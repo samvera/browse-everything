@@ -14,15 +14,15 @@ describe BrowseEverything::Driver::FileSystem do
 
   describe 'configuration' do
     it '#validate_config' do
-      expect { BrowseEverything::Driver::S3.new({}) }.to raise_error(BrowseEverythingHelper::InitializationError)
+      expect { BrowseEverything::Driver::S3.new({}) }.to raise_error(BrowseEverything::InitializationError)
     end
 
     it 'rejects app_key if app_secret is missing' do
-      expect { BrowseEverything::Driver::S3.new(bucket: 'bucket', app_key: 'APP_KEY') }.to raise_error(BrowseEverythingHelper::InitializationError)
+      expect { BrowseEverything::Driver::S3.new(bucket: 'bucket', app_key: 'APP_KEY') }.to raise_error(BrowseEverything::InitializationError)
     end
 
     it 'rejects app_secret if app_key is missing' do
-      expect { BrowseEverything::Driver::S3.new(bucket: 'bucket', app_secret: 'APP_SECRET') }.to raise_error(BrowseEverythingHelper::InitializationError)
+      expect { BrowseEverything::Driver::S3.new(bucket: 'bucket', app_secret: 'APP_SECRET') }.to raise_error(BrowseEverything::InitializationError)
     end
 
     it 'accepts app_key and app_secret together' do
@@ -30,7 +30,7 @@ describe BrowseEverything::Driver::FileSystem do
     end
 
     it 'rejects an invalid response type' do
-      expect { BrowseEverything::Driver::S3.new(bucket: 'bucket', response_type: :foo) }.to raise_error(BrowseEverythingHelper::InitializationError)
+      expect { BrowseEverything::Driver::S3.new(bucket: 'bucket', response_type: :foo) }.to raise_error(BrowseEverything::InitializationError)
     end
 
     it 'deprecates :signed_url' do

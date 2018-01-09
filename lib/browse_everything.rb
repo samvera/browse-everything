@@ -14,6 +14,14 @@ module BrowseEverything
     autoload :GoogleDrive, 'browse_everything/driver/google_drive'
     autoload :S3,          'browse_everything/driver/s3'
   end
+  module Auth
+    module Google
+      autoload :Credentials,        'browse_everything/auth/google/credentials'
+      autoload :RequestParameters,  'browse_everything/auth/google/request_parameters'
+    end
+  end
+  class InitializationError < RuntimeError; end
+  class NotAuthorizedError < StandardError; end
 
   class << self
     def configure(value)
