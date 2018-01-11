@@ -36,6 +36,7 @@ RSpec/ExampleLength:
 RSpec/MultipleExpectations:
   Exclude:
     - 'spec/unit/dropbox_spec.rb'
+    - 'spec/features/**/*'
 
 Style/NumericLiterals:
   MinDigits: 7

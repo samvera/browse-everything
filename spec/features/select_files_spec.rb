@@ -1,25 +1,21 @@
-require 'capybara/poltergeist'
-
-describe 'Choosing files', type: :feature do
+describe 'Choosing files', type: :feature, js: true do
   before do
-    Capybara.register_driver :poltergeist do |app|
-      Capybara::Poltergeist::Driver.new(app, js_errors: true, timeout: 90)
-    end
-    Capybara.current_driver = :poltergeist
     visit '/'
   end
 
   shared_examples 'browseable files' do
     it 'selects files from the filesystem' do
       click_button('Browse')
-      sleep(5)
+      wait_for_ajax
+      expect(page).to have_selector '#browse-everything'
+      expect(page).to have_link 'Gemfile.lock'
       click_link('Gemfile.lock')
       check('config-ru')
+      wait_for_ajax
       within('.modal-footer') do
         expect(page).to have_selector('span', text: '2 files selected')
         click_button('Submit')
       end
-      sleep(5)
       expect(page).to have_selector('#status', text: '2 items selected')
     end
   end

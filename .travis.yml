@@ -1,3 +1,7 @@
+dist: trusty
+addons:
+  chrome: stable
+
 language: ruby
 sudo: false
 cache:
@@ -14,14 +18,12 @@ before_install:
   - "phantomjs --version"
 
 rvm:
-  - "2.4.1"
+  - "2.4.3"
 global_env:
   - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
 env:
-  - "RAILS_VERSION=5.1.0"
+  - "RAILS_VERSION=5.1.4"
 matrix:
-  include:
-    - rvm: "2.3.4"
-      env: "RAILS_VERSION=5.0.2"
-    - rvm: 2.2.7
-      env: "RAILS_VERSION=4.2.8"
+  - "RAILS_VERSION=5.1.4"
+  - "RAILS_VERSION=5.0.6"
+  - "RAILS_VERSION=4.2.10"
