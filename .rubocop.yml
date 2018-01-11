@@ -38,6 +38,7 @@ RSpec/MultipleExpectations:
   Exclude:
     - 'spec/unit/dropbox_spec.rb'
     - 'spec/unit/google_drive_spec.rb'
+    - 'spec/features/**/*'
 
 Style/NumericLiterals:
   MinDigits: 7

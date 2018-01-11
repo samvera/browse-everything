@@ -18,17 +18,17 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'rails', '>= 3.1'
+  spec.add_dependency 'rails', '>= 5.1'
   spec.add_dependency 'addressable', '~> 2.5'
-  spec.add_dependency 'google_drive'
+  spec.add_dependency 'google_drive', '~> 2.1'
   spec.add_dependency 'dropbox_api', '>= 0.1.10'
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'sass-rails'
   spec.add_dependency 'bootstrap-sass', '~> 3.2'
   spec.add_dependency 'font-awesome-rails'
   spec.add_dependency 'google-api-client', '~> 0.9'
-  spec.add_dependency 'signet'
-  spec.add_dependency 'httparty'
+  spec.add_dependency 'signet', '~> 0.8'
+  spec.add_dependency 'httparty', '~> 0.15'
   spec.add_dependency 'aws-sdk-s3'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-rails'
@@ -47,5 +47,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'capybara'
   spec.add_development_dependency 'jasmine', '~> 2.3'
   spec.add_development_dependency 'coveralls'
-  spec.add_development_dependency 'poltergeist', '~> 1.10'
+  spec.add_development_dependency "chromedriver-helper"
+  spec.add_development_dependency "selenium-webdriver"
 end
