@@ -28,4 +28,12 @@ describe BrowseEverythingController, type: :controller do
       its(:length) { is_expected.to eq(1) }
     end
   end
+
+  context 'with the Google Drive provider' do
+    let(:provider) { browser.providers['google_drive'] }
+
+    describe 'auth_link' do
+      its(:length) { is_expected.to eq(1) }
+    end
+  end
 end

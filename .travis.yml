@@ -1,9 +1,9 @@
 dist: trusty
+sudo: required
 addons:
   chrome: stable
 
 language: ruby
-sudo: false
 cache:
   bundler: true
   directories:

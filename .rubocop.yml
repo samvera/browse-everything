@@ -30,12 +30,14 @@ RSpec/LeadingSubject:
 RSpec/ExampleLength:
   Exclude:
     - 'spec/unit/dropbox_spec.rb'
+    - 'spec/unit/google_drive_spec.rb'
     - 'spec/features/select_files_spec.rb'
     - 'spec/javascripts/jasmine_spec.rb'
 
 RSpec/MultipleExpectations:
   Exclude:
     - 'spec/unit/dropbox_spec.rb'
+    - 'spec/unit/google_drive_spec.rb'
     - 'spec/features/**/*'
 
 Style/NumericLiterals:

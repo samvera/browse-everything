@@ -54,8 +54,8 @@ module BrowseEverything
       end
 
       def validate_config
-        raise BrowseEverything::InitializationError, 'Dropbox driver requires a :client_id argument' unless config[:client_id]
-        raise BrowseEverything::InitializationError, 'Dropbox driver requires a :client_secret argument' unless config[:client_secret]
+        raise InitializationError, 'Dropbox driver requires a :client_id argument' unless config[:client_id]
+        raise InitializationError, 'Dropbox driver requires a :client_secret argument' unless config[:client_secret]
       end
 
       def contents(path = '')

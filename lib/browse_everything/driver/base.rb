@@ -4,7 +4,7 @@ module BrowseEverything
       include BrowseEverything::Engine.routes.url_helpers
 
       attr_reader :config, :name
-      attr_accessor :token
+      attr_accessor :token, :code
 
       def initialize(config, _session_info = {})
         @config = config

@@ -1,44 +1,38 @@
+require 'google/apis/drive_v3'
+require 'googleauth'
+require 'googleauth/stores/file_token_store'
+
 module BrowseEverything
   module Driver
     class GoogleDrive < Base
-      require 'google/apis/drive_v3'
-      require 'signet'
+      attr_reader :credentials
+
+      # The token here must be set using a Hash
+      # @param value [String, Hash] the new access token
+      def token=(value)
+        # This is invoked within BrowseEverythingController using a Hash
+        value = value.fetch('access_token') if value.is_a? Hash
+
+        # Restore the credentials if the access token string itself has been cached
+        restore_credentials(value) if @credentials.nil?
+
+        super(value)
+      end
 
       def icon
         'google-plus-sign'
       end
 
+      # Validates the configuration for the Google Drive provider
       def validate_config
-        unless config[:client_id]
-          raise BrowseEverything::InitializationError, 'GoogleDrive driver requires a :client_id argument'
-        end
-        unless config[:client_secret]
-          raise BrowseEverything::InitializationError, 'GoogleDrive driver requires a :client_secret argument'
-        end
+        raise InitializationError, 'GoogleDrive driver requires a :client_id argument' unless config[:client_id]
+        raise InitializationError, 'GoogleDrive driver requires a :client_secret argument' unless config[:client_secret]
       end
 
-      def contents(path = '')
-        return to_enum(:contents, path) unless block_given?
-        default_params = {
-          order_by: 'folder,modifiedTime desc,name',
-          fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,web_content_link)'
-          # page_size: 100
-        }
-        page_token = nil
-        begin
-          default_params[:q] = "'#{path}' in parents" unless path.blank?
-          default_params[:page_token] = page_token unless page_token.blank?
-          response = drive.list_files(default_params)
-          page_token = response.next_page_token
-          response.files.select do |file|
-            path.blank? ? (file.parents.blank? || file.parents.any? { |p| p == 'root' }) : true
-          end.each do |file|
-            d = details(file, path)
-            yield d if d
-          end
-        end while !page_token.blank?
-      end
-
+      # Retrieve the file details
+      # @param file [Google::Apis::DriveV3::File] the Google Drive File
+      # @param path [String] path for the resource details (unused)
+      # @return [BrowseEverything::FileEntry] file entry for the resource node
       def details(file, _path = '')
         mime_folder = file.mime_type == 'application/vnd.google-apps.folder'
         BrowseEverything::FileEntry.new(
@@ -52,54 +46,162 @@ module BrowseEverything
         )
       end
 
+      # Lists the files given a Google Drive context
+      # @param drive [Google::Apis::DriveV3::DriveService] the Google Drive context
+      # @param request_params [RequestParameters] the object containing the parameters for the Google Drive API request
+      # @param path [String] the path (default to the root)
+      # @return [Array<BrowseEverything::FileEntry>] file entries for the path
+      def list_files(drive, request_params, path: '')
+        drive.list_files(request_params.to_h) do |file_list, error|
+          # Raise an exception if there was an error Google API's
+          if error.present?
+            # In order to properly trigger reauthentication, the token must be cleared
+            # Additionally, the error is not automatically raised from the Google Client
+            @token = nil
+            raise error
+          end
+
+          @files += file_list.files.map do |gdrive_file|
+            details(gdrive_file, path)
+          end
+
+          request_params.page_token = file_list.next_page_token
+        end
+
+        @files += list_files(drive, request_params, path: path) if request_params.page_token.present?
+      end
+
+      # Retrieve the files for any given resource on Google Drive
+      # @param path [String] the root or Folder path for which to list contents
+      # @return [Array<BrowseEverything::FileEntry>] file entries for the path
+      def contents(path = '')
+        @files = []
+        drive_service.batch do |drive|
+          request_params = Auth::Google::RequestParameters.new
+          request_params.q = "'#{path}' in parents" unless path.blank?
+          list_files(drive, request_params, path: path)
+        end
+        @files
+      end
+
+      # Retrieve a link for a resource
+      # @param id [String] identifier for the resource
+      # @return [Array<String, Hash>] authorized link to the resource
       def link_for(id)
-        file = drive.get_file(id)
-        auth_header = { 'Authorization' => "Bearer #{auth_client.access_token}" }
+        file = drive_service.get_file(id, fields: 'id, name, size')
+        auth_header = { 'Authorization' => "Bearer #{credentials.access_token}" }
         extras = {
           auth_header: auth_header,
           expires: 1.hour.from_now,
           file_name: file.name,
           file_size: file.size.to_i
         }
-        [file.web_content_link, extras]
+        [download_url(id), extras]
       end
 
+      # Provides a URL for authorizing against Google Drive
+      # @return [String] the URL
       def auth_link
-        auth_client.authorization_uri
+        Addressable::URI.parse(authorizer.get_authorization_url)
       end
 
+      # Whether or not the current provider is authorized
+      # @return [true,false]
       def authorized?
-        token.present?
+        @token.present?
       end
 
+      # Client ID for authorizing against the Google API's
+      # @return [Google::Auth::ClientId]
+      def client_id
+        @client_id ||= Google::Auth::ClientId.from_hash(client_secrets)
+      end
+
+      # Token store file used for authorizing against the Google API's
+      # (This is fundamentally used to temporarily cache access tokens)
+      # @return [Google::Auth::Stores::FileTokenStore]
+      def token_store
+        Google::Auth::Stores::FileTokenStore.new(file: file_token_store_path)
+      end
+
+      # Authorization Object for Google API
+      # @return [Google::Auth::UserAuthorizer]
+      def authorizer
+        @authorizer ||= Google::Auth::UserAuthorizer.new(client_id, scope, token_store, callback)
+      end
+
+      # Request to authorize the provider
+      # This is *the* method which, passing an HTTP request, redeems an authorization code for an access token
+      # @return [String] a new access token
+      def authorize!
+        @credentials = authorizer.get_credentials_from_code(user_id: user_id, code: code)
+        @token = @credentials.access_token
+        @code = nil # The authorization code can only be redeemed for an access token once
+        @token
+      end
+
+      # This is the method accessed by the BrowseEverythingController for authorizing using an authorization code
+      # @param params [Hash] HTTP response passed to the OAuth callback
+      # @param _data [Object,nil] an unused parameter
+      # @return [String] a new access token
       def connect(params, _data)
-        auth_client.code = params[:code]
-        self.token = auth_client.fetch_access_token!
+        @code = params[:code]
+        authorize!
       end
 
-      def drive
-        @drive ||= Google::Apis::DriveV3::DriveService.new.tap do |s|
-          s.authorization = authorization
+      # Construct a new object for interfacing with the Google Drive API
+      # @return [Google::Apis::DriveV3::DriveService]
+      def drive_service
+        Google::Apis::DriveV3::DriveService.new.tap do |s|
+          s.authorization = credentials
         end
       end
 
       private
 
-        def authorization
-          return @auth_client unless @auth_client.nil?
-          return nil unless token.present?
-          auth_client.update_token!(token)
-          self.token = auth_client.fetch_access_token! if auth_client.expired?
-          auth_client
+        def client_secrets
+          {
+            Google::Auth::ClientId::WEB_APP => {
+              Google::Auth::ClientId::CLIENT_ID => config[:client_id],
+              Google::Auth::ClientId::CLIENT_SECRET => config[:client_secret]
+            }
+          }
         end
 
-        def auth_client
-          @auth_client ||= Signet::OAuth2::Client.new token_credential_uri: 'https://www.googleapis.com/oauth2/v3/token',
-                                                      authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
-                                                      scope: 'https://www.googleapis.com/auth/drive',
-                                                      client_id: config[:client_id],
-                                                      client_secret: config[:client_secret],
-                                                      redirect_uri: callback
+        # This is required for using the googleauth Gem
+        # @see http://www.rubydoc.info/gems/googleauth/Google/Auth/Stores/FileTokenStore FileTokenStore for googleauth
+        # @return [Tempfile] temporary file within which to cache credentials
+        def file_token_store_path
+          Tempfile.new('gdrive.yaml')
+        end
+
+        def scope
+          Google::Apis::DriveV3::AUTH_DRIVE
+        end
+
+        # Provides the user ID for caching access tokens
+        # (This is a hack which attempts to anonymize the access tokens)
+        # @return [String] the ID for the user
+        def user_id
+          'current_user'
+        end
+
+        # Please see https://developers.google.com/drive/v3/web/manage-downloads
+        # @param id [String] the ID for the Google Drive File
+        # @return [String] the URL for the file download
+        def download_url(id)
+          "https://www.googleapis.com/drive/v3/files/#{id}?alt=media"
+        end
+
+        # Restore the credentials for the Google API
+        # @param access_token [String] the access token redeemed using an authorization code
+        # @return Credentials credentials restored from a cached access token
+        def restore_credentials(access_token)
+          client = Auth::Google::Credentials.new
+          client.client_id = client_id.id
+          client.client_secret = client_id.secret
+          client.update_token!('access_token' => access_token)
+          @credentials = client
         end
     end
   end
