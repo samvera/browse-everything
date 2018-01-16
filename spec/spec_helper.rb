@@ -8,8 +8,10 @@ require 'simplecov'
 require 'vcr'
 require 'capybara/rails'
 require 'capybara/rspec'
-require 'support/rake'
 require 'coveralls'
+# Requires supporting ruby files with custom matchers and macros, etc,
+# in spec/support/ and its subdirectories.
+Dir[Pathname.new(File.expand_path('../support/**/*.rb', __FILE__))].each { |f| require f }
 
 Coveralls.wear!
 EngineCart.load_application!
@@ -25,32 +27,12 @@ VCR.configure do |c|
   c.ignore_localhost = true
 end
 
-# Requires supporting ruby files with custom matchers and macros, etc,
-# in spec/support/ and its subdirectories.
-Dir[Pathname.new(File.expand_path('../support/**/*.rb', __FILE__))].each { |f| require f }
-
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = [:should, :expect]
   end
   config.include WaitForAjax, type: :feature
 end
-
-Capybara.register_driver :chrome do |app|
-  Capybara::Selenium::Driver.new(app, browser: :chrome)
-end
-
-Capybara.register_driver :headless_chrome do |app|
-  capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-    chromeOptions: { args: %w(headless disable-gpu) }
-  )
-
-  Capybara::Selenium::Driver.new(app,
-                                 browser: :chrome,
-                                 desired_capabilities: capabilities)
-end
-
-Capybara.javascript_driver = :headless_chrome
 
 module BrowserConfigHelper
   def url_options
