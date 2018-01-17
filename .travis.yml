@@ -1,7 +1,5 @@
 language: ruby
-# Workaround for https://github.com/travis-ci/travis-ci/issues/8836
-# sudo: false
-sudo: required
+sudo: false
 dist: trusty
 sudo: required
 addons:
