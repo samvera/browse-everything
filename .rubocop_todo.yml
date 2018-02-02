@@ -37,13 +37,6 @@ RSpec/DescribeClass:
     - 'spec/javascripts/jasmine_spec.rb'
 
 # Offense count: 2
-# Configuration parameters: Max.
-RSpec/ExampleLength:
-  Exclude:
-    - 'spec/features/select_files_spec.rb'
-    - 'spec/javascripts/jasmine_spec.rb'
-
-# Offense count: 2
 RSpec/MultipleExpectations:
   Max: 2
 
@@ -83,12 +76,6 @@ Style/ClassAndModuleChildren:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 1
-# Configuration parameters: ExpectMatchingDefinition, Regex, IgnoreExecutableScripts.
-Style/FileName:
-  Exclude:
-    - 'lib/browse-everything.rb'
-
 # Offense count: 2
 # Configuration parameters: MinBodyLength.
 Style/GuardClause:
@@ -102,7 +89,7 @@ Style/MultilineBlockChain:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Style/MultilineBlockLayout:
+Layout/MultilineBlockLayout:
   Exclude:
     - 'spec/unit/dropbox_spec.rb'
 
@@ -111,7 +98,7 @@ Style/MultilineBlockLayout:
 # NamePrefix: is_, has_, have_
 # NamePrefixBlacklist: is_, has_, have_
 # NameWhitelist: is_a?
-Style/PredicateName:
+Naming/PredicateName:
   Exclude:
     - 'spec/**/*'
     - 'app/helpers/browse_everything_helper.rb'

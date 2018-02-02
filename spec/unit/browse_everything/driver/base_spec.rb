@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 include BrowserConfigHelper
 
 describe BrowseEverything::Driver::Base do
@@ -14,18 +16,22 @@ describe BrowseEverything::Driver::Base do
   end
   describe '#connect' do
     subject { driver.connect({}, {}) }
+
     it { is_expected.to be_blank }
   end
   describe '#contents' do
     subject { driver.contents('') }
+
     it { is_expected.to be_empty }
   end
   describe '#details' do
     subject { driver.details('/path/to/foo.txt') }
+
     it { is_expected.to be_nil }
   end
   describe '#link_for' do
     subject { driver.link_for('/path/to/foo.txt') }
+
     it { is_expected.to contain_exactly('/path/to/foo.txt', file_name: 'foo.txt') }
   end
 end

@@ -1,4 +1,5 @@
-# -*- encoding : utf-8 -*-
+# frozen_string_literal: true
+
 require 'rails/generators'
 
 class BrowseEverything::InstallGenerator < Rails::Generators::Base
@@ -6,7 +7,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
 
   desc 'This generator installs the browse everything configuration and assets into your application'
 
-  source_root File.expand_path('../templates', __FILE__)
+  source_root File.expand_path('templates', __dir__)
 
   def inject_config
     generate 'browse_everything:config'

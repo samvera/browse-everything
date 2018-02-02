@@ -1,9 +1,8 @@
+# frozen_string_literal: true
+
 include BrowserConfigHelper
 
 describe BrowseEverything::Driver::Dropbox, vcr: { cassette_name: 'dropbox', record: :none } do
-  before(:all)  { stub_configuration   }
-  after(:all)   { unstub_configuration }
-
   let(:browser) { BrowseEverything::Browser.new(url_options) }
   let(:provider) { browser.providers['dropbox'] }
   let(:provider_yml) do
@@ -11,6 +10,14 @@ describe BrowseEverything::Driver::Dropbox, vcr: { cassette_name: 'dropbox', rec
       client_id: 'client-id',
       client_secret: 'client-secret'
     }
+  end
+
+  before do
+    stub_configuration
+  end
+
+  after do
+    unstub_configuration
   end
 
   describe '#validate_config' do
@@ -25,6 +32,7 @@ describe BrowseEverything::Driver::Dropbox, vcr: { cassette_name: 'dropbox', rec
 
   describe 'simple properties' do
     subject    { provider }
+
     its(:name) { is_expected.to eq('Dropbox') }
     its(:key)  { is_expected.to eq('dropbox') }
     its(:icon) { is_expected.to be_a(String) }
@@ -32,20 +40,23 @@ describe BrowseEverything::Driver::Dropbox, vcr: { cassette_name: 'dropbox', rec
 
   context 'with a valid configuration' do
     let(:driver) { described_class.new(provider_yml) }
+
     before { driver.connect({ code: 'code' }, {}) }
 
     describe '#auth_link' do
       subject { driver.auth_link }
+
       it { is_expected.to start_with('https://www.dropbox.com/oauth2/authorize') }
     end
 
     describe '#authorized?' do
       subject { driver }
+
       it { is_expected.to be_authorized }
     end
 
     describe '#contents' do
-      context 'within the root folder' do
+      context 'when in the root folder' do
         let(:contents) { driver.contents }
 
         it 'retrieves all folders the root folders' do

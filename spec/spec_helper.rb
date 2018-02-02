@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'engine_cart'
 require File.expand_path('config/environment', EngineCart.destination)
 require 'rspec'
@@ -11,7 +13,7 @@ require 'capybara/rspec'
 require 'coveralls'
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Pathname.new(File.expand_path('../support/**/*.rb', __FILE__))].each { |f| require f }
+Dir[Pathname.new(File.expand_path('support/**/*.rb', __dir__))].each { |f| require f }
 
 Coveralls.wear!
 EngineCart.load_application!
@@ -29,7 +31,7 @@ end
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
-    c.syntax = [:should, :expect]
+    c.syntax = %i[should expect]
   end
   config.include WaitForAjax, type: :feature
 end
@@ -45,7 +47,7 @@ module BrowserConfigHelper
 
   def stub_configuration
     BrowseEverything.configure('file_system' => {
-                                 home: File.expand_path('../fixtures/file_system', __FILE__)
+                                 home: File.expand_path('fixtures/file_system', __dir__)
                                },
                                'box' => {
                                  client_id: 'BoxClientId',

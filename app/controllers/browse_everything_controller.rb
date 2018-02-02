@@ -1,4 +1,6 @@
-require File.expand_path('../../helpers/browse_everything_helper', __FILE__)
+# frozen_string_literal: true
+
+require File.expand_path('../helpers/browse_everything_helper', __dir__)
 
 class BrowseEverythingController < ActionController::Base
   layout 'browse_everything'
@@ -10,6 +12,13 @@ class BrowseEverythingController < ActionController::Base
     provider_session.token = provider.token unless provider.nil? || provider.token.blank?
   end
 
+  def provider_contents
+    raise BrowseEverythingHelper::NotImplementedError, 'No provider supported' if provider.nil?
+    raise BrowseEverythingHelper::NotAuthorizedError, 'Not authorized' unless provider.authorized?
+
+    @provider_contents ||= provider.contents(browse_path)
+  end
+
   def index
     render layout: !request.xhr?
   end
@@ -17,10 +26,6 @@ class BrowseEverythingController < ActionController::Base
   # Either render the link to authorization or render the files
   # provider#show method is invoked here
   def show
-    raise BrowseEverythingHelper::NotImplementedError, 'No provider supported' if provider.nil?
-    raise BrowseEverythingHelper::NotAuthorizedError, 'Not authorized' unless provider.authorized?
-
-    @provider_contents = provider.contents(browse_path)
     render partial: 'files', layout: !request.xhr?
   rescue StandardError => error
     # Should an error be raised, log the error and redirect the use to reauthenticate
@@ -37,16 +42,18 @@ class BrowseEverythingController < ActionController::Base
 
   def resolve
     selected_files = params[:selected_files] || []
-    @links = selected_files.collect do |file|
-      provider_key, uri = file.split(/:/)
+    selected_links = selected_files.collect do |file|
+      provider_key_value, uri = file.split(/:/)
+      provider_key = provider_key_value.to_sym
       (url, extra) = browser.providers[provider_key].link_for(uri)
       result = { url: url }
       result.merge!(extra) unless extra.nil?
       result
     end
+
     respond_to do |format|
       format.html { render layout: false }
-      format.json { render json: @links }
+      format.json { render json: selected_links }
     end
   end
 
@@ -56,17 +63,19 @@ class BrowseEverythingController < ActionController::Base
       @provider_session ||= BrowseEverythingSession::ProviderSession.new(session: session, name: provider_name)
     end
 
+    # Generate the markup for the authentication link
+    # @return [String, nil] the markup for the link (if it exists)
     def auth_link
       @auth_link ||= if provider.present?
                        link, data = provider.auth_link
                        provider_session.data = data
                        link = "#{link}&state=#{provider.key}" unless link.to_s.include?('state')
                        link
-                     end # else nil, implicitly
+                     end
     end
 
     def browse_path
-      @path ||= params[:path] || ''
+      @browse_path ||= params[:path] || ''
     end
 
     # Browser state cannot persist between requests to the Controller
@@ -80,13 +89,13 @@ class BrowseEverythingController < ActionController::Base
     end
 
     def provider_name
-      @provider_name ||= params[:provider] || provider_name_from_state
+      @provider_name ||= params[:provider] || provider_name_from_state || browser.providers.each_key.to_a.first
     end
 
     # Retrieve the Driver for each request
     # @return [BrowseEverything::Driver::Base]
     def provider
-      browser.providers[provider_name]
+      browser.providers[provider_name] || browser.first_provider
     end
 
     helper_method :auth_link
@@ -94,4 +103,5 @@ class BrowseEverythingController < ActionController::Base
     helper_method :browse_path
     helper_method :provider
     helper_method :provider_name
+    helper_method :provider_contents
 end

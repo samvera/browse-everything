@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record: :none } do
   let(:retriever) { described_class.new }
-  let(:datafile) { File.expand_path('../../fixtures/file_system/file_1.pdf', __FILE__) }
-  let(:datafile_with_spaces) { File.expand_path('../../fixtures/file_system/file 1.pdf', __FILE__) }
+  let(:datafile) { File.expand_path('../../fixtures/file_system/file_1.pdf', __dir__) }
+  let(:datafile_with_spaces) { File.expand_path('../../fixtures/file_system/file 1.pdf', __dir__) }
   let(:data) { File.open(datafile, 'rb', &:read) }
   let(:data_with_spaces) { File.open(datafile_with_spaces, 'rb', &:read) }
   let(:size) { File.size(datafile) }
@@ -24,22 +26,23 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
     end
   end
 
-  context 'http://' do
+  context 'when retrieving using the HTTP' do
+    let(:expiry_time) { (Time.current + 3600).xmlschema }
     let(:spec) do
       {
         '0' => {
           'url' => 'https://retrieve.cloud.example.com/some/dir/file.pdf',
           'auth_header' => { 'Authorization' => 'Bearer ya29.kQCEAHj1bwFXr2AuGQJmSGRWQXpacmmYZs4kzCiXns3d6H1ZpIDWmdM8' },
-          'expires' => (Time.now + 3600).xmlschema,
+          'expires' => expiry_time,
           'file_name' => 'file.pdf',
           'file_size' => size.to_s
         }
       }
     end
 
-    context '#retrieve' do
+    context 'when retrieving data using chunked-encoded streams' do
       it 'content' do
-        content = ''
+        content = +''
         retriever.retrieve(spec['0']) { |chunk, _retrieved, _total| content << chunk }
         expect(content).to eq(data)
       end
@@ -49,7 +52,7 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
       end
     end
 
-    context '#download' do
+    context 'when downloading content' do
       it 'content' do
         file = retriever.download(spec['0'])
         expect(File.open(file, 'rb', &:read)).to eq(data)
@@ -61,7 +64,7 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
     end
   end
 
-  context 'file://' do
+  context 'when retrieving file content' do
     let(:spec) do
       {
         '0' => {
@@ -77,15 +80,15 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
       }
     end
 
-    context '#retrieve' do
+    context 'when retrieving data using chunked-encoded streams' do
       it 'content' do
-        content = ''
+        content = +''
         retriever.retrieve(spec['0']) { |chunk, _retrieved, _total| content << chunk }
         expect(content).to eq(data)
       end
 
       it 'content with spaces' do
-        content = ''
+        content = +''
         retriever.retrieve(spec['1']) { |chunk, _retrieved, _total| content << chunk }
         expect(content).to eq(data_with_spaces)
       end
@@ -95,7 +98,7 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
       end
     end
 
-    context '#download' do
+    context 'when downloading content' do
       it 'content' do
         file = retriever.download(spec['0'])
         expect(File.open(file, 'rb', &:read)).to eq(data)

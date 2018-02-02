@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 class BrowseEverythingSession
   class Base
     def initialize(session:)

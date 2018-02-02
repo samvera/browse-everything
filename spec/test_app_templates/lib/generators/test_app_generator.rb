@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'rails/generators'
 
 class TestAppGenerator < Rails::Generators::Base
-  source_root File.expand_path('../../../../spec/support', __FILE__)
+  source_root File.expand_path('../../../spec/support', __dir__)
 
   def run_config_generator
     generate 'browse_everything:config'

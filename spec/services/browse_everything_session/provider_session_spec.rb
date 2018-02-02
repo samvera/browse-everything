@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 describe BrowseEverythingSession::ProviderSession do
   subject(:provider_session) { described_class.new(session: session, name: name) }
+
   let(:session) { instance_double(ActionDispatch::Request::Session) }
   let(:name) { 'test_session' }
 

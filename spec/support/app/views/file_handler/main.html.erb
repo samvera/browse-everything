@@ -6,7 +6,7 @@
   <%= form_tag('/file', id: 'main_form', method: 'post') do %>
     <%= button_tag("Browse", type: 'button', class: 'btn btn-large btn-success', id: "browse-btn",
       'data-toggle' => 'browse-everything', 'data-route' => browse_everything_engine.root_path,
-      'data-target' => '#main_form' ) %>
+      'data-target' => '#main_form') %>
     <%= button_tag("Submit", type: 'submit', class: 'btn btn-large btn-primary', id: "submit-btn") %>
   <% end %>
 

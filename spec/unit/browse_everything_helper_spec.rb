@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe BrowseEverythingHelper do
   let(:test_class) do
     Class.new do

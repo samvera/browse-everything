@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe 'browse_everything/_files.html.erb', type: :view do
   let(:file) do
     BrowseEverything::FileEntry.new(
@@ -23,17 +25,20 @@ describe 'browse_everything/_files.html.erb', type: :view do
     allow(view).to receive(:provider_name).and_return('my provider')
     allow(provider).to receive(:config).and_return(config)
 
-    assign(:provider_contents, provider_contents)
+    allow(view).to receive(:provider_contents).and_return provider_contents
   end
 
   describe 'a file' do
+    let(:config) { {} }
     let(:provider_contents) { [file] }
+
     before do
       allow(view).to receive(:file).and_return(file)
       render
     end
-    context 'file not too big' do
+    context 'when a file is not too big' do
       let(:config) { { max_upload_file_size: (5 * 1024 * 1024 * 1024) } }
+
       it 'draws link' do
         expect(page).to have_selector('a.ev-link')
       end
@@ -43,39 +48,35 @@ describe 'browse_everything/_files.html.erb', type: :view do
       end
     end
 
-    context 'max not configured' do
-      let(:config) { {} }
+    context 'when a maximum file size is not configured' do
       it 'draws link' do
         expect(page).to have_selector('a.ev-link')
       end
     end
 
-    context 'file too big' do
+    context 'when a file is too big' do
       let(:config) { { max_upload_file_size: 1024 } }
+
       it 'draws link' do
         expect(page).not_to have_selector('a.ev-link')
       end
     end
 
-    context 'multi-select' do
-      let(:config) { {} }
-      it 'does not have a checkbox' do
-        expect(page).not_to have_selector('input.ev-select-all')
-      end
+    it 'does not have a checkbox' do
+      expect(page).not_to have_selector('input.ev-select-all')
     end
   end
 
   describe 'a directory' do
     let(:provider_contents) { [container] }
+
     before do
       allow(view).to receive(:file).and_return(container)
       render
     end
-    context 'multi-select' do
-      let(:config) { {} }
-      it 'has the select-all checkbox' do
-        expect(page).to have_selector('input.ev-select-all')
-      end
+
+    it 'has the select-all checkbox' do
+      expect(page).to have_selector('input.ev-select-all')
     end
   end
 end

@@ -1,9 +1,8 @@
+# frozen_string_literal: true
+
 include BrowserConfigHelper
 
 describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_drive', record: :none } do
-  before(:all)  { stub_configuration   }
-  after(:all)   { unstub_configuration }
-
   let(:browser) { BrowseEverything::Browser.new(url_options) }
   let(:provider) { browser.providers['google_drive'] }
   let(:provider_yml) do
@@ -11,6 +10,14 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
       client_id: 'CLIENTID', client_secret: 'CLIENTSECRET',
       url_options: { port: '3000', protocol: 'http://', host: 'example.com' }
     }
+  end
+
+  before do
+    stub_configuration
+  end
+
+  after do
+    unstub_configuration
   end
 
   describe 'simple properties' do
@@ -36,6 +43,7 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
     describe '#token=' do
       let(:value) { 'test' }
+
       it 'restores the credentials' do
         allow(driver).to receive(:restore_credentials)
         driver.token = value
@@ -44,6 +52,7 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
       context 'when set to a Hash' do
         let(:value) { { 'access_token' => 'test' } }
+
         before do
           driver.token = value
         end
@@ -71,6 +80,7 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
     describe '#contents' do
       subject(:contents) { driver.contents.to_a }
+
       let(:drive_service_class) { class_double(Google::Apis::DriveV3::DriveService).as_stubbed_const(transfer_nested_constants: true) }
       let(:drive_service) { instance_double(Google::Apis::DriveV3::DriveService) }
       let(:file_list) { instance_double(Google::Apis::DriveV3::FileList) }
@@ -85,8 +95,8 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
         allow(file2).to receive(:name).and_return('asset-name3.pdf')
         allow(file1).to receive(:size).and_return('891764')
         allow(file2).to receive(:size).and_return('641789')
-        allow(file1).to receive(:modified_time).and_return(DateTime.current)
-        allow(file2).to receive(:modified_time).and_return(DateTime.current)
+        allow(file1).to receive(:modified_time).and_return(Time.current)
+        allow(file2).to receive(:modified_time).and_return(Time.current)
         allow(file1).to receive(:mime_type).and_return('application/pdf')
         allow(file2).to receive(:mime_type).and_return('application/vnd.google-apps.folder')
         allow(file_list).to receive(:files).and_return(files)
@@ -102,13 +112,13 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
         expect(contents).not_to be_empty
         expect(contents.first).to be_a BrowseEverything::FileEntry
         expect(contents.first.location).to eq 'google_drive:asset-id2'
-        expect(contents.first.mtime).to be_a DateTime
+        expect(contents.first.mtime).to be_a Time
         expect(contents.first.name).to eq 'asset-name2.pdf'
         expect(contents.first.size).to eq 891764
         expect(contents.first.type).to eq 'application/pdf'
         expect(contents.last).to be_a BrowseEverything::FileEntry
         expect(contents.last.location).to eq 'google_drive:asset-id3'
-        expect(contents.last.mtime).to be_a DateTime
+        expect(contents.last.mtime).to be_a Time
         expect(contents.last.name).to eq 'asset-name3.pdf'
         expect(contents.last.size).to eq 641789
         expect(contents.last.type).to eq 'directory'

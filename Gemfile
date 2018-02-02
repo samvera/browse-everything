@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 # Specify your gem's dependencies in browse_everything.gemspec
@@ -31,14 +33,12 @@ else
   when /^5.1/
     gem 'capybara', '~> 2.13.0'
   when /^4.2/
-    gem 'responders', '~> 2.0'
-    gem 'sass-rails', '>= 5.0'
     gem 'coffee-rails', '~> 4.1.0'
     gem 'json', '~> 1.8'
+    gem 'responders', '~> 2.0'
+    gem 'sass-rails', '>= 5.0'
   end
 end
 # END ENGINE_CART BLOCK
 
-unless File.exist?(file)
-  eval_gemfile File.expand_path('spec/test_app_templates/Gemfile.extra', File.dirname(__FILE__))
-end
+eval_gemfile File.expand_path('spec/test_app_templates/Gemfile.extra', File.dirname(__FILE__)) unless File.exist?(file)
