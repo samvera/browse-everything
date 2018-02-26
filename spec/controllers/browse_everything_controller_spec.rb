@@ -32,7 +32,7 @@ RSpec.describe BrowseEverythingController, type: :controller do
     let(:file2) { instance_double(BrowseEverything::FileEntry) }
 
     before do
-      allow(driver).to receive(:contents).and_return([file1, file2])
+      allow(provider).to receive(:contents).and_return([file1, file2])
       allow(controller).to receive(:render).with(partial: 'files', layout: true)
     end
 
@@ -47,7 +47,8 @@ RSpec.describe BrowseEverythingController, type: :controller do
 
       before do
         controller.instance_variable_set(:@provider_session, provider_session)
-        allow(provider).to receive(:contents).and_raise(Signet::AuthorizationError)
+        allow(controller).to receive(:render).with(partial: 'auth', layout: true)
+        allow(controller).to receive(:render).with(partial: 'files', layout: true).and_raise(Signet::AuthorizationError)
         allow(provider_session).to receive(:token=)
         allow(provider_session).to receive(:code=)
         allow(provider_session).to receive(:data=)
@@ -64,13 +65,13 @@ RSpec.describe BrowseEverythingController, type: :controller do
 
     context 'when a remote API error occurs while retrieving the files' do
       before do
-        allow(provider).to receive(:contents).and_raise(StandardError)
+        allow(controller).to receive(:render).with(partial: 'auth', layout: true)
+        allow(controller).to receive(:render).with(partial: 'files', layout: true).and_raise(StandardError)
         allow(controller).to receive(:reset_provider_session!)
         controller.show
       end
 
       it 'directs the user to reauthenticate after attempting to render the files' do
-        controller.show
         expect(controller).to have_received(:render).with(partial: 'auth', layout: true)
         expect(controller).to have_received(:reset_provider_session!)
       end
