@@ -16,7 +16,7 @@ module BrowseEverything
           # @return [Hash]
           def default_params
             {
-              order_by: 'modifiedByMeTime,modifiedTime,folder desc,name',
+              order_by: 'folder desc,modifiedTime desc,name',
               fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,web_content_link)',
               page_size: 1000
             }

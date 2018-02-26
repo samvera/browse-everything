@@ -39,6 +39,7 @@ RSpec/MultipleExpectations:
     - 'spec/unit/dropbox_spec.rb'
     - 'spec/unit/google_drive_spec.rb'
     - 'spec/features/**/*'
+    - 'spec/controllers/browse_everything_controller_spec.rb'
 
 Style/NumericLiterals:
   MinDigits: 7
