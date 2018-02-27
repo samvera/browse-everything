@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'rails', '>= 5.1'
+  spec.add_dependency 'rails', '>= 4.2'
   spec.add_dependency 'addressable', '~> 2.5'
   spec.add_dependency 'google_drive', '~> 2.1'
   spec.add_dependency 'dropbox_api', '>= 0.1.10'
@@ -49,4 +49,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency "chromedriver-helper"
   spec.add_development_dependency "selenium-webdriver"
+  spec.add_development_dependency 'capybara-selenium'
 end

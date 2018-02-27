@@ -8,8 +8,10 @@ require 'simplecov'
 require 'vcr'
 require 'capybara/rails'
 require 'capybara/rspec'
-require 'support/rake'
 require 'coveralls'
+# Requires supporting ruby files with custom matchers and macros, etc,
+# in spec/support/ and its subdirectories.
+Dir[Pathname.new(File.expand_path('../support/**/*.rb', __FILE__))].each { |f| require f }
 
 Coveralls.wear!
 EngineCart.load_application!
@@ -24,10 +26,6 @@ VCR.configure do |c|
   c.configure_rspec_metadata!
   c.ignore_localhost = true
 end
-
-# Requires supporting ruby files with custom matchers and macros, etc,
-# in spec/support/ and its subdirectories.
-Dir[Pathname.new(File.expand_path('../support/**/*.rb', __FILE__))].each { |f| require f }
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
