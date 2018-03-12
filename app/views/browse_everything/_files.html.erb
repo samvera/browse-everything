@@ -8,7 +8,7 @@
         <th role="columnheader">Modified</th>
       </tr>
     </thead>
-    <% @provider_contents.each_with_index do |file, index| %>
+    <% provider_contents.each_with_index do |file, index| %>
       <% path = browse_everything_engine.contents_path(provider_name, file.id) %>
       <% parent = params[:parent] %>
       <% if file.container? || provider.config[:max_upload_file_size].blank? %>

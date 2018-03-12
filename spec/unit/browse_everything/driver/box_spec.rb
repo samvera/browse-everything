@@ -1,9 +1,8 @@
+# frozen_string_literal: true
+
 include BrowserConfigHelper
 
 describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: :none } do
-  before(:all)  { stub_configuration   }
-  after(:all)   { unstub_configuration }
-
   let(:browser) { BrowseEverything::Browser.new(url_options) }
   let(:provider) { browser.providers['box'] }
   let(:auth_params) do
@@ -33,7 +32,15 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: :no
     }
   end
 
-  subject    { provider }
+  subject { provider }
+
+  before do
+    stub_configuration
+  end
+
+  after do
+    unstub_configuration
+  end
 
   its(:name) { is_expected.to eq('Box') }
   its(:key)  { is_expected.to eq('box') }
@@ -55,6 +62,7 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: :no
 
   describe '#authorized?' do
     subject { provider.authorized? }
+
     context 'when the access token is not registered' do
       it { is_expected.to be(false) }
     end
@@ -73,9 +81,13 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: :no
   end
 
   describe '#connect' do
+    before do
+      allow(provider).to receive(:register_access_token)
+    end
+
     it 'registers new tokens' do
-      expect(provider).to receive(:register_access_token).with(kind_of(OAuth2::AccessToken))
       provider.connect(auth_params, 'data')
+      expect(provider).to have_received(:register_access_token).with(kind_of(OAuth2::AccessToken))
     end
   end
 
@@ -90,6 +102,7 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: :no
 
       describe 'the first item' do
         subject { long_file }
+
         its(:name)     { is_expected.to start_with('A very looooooooooooong box folder') }
         its(:location) { is_expected.to eq('box:20375782799') }
         it             { is_expected.to be_container }
@@ -97,6 +110,7 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: :no
 
       describe 'the SaS - Development Team directory' do
         subject { sas_directory }
+
         its(:name)     { is_expected.to eq('SaS - Development Team') }
         its(:location) { is_expected.to eq('box:2459961273') }
         its(:id)       { is_expected.to eq('2459961273') }
@@ -105,6 +119,7 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: :no
 
       describe 'a file' do
         subject { tar_file }
+
         its(:name)     { is_expected.to eq('failed.tar.gz') }
         its(:size)     { is_expected.to eq(28_650_839) }
         its(:location) { is_expected.to eq('box:25581309763') }

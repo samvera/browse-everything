@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BrowseEverything
   module Driver
     # Driver for accessing the Box API (https://www.box.com/home)
@@ -26,7 +28,7 @@ module BrowseEverything
           results = [parent_directory(folder)]
         end
 
-        folder.items(ITEM_LIMIT, 0, %w(name size created_at)).collect do |f|
+        folder.items(ITEM_LIMIT, 0, %w[name size created_at]).collect do |f|
           results << directory_entry(f)
         end
         results
@@ -114,8 +116,8 @@ module BrowseEverything
           BrowseEverything::FileEntry.new(Pathname(folder.name).join('..'), '', '..', 0, Time.current, true)
         end
 
-        def directory_entry(f)
-          BrowseEverything::FileEntry.new(f.id, "#{key}:#{f.id}", f.name, f.size, f.created_at, f.type == 'folder')
+        def directory_entry(file)
+          BrowseEverything::FileEntry.new(file.id, "#{key}:#{file.id}", file.name, file.size, file.created_at, file.type == 'folder')
         end
     end
   end

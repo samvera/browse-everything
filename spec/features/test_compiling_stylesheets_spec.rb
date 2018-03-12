@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe 'Compiling the stylesheets', type: :feature do
   it 'does not raise errors' do
     visit '/'

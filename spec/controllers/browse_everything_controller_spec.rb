@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe BrowseEverythingController, type: :controller do
@@ -12,6 +14,7 @@ RSpec.describe BrowseEverythingController, type: :controller do
 
   describe '#auth' do
     let(:provider_session) { instance_double(BrowseEverythingSession::ProviderSession) }
+
     before do
       allow(controller).to receive(:params).and_return('code' => 'test-code')
       allow(provider_session).to receive(:data).and_return(nil)
@@ -28,22 +31,23 @@ RSpec.describe BrowseEverythingController, type: :controller do
     let(:file2) { instance_double(BrowseEverything::FileEntry) }
 
     before do
-      allow(controller).to receive(:render)
+      allow(driver).to receive(:contents).and_return([file1, file2])
+      allow(controller).to receive(:render).with(partial: 'files', layout: true)
     end
 
     it 'renders the files retrieved by the driver' do
-      allow(driver).to receive(:contents).and_return([file1, file2])
       controller.show
       expect(controller).to have_received(:render).with(partial: 'files', layout: true)
     end
 
     context 'when an error occurs while retrieving the files' do
       before do
-        allow(driver).to receive(:contents).and_raise(StandardError)
-        controller.show
+        allow(controller).to receive(:render).with(partial: 'files', layout: true).and_raise(StandardError)
+        allow(controller).to receive(:render).with(partial: 'auth', layout: true)
       end
 
-      it 'directs the user to reauthenticate' do
+      it 'directs the user to reauthenticate after attempting to render the files' do
+        controller.show
         expect(controller).to have_received(:render).with(partial: 'auth', layout: true)
       end
     end

@@ -1,7 +1,7 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 2.1
+  TargetRubyVersion: 2.4
   DisplayCopNames: true
   Include:
     - '**/Rakefile'
@@ -10,18 +10,33 @@ AllCops:
 
 Rails:
   Enabled: true
+Rails/FilePath:
+  Exclude:
+    - 'lib/generators/browse_everything/config_generator.rb'
 
 Metrics/ClassLength:
   Max: 130
-
-# Configuration parameters: AllowURI, URISchemes.
 Metrics/LineLength:
   Max: 400
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/views/browse_everything/_files.html.erb_spec.rb'
+    - 'spec/unit/browse_everything_helper_spec.rb'
+    - 'spec/unit/browse_everything/retriever_spec.rb'
+    - 'spec/unit/browse_everything/file_entry_spec.rb'
+    - 'spec/unit/browse_everything/driver/s3_spec.rb'
+    - 'spec/unit/browse_everything/driver/google_drive_spec.rb'
+    - 'spec/unit/browse_everything/driver/file_system_spec.rb'
+    - 'spec/unit/browse_everything/driver/dropbox_spec.rb'
+    - 'spec/unit/browse_everything/driver/box_spec.rb'
+    - 'spec/unit/browse_everything/browser_spec.rb'
+    - 'spec/services/browser_factory_spec.rb'
+    - 'spec/services/browse_everything_session/provider_session_spec.rb'
+    - 'spec/helper/browse_everything_controller_helper_spec.rb'
+    - 'spec/controllers/browse_everything_controller_spec.rb'
+    - 'browse-everything.gemspec'
 
 RSpec/NestedGroups:
-  Enabled: false
-
-RSpec/FilePath:
   Enabled: false
 
 RSpec/LeadingSubject:
@@ -29,19 +44,49 @@ RSpec/LeadingSubject:
 
 RSpec/ExampleLength:
   Exclude:
-    - 'spec/unit/dropbox_spec.rb'
-    - 'spec/unit/google_drive_spec.rb'
+    - 'spec/unit/browse_everything/driver/base_spec.rb'
+    - 'spec/unit/browse_everything/driver/box_spec.rb'
+    - 'spec/unit/browse_everything/driver/dropbox_spec.rb'
+    - 'spec/unit/browse_everything/driver/file_system_spec.rb'
+    - 'spec/unit/browse_everything/driver/google_drive_spec.rb'
+    - 'spec/unit/browse_everything/driver/s3_spec.rb'
     - 'spec/features/select_files_spec.rb'
     - 'spec/javascripts/jasmine_spec.rb'
 
 RSpec/MultipleExpectations:
   Exclude:
-    - 'spec/unit/dropbox_spec.rb'
-    - 'spec/unit/google_drive_spec.rb'
+    - 'spec/unit/browse_everything/driver/base_spec.rb'
+    - 'spec/unit/browse_everything/driver/box_spec.rb'
+    - 'spec/unit/browse_everything/driver/dropbox_spec.rb'
+    - 'spec/unit/browse_everything/driver/file_system_spec.rb'
+    - 'spec/unit/browse_everything/driver/google_drive_spec.rb'
+    - 'spec/unit/browse_everything/driver/s3_spec.rb'
     - 'spec/features/**/*'
 
 Style/NumericLiterals:
   MinDigits: 7
 
-Style/IndentationConsistency:
+Layout/IndentationConsistency:
   EnforcedStyle: rails
+
+Naming/FileName:
+  Exclude:
+    - 'browse-everything.gemspec'
+    - 'Gemfile'
+    - 'lib/browse-everything.rb'
+
+Style/MixinUsage:
+  Exclude:
+    - 'spec/unit/browse_everything/driver/s3_spec.rb'
+    - 'spec/unit/browse_everything/driver/google_drive_spec.rb'
+    - 'spec/unit/browse_everything/driver/file_system_spec.rb'
+    - 'spec/unit/browse_everything/driver/dropbox_spec.rb'
+    - 'spec/unit/browse_everything/driver/box_spec.rb'
+    - 'spec/unit/browse_everything/driver/base_spec.rb'
+    - 'spec/unit/browse_everything/browser_spec.rb'
+    - 'spec/services/browser_factory_spec.rb'
+    - 'spec/helper/browse_everything_controller_helper_spec.rb'
+
+Bundler/DuplicatedGem:
+  Exclude:
+    - 'Gemfile'

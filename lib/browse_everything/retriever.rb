@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'httparty'
 require 'tempfile'
 require 'addressable'
@@ -27,9 +29,7 @@ module BrowseEverything
     end
 
     def retrieve(spec, &block)
-      if spec.key?('expires') && Time.parse(spec['expires']) < Time.now
-        raise ArgumentError, "Download spec expired at #{spec['expires']}"
-      end
+      raise ArgumentError, "Download spec expired at #{spec['expires']}" if spec.key?('expires') && Time.parse(spec['expires']) < Time.now
 
       parsed_spec = parse_spec(spec)
 

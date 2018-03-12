@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BrowseEverything
   class FileEntry
     attr_reader :id, :location, :name, :size, :mtime, :type
@@ -13,7 +15,7 @@ module BrowseEverything
     end
 
     def relative_parent_path?
-      name =~ /^\.\.?$/ ? true : false
+      name.match?(/^\.\.?$/) ? true : false
     end
 
     def container?

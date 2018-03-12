@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module FontAwesomeVersionHelper
   def font_awesome_four?
     Bundler.environment.specs['font-awesome-rails'].first.version >= Gem::Version.new('4')

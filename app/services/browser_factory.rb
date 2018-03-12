@@ -1,11 +1,14 @@
 
+# frozen_string_literal: true
+
 class BrowserFactory
   class << self
     def build(session:, url_options:)
       browser = BrowseEverything::Browser.new(url_options)
-      browser.providers.values.each do |provider_handler|
+      browser.providers.each_value do |provider_handler|
         # The authentication token must be set here
-        provider_handler.token = BrowseEverythingSession::ProviderSession.for(session: session, name: provider_handler.key.to_sym).token
+        provider_session = BrowseEverythingSession::ProviderSession.for(session: session, name: provider_handler.key.to_sym)
+        provider_handler.token = provider_session.token if provider_session.token
       end
       browser
     end

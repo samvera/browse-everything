@@ -1,19 +1,25 @@
-require File.expand_path('../../spec_helper', __FILE__)
+# frozen_string_literal: true
+
+require File.expand_path('../spec_helper', __dir__)
 
 include BrowserConfigHelper
 
 describe BrowseEverythingController, type: :controller do
-  before(:all)  { stub_configuration   }
-  after(:all)   { unstub_configuration }
-
   subject { helper_context.auth_link.scan(/state/) }
 
   let(:helper_context) { controller.view_context }
   let(:browser) { BrowseEverything::Browser.new(url_options) }
 
-  before { allow(controller).to receive(:provider).and_return(provider) }
+  before do
+    stub_configuration
+    allow(controller).to receive(:provider).and_return(provider)
+  end
 
-  context 'dropbox' do
+  after do
+    unstub_configuration
+  end
+
+  context 'when using Dropbox as a provider' do
     let(:provider) { browser.providers['dropbox'] }
 
     describe 'auth_link' do
@@ -21,7 +27,7 @@ describe BrowseEverythingController, type: :controller do
     end
   end
 
-  context 'box' do
+  context 'when using Box as a provider' do
     let(:provider) { browser.providers['box'] }
 
     describe 'auth_link' do
@@ -29,7 +35,7 @@ describe BrowseEverythingController, type: :controller do
     end
   end
 
-  context 'with the Google Drive provider' do
+  context 'when using Google Drive as a provider' do
     let(:provider) { browser.providers['google_drive'] }
 
     describe 'auth_link' do

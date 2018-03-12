@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'google/apis/drive_v3'
 require 'googleauth'
 require 'googleauth/stores/file_token_store'
@@ -40,7 +42,7 @@ module BrowseEverything
           "#{key}:#{file.id}",
           file.name,
           file.size.to_i,
-          file.modified_time || DateTime.new,
+          file.modified_time || Time.new,
           mime_folder,
           mime_folder ? 'directory' : file.mime_type
         )
@@ -78,7 +80,7 @@ module BrowseEverything
         @files = []
         drive_service.batch do |drive|
           request_params = Auth::Google::RequestParameters.new
-          request_params.q = "'#{path}' in parents" unless path.blank?
+          request_params.q = "'#{path}' in parents" if path.present?
           list_files(drive, request_params, path: path)
         end
         @files
