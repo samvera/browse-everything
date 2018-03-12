@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BrowseEverything
   class Browser
     attr_reader :providers
@@ -20,6 +22,10 @@ module BrowseEverything
           Rails.logger.warn "Unknown provider: #{driver}"
         end
       end
+    end
+
+    def first_provider
+      @providers.each_value.to_a.first
     end
   end
 end

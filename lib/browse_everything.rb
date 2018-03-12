@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails'
 require 'browse_everything/version'
 require 'browse_everything/engine'
@@ -28,13 +30,15 @@ module BrowseEverything
       if value.nil? || value.is_a?(Hash)
         @config = value
       elsif value.is_a?(String)
-        @config = YAML.load(ERB.new(File.read(value)).result)
+        config_file_content = File.read(value)
+        config_file_template = ERB.new(config_file_content)
+        @config = YAML.safe_load(config_file_template.result)
+        @config.deep_symbolize_keys!
 
         if @config.include? 'drop_box'
           warn '[DEPRECATION] `drop_box` is deprecated.  Please use `dropbox` instead.'
           @config['dropbox'] = @config.delete('drop_box')
         end
-
       else
         raise InitializationError, "Unrecognized configuration: #{value.inspect}"
       end
@@ -42,7 +46,8 @@ module BrowseEverything
 
     def config
       if @config.nil?
-        configure(File.join(Rails.root.to_s, 'config', 'browse_everything_providers.yml'))
+        config_path = Rails.root.join 'config', 'browse_everything_providers.yml'
+        configure config_path.to_s
       end
       @config
     end

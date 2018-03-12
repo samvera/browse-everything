@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'googleauth'
 
 # Object structuring the credentials retrieved for the Google API's

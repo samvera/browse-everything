@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 include BrowserConfigHelper
 
 describe BrowserFactory do
   subject(:browser_factory) { described_class.new }
+
   let(:session) { instance_double(BrowseEverythingSession::ProviderSession) }
   let(:provider_session_class) { class_double(BrowseEverythingSession::ProviderSession).as_stubbed_const(transfer_nested_constants: true) }
   let(:provider_session) { instance_double(BrowseEverythingSession::ProviderSession) }

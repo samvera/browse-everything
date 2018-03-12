@@ -1,15 +1,19 @@
+# frozen_string_literal: true
+
 module BrowseEverything
   module Driver
     class Base
       include BrowseEverything::Engine.routes.url_helpers
 
-      attr_reader :config, :name
+      attr_reader :config
       attr_accessor :token, :code
 
       def initialize(config, _session_info = {})
         @config = config
         validate_config
       end
+
+      def validate_config; end
 
       def key
         self.class.name.split(/::/).last.underscore
@@ -21,9 +25,6 @@ module BrowseEverything
 
       def name
         @name ||= (@config[:name] || self.class.name.split(/::/).last.titleize)
-      end
-
-      def validate_config
       end
 
       def contents(_path)

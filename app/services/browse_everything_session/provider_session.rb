@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Object for handling session cookies containing cached values
 class BrowseEverythingSession
   class ProviderSession < Base

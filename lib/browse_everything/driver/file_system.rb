@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BrowseEverything
   module Driver
     class FileSystem < Base
@@ -6,8 +8,7 @@ module BrowseEverything
       end
 
       def validate_config
-        return if config[:home].present?
-        raise BrowseEverything::InitializationError, 'FileSystem driver requires a :home argument'
+        raise BrowseEverything::InitializationError, 'FileSystem driver requires a :home argument' if config[:home].blank?
       end
 
       def contents(path = '')
@@ -49,9 +50,7 @@ module BrowseEverything
 
         def make_directory_entry(relative_path, real_path)
           entries = []
-          if relative_path.present?
-            entries << details(File.expand_path('..', real_path), '..')
-          end
+          entries << details(File.expand_path('..', real_path), '..') if relative_path.present?
           entries + Dir[File.join(real_path, '*')].collect { |f| details(f) }
         end
 
@@ -71,7 +70,8 @@ module BrowseEverything
 
         def file_size(path)
           File.size(path).to_i
-        rescue
+        rescue StandardError => error
+          Rails.logger.error "Failed to find the file size for #{path}: #{error}"
           0
         end
     end

@@ -1,9 +1,9 @@
-class FileHandlerController < ApplicationController
-  def index
-  end
+# frozen_string_literal: true
 
-  def main
-  end
+class FileHandlerController < ApplicationController
+  def index; end
+
+  def main; end
 
   def update
     render json: params[:selected_files].to_json

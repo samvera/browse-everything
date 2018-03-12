@@ -1,11 +1,10 @@
+# frozen_string_literal: true
+
 include BrowserConfigHelper
 
 describe BrowseEverything::Browser do
   let(:file_config) do
-    {
-      file_system:  { home: '/file/config/home' },
-      dropbox:      { client_id: 'DropboxId', client_secret: 'DropboxClientSecret' }
-    }.to_yaml
+    "file_system:\n  home: '/file/config/home'\ndropbox:\n  client_id: 'DropboxId'\n  client_secret: 'DropboxClientSecret'"
   end
 
   let(:global_config) do
@@ -29,7 +28,7 @@ describe BrowseEverything::Browser do
     before { allow(File).to receive(:read).and_return(file_config) }
 
     it 'has 2 providers' do
-      expect(browser.providers.keys).to eq([:file_system, :dropbox])
+      expect(browser.providers.keys).to eq(%i[file_system dropbox])
     end
 
     it 'uses the file configuration' do
@@ -43,7 +42,7 @@ describe BrowseEverything::Browser do
     before { BrowseEverything.configure(global_config) }
 
     it 'has 2 providers' do
-      expect(browser.providers.keys).to eq([:file_system, :dropbox])
+      expect(browser.providers.keys).to eq(%i[file_system dropbox])
     end
 
     it 'uses the global configuration' do
@@ -55,7 +54,7 @@ describe BrowseEverything::Browser do
     let(:browser) { described_class.new(local_config) }
 
     it 'has 2 providers' do
-      expect(browser.providers.keys).to eq([:file_system, :dropbox])
+      expect(browser.providers.keys).to eq(%i[file_system dropbox])
     end
 
     it 'uses the local configuration' do
@@ -63,14 +62,18 @@ describe BrowseEverything::Browser do
     end
   end
 
-  describe 'unknown provider' do
+  context 'with an unknown provider' do
     let(:browser) do
-      described_class.new(local_config.merge(foo: { key: 'bar', secret: 'baz' }))
+      described_class.new(foo: { key: 'bar', secret: 'baz' }, url_options: url_options)
     end
 
-    it 'complains but continue' do
-      expect(Rails.logger).to receive(:warn).with('Unknown provider: foo')
-      expect(browser.providers.keys).to eq([:file_system, :dropbox])
+    before do
+      allow(Rails.logger).to receive(:warn)
+    end
+
+    it 'logs a warning' do
+      browser
+      expect(Rails.logger).to have_received(:warn).with('Unknown provider: foo')
     end
   end
 end

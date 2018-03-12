@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 describe BrowseEverything::Auth::Google::Credentials do
   subject(:credentials) { described_class.new }
+
   describe '#fetch_access_token' do
     before do
       credentials.access_token = 'test-token'

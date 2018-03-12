@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BrowseEverythingHelper
   def array_to_hidden_fields(array, key)
     fields = array.to_query(key).split(Rack::Utils::DEFAULT_SEP).collect do |pair|

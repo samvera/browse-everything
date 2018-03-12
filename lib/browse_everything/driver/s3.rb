@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 require 'aws-sdk-s3'
 
 module BrowseEverything
   module Driver
     class S3 < Base
       DEFAULTS = { response_type: :signed_url }.freeze
-      RESPONSE_TYPES = [:signed_url, :public_url, :s3_uri].freeze
-      CONFIG_KEYS = [:bucket].freeze
+      RESPONSE_TYPES = %i[signed_url public_url s3_uri].freeze
+      CONFIG_KEYS = %i[bucket].freeze
 
       attr_reader :entries
 
@@ -23,12 +25,8 @@ module BrowseEverything
       end
 
       def validate_config
-        if config.values_at(:app_key, :app_secret).compact.length == 1
-          raise InitializationError, 'Amazon S3 driver: If either :app_key or :app_secret is provided, both must be.'
-        end
-        unless RESPONSE_TYPES.include?(config[:response_type].to_sym)
-          raise InitializationError, "Amazon S3 driver: Valid response types: #{RESPONSE_TYPES.join(',')}"
-        end
+        raise InitializationError, 'Amazon S3 driver: If either :app_key or :app_secret is provided, both must be.' if config.values_at(:app_key, :app_secret).compact.length == 1
+        raise InitializationError, "Amazon S3 driver: Valid response types: #{RESPONSE_TYPES.join(',')}" unless RESPONSE_TYPES.include?(config[:response_type].to_sym)
         return if CONFIG_KEYS.all? { |key| config[key].present? }
         raise InitializationError, "Amazon S3 driver requires #{CONFIG_KEYS.join(',')}"
       end
@@ -57,9 +55,7 @@ module BrowseEverything
       def add_files(listing, path)
         listing.contents.each do |entry|
           key = from_base(entry.key)
-          unless strip(key) == strip(path)
-            entries << entry_for(key, entry.size, entry.last_modified, false)
-          end
+          entries << entry_for(key, entry.size, entry.last_modified, false) unless strip(key) == strip(path)
         end
       end
 

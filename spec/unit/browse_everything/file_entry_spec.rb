@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 describe BrowseEverything::FileEntry do
-  let(:mtime) { Time.now }
+  let(:mtime) { Time.current }
 
   describe 'regular file' do
     subject do
@@ -42,6 +44,7 @@ describe BrowseEverything::FileEntry do
         '..', '', mtime, true
       )
     end
+
     it { is_expected.to be_container }
     it { is_expected.to be_relative_parent_path }
 

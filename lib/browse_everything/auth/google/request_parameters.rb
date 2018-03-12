@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Manages request parameters for the request to the Google Drive API
 module BrowseEverything
   module Auth
