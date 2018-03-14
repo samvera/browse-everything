@@ -22,7 +22,9 @@ module BrowseEverything
       autoload :RequestParameters,  'browse_everything/auth/google/request_parameters'
     end
   end
+
   class InitializationError < RuntimeError; end
+  class NotImplementedError < StandardError; end
   class NotAuthorizedError < StandardError; end
 
   class << self

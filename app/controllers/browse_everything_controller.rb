@@ -13,10 +13,10 @@ class BrowseEverythingController < ActionController::Base
   end
 
   def provider_contents
-    raise BrowseEverythingHelper::NotImplementedError, 'No provider supported' if provider.nil?
-    raise BrowseEverythingHelper::NotAuthorizedError, 'Not authorized' unless provider.authorized?
+    raise BrowseEverything::NotImplementedError, 'No provider supported' if provider.nil?
+    raise BrowseEverything::NotAuthorizedError, 'Not authorized' unless provider.authorized?
 
-    @provider_contents ||= provider.contents(browse_path)
+    provider.contents(browse_path)
   end
 
   def index
@@ -64,7 +64,7 @@ class BrowseEverythingController < ActionController::Base
     # Constructs or accesses an existing session manager Object
     # @return [BrowseEverythingSession::ProviderSession] the session manager
     def provider_session
-      @provider_session ||= BrowseEverythingSession::ProviderSession.new(session: session, name: provider_name)
+      BrowseEverythingSession::ProviderSession.new(session: session, name: provider_name)
     end
 
     # Clears all authentication tokens, codes, and other data from the Rails session
@@ -90,7 +90,7 @@ class BrowseEverythingController < ActionController::Base
     # Accesses the relative path for browsing from the Rails session
     # @return [String]
     def browse_path
-      @browse_path ||= params[:path] || ''
+      params[:path] || ''
     end
 
     # Generate the provider name from the Rails session state value
@@ -102,13 +102,13 @@ class BrowseEverythingController < ActionController::Base
     # Generates the name of the provider using Rails session values
     # @return [String]
     def provider_name
-      @provider_name ||= params[:provider] || provider_name_from_state || browser.providers.each_key.to_a.first
+      params[:provider] || provider_name_from_state || browser.providers.each_key.to_a.first
     end
 
     # Retrieve the Driver for each request
     # @return [BrowseEverything::Driver::Base]
     def provider
-      browser.providers[provider_name] || browser.first_provider
+      browser.providers[provider_name.to_sym] || browser.first_provider
     end
 
     # Constructs a browser manager Object

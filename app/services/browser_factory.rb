@@ -19,7 +19,7 @@ class BrowserFactory
   end
 
   def self.browser(url_options: {})
-    @browser ||= BrowseEverything::Browser.new(url_options)
+    BrowseEverything::Browser.new(url_options)
   end
   private_class_method :browser
 end
