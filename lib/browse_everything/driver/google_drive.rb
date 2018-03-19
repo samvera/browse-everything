@@ -80,7 +80,7 @@ module BrowseEverything
         @files = []
         drive_service.batch do |drive|
           request_params = Auth::Google::RequestParameters.new
-          request_params.q = "'#{path}' in parents" if path.present?
+          request_params.q += " and '#{path}' in parents " if path.present?
           list_files(drive, request_params, path: path)
         end
         @files

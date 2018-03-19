@@ -24,7 +24,7 @@ describe 'Choosing files', type: :feature, js: true do
     end
   end
 
-  context 'when Turbolinks are enabled' do
+  context 'when Turbolinks are enabled', fail: true do
     before { click_link('Enter Test App (Turbolinks)') }
     it_behaves_like 'browseable files'
   end

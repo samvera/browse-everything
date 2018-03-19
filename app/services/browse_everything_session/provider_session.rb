@@ -7,8 +7,7 @@ class BrowseEverythingSession
     self.sessions = {}
 
     def self.for(session:, name:)
-      return sessions[name] if sessions[name]
-      sessions[name] = ProviderSession.new(session: session, name: name)
+      ProviderSession.new(session: session, name: name)
     end
 
     def initialize(session:, name:)
