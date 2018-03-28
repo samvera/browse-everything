@@ -13,7 +13,7 @@ module BrowseEverything
         opts = BrowseEverything.config
       end
 
-      @providers = {}
+      @providers = ActiveSupport::HashWithIndifferentAccess.new
       opts.each_pair do |driver_key, config|
         begin
           driver = driver_key.to_s
@@ -26,7 +26,7 @@ module BrowseEverything
     end
 
     def first_provider
-      @providers.each_value.to_a.first
+      @providers.to_hash.each_value.to_a.first
     end
   end
 end
