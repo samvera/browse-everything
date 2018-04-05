@@ -58,20 +58,14 @@ describe BrowseEverything::Driver::FileSystem do
     context 'when there is a subdirectory' do
       let(:contents) { provider.contents('/dir_1') }
 
-      context 'when referencing a parent directory' do
-        subject { contents[0] }
-
-        its(:name) { is_expected.to eq('..') }
-        specify    { is_expected.to be_container }
-      end
       context 'when there is a directory' do
-        subject { contents[1] }
+        subject { contents.first }
 
         its(:name) { is_expected.to eq('dir_3') }
         specify    { is_expected.to be_container }
       end
       context 'when there is a text file' do
-        subject { contents[2] }
+        subject { contents.last }
 
         its(:name)     { is_expected.to eq('file_2.txt') }
         its(:location) { is_expected.to eq("file_system:#{File.join(home, 'dir_1/file_2.txt')}") }

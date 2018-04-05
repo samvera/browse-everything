@@ -15,7 +15,7 @@ module BrowseEverything
         relative_path = path.sub(%r{^[\/.]+}, '')
         real_path = File.join(config[:home], relative_path)
         entries = if File.directory?(real_path)
-                    make_directory_entry(relative_path, real_path)
+                    make_directory_entry real_path
                   else
                     [details(real_path)]
                   end
@@ -34,7 +34,7 @@ module BrowseEverything
       end
 
       def details(path, display = File.basename(path))
-        return nil unless File.exist?(path)
+        return nil unless File.exist? path
         info = File::Stat.new(path)
         BrowseEverything::FileEntry.new(
           make_pathname(path),
@@ -48,9 +48,8 @@ module BrowseEverything
 
       private
 
-        def make_directory_entry(relative_path, real_path)
+        def make_directory_entry(real_path)
           entries = []
-          entries << details(File.expand_path('..', real_path), '..') if relative_path.present?
           entries + Dir[File.join(real_path, '*')].collect { |f| details(f) }
         end
 

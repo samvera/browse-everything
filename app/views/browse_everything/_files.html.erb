@@ -21,9 +21,9 @@
       <tr role="row"
           tabindex="-1"
           data-ev-location="<%= file.location %>"
-          data-tt-id="<%=path%>"
-          data-tt-parent-id="<%=parent%>"
-          data-tt-branch="<%=file.container? ? 'true' : 'false'%>">
+          data-tt-id="<%= path %>"
+          data-tt-parent-id="<%= parent %>"
+          data-tt-branch="<%= file.container? ? 'true' : 'false' %>">
 
         <td role="gridcell" title="<%= file.name %>" class="<%=file.container? ? 'ev-container' : 'ev-file'%> ev-file-name">
           <% if disabled %>
