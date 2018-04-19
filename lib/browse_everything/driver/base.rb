@@ -5,12 +5,16 @@ module BrowseEverything
     class Base
       include BrowseEverything::Engine.routes.url_helpers
 
-      attr_reader :config
       attr_accessor :token, :code
 
       def initialize(config, _session_info = {})
         @config = config
         validate_config
+      end
+
+      def config
+        @config = ActiveSupport::HashWithIndifferentAccess.new(@config) if @config.is_a? Hash
+        @config
       end
 
       def validate_config; end
@@ -61,7 +65,9 @@ module BrowseEverything
         # remove the script_name parameter from the url_options since that is causing issues
         #   with the route not containing the engine path in rails 4.2.0
         def callback_options
-          config[:url_options].reject { |k, _v| k == :script_name }
+          options = config.to_hash
+          options.deep_symbolize_keys!
+          options[:url_options].reject { |k, _v| k == :script_name }
         end
     end
   end

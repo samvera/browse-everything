@@ -63,6 +63,7 @@ RSpec/MultipleExpectations:
     - 'spec/unit/browse_everything/driver/s3_spec.rb'
     - 'spec/features/**/*'
     - 'spec/controllers/browse_everything_controller_spec.rb'
+    - 'spec/unit/browse_everything/browser_spec.rb'
 
 Style/NumericLiterals:
   MinDigits: 7
