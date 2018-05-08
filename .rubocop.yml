@@ -16,6 +16,8 @@ Rails/FilePath:
 
 Metrics/ClassLength:
   Max: 130
+  Exclude:
+    - 'lib/browse_everything/driver/google_drive.rb'
 Metrics/LineLength:
   Max: 400
 Metrics/BlockLength:

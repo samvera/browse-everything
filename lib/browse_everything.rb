@@ -16,6 +16,20 @@ module BrowseEverything
     autoload :Box,         'browse_everything/driver/box'
     autoload :GoogleDrive, 'browse_everything/driver/google_drive'
     autoload :S3,          'browse_everything/driver/s3'
+
+    # Access the sorter set for the base driver class
+    # @return [Proc]
+    def sorter
+      BrowseEverything::Driver::Base.sorter
+    end
+
+    # Provide a custom sorter for all driver classes
+    # @param [Proc] the sorting lambda (or proc)
+    def sorter=(sorting_proc)
+      BrowseEverything::Driver::Base.sorter = sorting_proc
+    end
+
+    module_function :sorter, :sorter=
   end
 
   module Auth

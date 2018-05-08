@@ -13,13 +13,13 @@ module BrowseEverything
 
       def contents(path = '')
         real_path = File.join(config[:home], path)
-        entries = if File.directory?(real_path)
-                    make_directory_entry real_path
-                  else
-                    [details(real_path)]
-                  end
+        @entries = if File.directory?(real_path)
+                     make_directory_entry real_path
+                   else
+                     [details(real_path)]
+                   end
 
-        sort_entries(entries)
+        @sorter.call(@entries)
       end
 
       def link_for(path)
@@ -50,16 +50,6 @@ module BrowseEverything
         def make_directory_entry(real_path)
           entries = []
           entries + Dir[File.join(real_path, '*')].collect { |f| details(f) }
-        end
-
-        def sort_entries(entries)
-          entries.sort do |a, b|
-            if b.container?
-              a.container? ? a.name.downcase <=> b.name.downcase : 1
-            else
-              a.container? ? -1 : a.name.downcase <=> b.name.downcase
-            end
-          end
         end
 
         def make_pathname(path)

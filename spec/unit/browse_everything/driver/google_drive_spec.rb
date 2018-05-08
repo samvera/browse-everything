@@ -90,11 +90,11 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
       before do
         allow(file1).to receive(:id).and_return('asset-id2')
-        allow(file2).to receive(:id).and_return('asset-id3')
+        allow(file2).to receive(:id).and_return('directory-id1')
         allow(file1).to receive(:name).and_return('asset-name2.pdf')
-        allow(file2).to receive(:name).and_return('asset-name3.pdf')
+        allow(file2).to receive(:name).and_return('directory-name1')
         allow(file1).to receive(:size).and_return('891764')
-        allow(file2).to receive(:size).and_return('641789')
+        allow(file2).to receive(:size).and_return('0')
         allow(file1).to receive(:modified_time).and_return(Time.current)
         allow(file2).to receive(:modified_time).and_return(Time.current)
         allow(file1).to receive(:mime_type).and_return('application/pdf')
@@ -110,18 +110,20 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
       it 'retrieves files' do
         expect(contents).not_to be_empty
+
         expect(contents.first).to be_a BrowseEverything::FileEntry
-        expect(contents.first.location).to eq 'google_drive:asset-id2'
+        expect(contents.first.location).to eq 'google_drive:directory-id1'
         expect(contents.first.mtime).to be_a Time
-        expect(contents.first.name).to eq 'asset-name2.pdf'
-        expect(contents.first.size).to eq 891764
-        expect(contents.first.type).to eq 'application/pdf'
+        expect(contents.first.name).to eq 'directory-name1'
+        expect(contents.first.size).to eq 0
+        expect(contents.first.type).to eq 'directory'
+
         expect(contents.last).to be_a BrowseEverything::FileEntry
-        expect(contents.last.location).to eq 'google_drive:asset-id3'
+        expect(contents.last.location).to eq 'google_drive:asset-id2'
         expect(contents.last.mtime).to be_a Time
-        expect(contents.last.name).to eq 'asset-name3.pdf'
-        expect(contents.last.size).to eq 641789
-        expect(contents.last.type).to eq 'directory'
+        expect(contents.last.name).to eq 'asset-name2.pdf'
+        expect(contents.last.size).to eq 891764
+        expect(contents.last.type).to eq 'application/pdf'
       end
 
       context 'when an error is encountered while authenticating' do

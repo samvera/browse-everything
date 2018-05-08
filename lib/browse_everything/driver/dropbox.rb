@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'dropbox_api'
+require_relative 'authentication_factory'
 
 module BrowseEverything
   module Driver
@@ -51,6 +52,21 @@ module BrowseEverything
         end
       end
 
+      class << self
+        attr_accessor :authentication_klass
+
+        def default_authentication_klass
+          DropboxApi::Authenticator
+        end
+      end
+
+      # Constructor
+      # @param config_values [Hash] configuration for the driver
+      def initialize(config_values)
+        self.class.authentication_klass ||= self.class.default_authentication_klass
+        super(config_values)
+      end
+
       def icon
         'dropbox'
       end
@@ -61,8 +77,9 @@ module BrowseEverything
       end
 
       def contents(path = '')
-        result = client.list_folder(path)
-        result.entries.map { |entry| FileEntryFactory.build(metadata: entry, key: key) }
+        response = client.list_folder(path)
+        @entries = response.entries.map { |entry| FileEntryFactory.build(metadata: entry, key: key) }
+        @sorter.call(@entries)
       end
 
       def details(path)
@@ -104,8 +121,20 @@ module BrowseEverything
 
       private
 
+        def session
+          AuthenticationFactory.new(
+            self.class.authentication_klass,
+            config[:client_id],
+            config[:client_secret]
+          )
+        end
+
+        def authenticate
+          session.authenticate
+        end
+
         def authenticator
-          @authenticator ||= DropboxApi::Authenticator.new(config[:client_id], config[:client_secret])
+          @authenticator ||= authenticate
         end
 
         def client
