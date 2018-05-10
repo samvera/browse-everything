@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'aws-sdk-s3'
+require_relative 'authentication_factory'
 
 module BrowseEverything
   module Driver
@@ -9,6 +10,14 @@ module BrowseEverything
       RESPONSE_TYPES = %i[signed_url public_url s3_uri].freeze
       CONFIG_KEYS = %i[bucket].freeze
 
+      class << self
+        attr_accessor :authentication_klass
+
+        def default_authentication_klass
+          Aws::S3::Client
+        end
+      end
+
       attr_reader :entries
 
       def initialize(config, *args)
@@ -16,8 +25,9 @@ module BrowseEverything
           warn '[DEPRECATION] Amazon S3 driver: `:signed_url` is deprecated.  Please use `:response_type` instead.'
           config[:response_type] = :public_url
         end
-        config = DEFAULTS.merge(config)
-        super
+        merged_config = DEFAULTS.merge(config)
+        self.class.authentication_klass ||= self.class.default_authentication_klass
+        super(merged_config, *args)
       end
 
       def icon
@@ -31,55 +41,13 @@ module BrowseEverything
         raise InitializationError, "Amazon S3 driver requires #{CONFIG_KEYS.join(',')}"
       end
 
+      # Retrieve the entries from the S3 Bucket
       # @return [Array<BrowseEverything::FileEntry>]
-      # Appends / to the path before querying S3
       def contents(path = '')
         path = File.join(path, '') unless path.empty?
         init_entries(path)
         generate_listing(path)
-        sort_entries
-      end
-
-      def generate_listing(path)
-        listing = client.list_objects(bucket: config[:bucket], delimiter: '/', prefix: full_path(path))
-        add_directories(listing)
-        add_files(listing, path)
-      end
-
-      def add_directories(listing)
-        listing.common_prefixes.each do |prefix|
-          entries << entry_for(from_base(prefix.prefix), 0, Time.current, true)
-        end
-      end
-
-      def add_files(listing, path)
-        listing.contents.each do |entry|
-          key = from_base(entry.key)
-          entries << entry_for(key, entry.size, entry.last_modified, false) unless strip(key) == strip(path)
-        end
-      end
-
-      def sort_entries
-        entries.sort do |a, b|
-          if b.container?
-            a.container? ? a.name.downcase <=> b.name.downcase : 1
-          else
-            a.container? ? -1 : a.name.downcase <=> b.name.downcase
-          end
-        end
-      end
-
-      def init_entries(path)
-        @entries = if path.empty?
-                     []
-                   else
-                     [BrowseEverything::FileEntry.new(Pathname(path).join('..').to_s, '', '..',
-                                                      0, Time.current, true)]
-                   end
-      end
-
-      def entry_for(name, size, date, dir)
-        BrowseEverything::FileEntry.new(name, [key, name].join(':'), File.basename(name), size, date, dir)
+        @sorter.call(@entries)
       end
 
       def details(path)
@@ -108,10 +76,6 @@ module BrowseEverything
         @bucket ||= Aws::S3::Bucket.new(config[:bucket], client: client)
       end
 
-      def client
-        @client ||= Aws::S3::Client.new(aws_config)
-      end
-
       private
 
         def strip(path)
@@ -131,6 +95,53 @@ module BrowseEverything
           result[:credentials] = Aws::Credentials.new(config[:app_key], config[:app_secret]) if config[:app_key].present?
           result[:region] = config[:region] if config.key?(:region)
           result
+        end
+
+        def session
+          AuthenticationFactory.new(
+            self.class.authentication_klass,
+            aws_config
+          )
+        end
+
+        def authenticate
+          session.authenticate
+        end
+
+        def client
+          @client ||= authenticate
+        end
+
+        def init_entries(path)
+          @entries = if path.empty?
+                       []
+                     else
+                       [BrowseEverything::FileEntry.new(Pathname(path).join('..').to_s, '', '..',
+                                                        0, Time.current, true)]
+                     end
+        end
+
+        def entry_for(name, size, date, dir)
+          BrowseEverything::FileEntry.new(name, [key, name].join(':'), File.basename(name), size, date, dir)
+        end
+
+        def add_directories(listing)
+          listing.common_prefixes.each do |prefix|
+            @entries << entry_for(from_base(prefix.prefix), 0, Time.current, true)
+          end
+        end
+
+        def add_files(listing, path)
+          listing.contents.each do |entry|
+            key = from_base(entry.key)
+            @entries << entry_for(key, entry.size, entry.last_modified, false) unless strip(key) == strip(path)
+          end
+        end
+
+        def generate_listing(path)
+          listing = client.list_objects(bucket: config[:bucket], delimiter: '/', prefix: full_path(path))
+          add_directories(listing)
+          add_files(listing, path)
         end
     end
   end

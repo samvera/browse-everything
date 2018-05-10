@@ -1,12 +1,28 @@
 # frozen_string_literal: true
 
+require 'ruby-box'
+require_relative 'authentication_factory'
+
 module BrowseEverything
   module Driver
     # Driver for accessing the Box API (https://www.box.com/home)
     class Box < Base
-      require 'ruby-box'
-
       ITEM_LIMIT = 99999
+
+      class << self
+        attr_accessor :authentication_klass
+
+        def default_authentication_klass
+          RubyBox::Session
+        end
+      end
+
+      # Constructor
+      # @param config_values [Hash] configuration for the driver
+      def initialize(config_values)
+        self.class.authentication_klass ||= self.class.default_authentication_klass
+        super(config_values)
+      end
 
       def icon
         'cloud'
@@ -22,16 +38,16 @@ module BrowseEverything
       def contents(id = '')
         if id.empty?
           folder = box_client.root_folder
-          results = []
+          @entries = []
         else
           folder = box_client.folder_by_id(id)
-          results = [parent_directory(folder)]
+          @entries = [parent_directory(folder)]
         end
 
         folder.items(ITEM_LIMIT, 0, %w[name size created_at]).collect do |f|
-          results << directory_entry(f)
+          @entries << directory_entry(f)
         end
-        results
+        @sorter.call(@entries)
       end
 
       # @param [String] id of the file in Box
@@ -70,17 +86,28 @@ module BrowseEverything
 
         def box_client
           if token_expired?
-            session = box_session(box_token)
+            session = box_session
             register_access_token(session.refresh_token(box_refresh_token))
           end
-          RubyBox::Client.new(box_session(box_token, box_refresh_token))
+          RubyBox::Client.new(box_session)
         end
 
-        def box_session(token = nil, refresh_token = nil)
-          RubyBox::Session.new(client_id: config[:client_id],
-                               client_secret: config[:client_secret],
-                               access_token: token,
-                               refresh_token: refresh_token)
+        def session
+          AuthenticationFactory.new(
+            self.class.authentication_klass,
+            client_id: config[:client_id],
+            client_secret: config[:client_secret],
+            access_token: box_token,
+            refresh_token: box_refresh_token
+          )
+        end
+
+        def authenticate
+          session.authenticate
+        end
+
+        def box_session
+          authenticate
         end
 
         # If there is an active session, {@token} will be set by {BrowseEverythingController} using data stored in the

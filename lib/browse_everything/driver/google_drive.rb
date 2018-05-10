@@ -3,11 +3,27 @@
 require 'google/apis/drive_v3'
 require 'googleauth'
 require 'googleauth/stores/file_token_store'
+require_relative 'authentication_factory'
 
 module BrowseEverything
   module Driver
     class GoogleDrive < Base
+      class << self
+        attr_accessor :authentication_klass
+
+        def default_authentication_klass
+          Google::Auth::UserAuthorizer
+        end
+      end
+
       attr_reader :credentials
+
+      # Constructor
+      # @param config_values [Hash] configuration for the driver
+      def initialize(config_values)
+        self.class.authentication_klass ||= self.class.default_authentication_klass
+        super(config_values)
+      end
 
       # The token here must be set using a Hash
       # @param value [String, Hash] the new access token
@@ -63,27 +79,28 @@ module BrowseEverything
             raise error
           end
 
-          @files += file_list.files.map do |gdrive_file|
+          @entries += file_list.files.map do |gdrive_file|
             details(gdrive_file, path)
           end
 
           request_params.page_token = file_list.next_page_token
         end
 
-        @files += list_files(drive, request_params, path: path) if request_params.page_token.present?
+        @entries += list_files(drive, request_params, path: path) if request_params.page_token.present?
       end
 
       # Retrieve the files for any given resource on Google Drive
       # @param path [String] the root or Folder path for which to list contents
       # @return [Array<BrowseEverything::FileEntry>] file entries for the path
       def contents(path = '')
-        @files = []
+        @entries = []
         drive_service.batch do |drive|
           request_params = Auth::Google::RequestParameters.new
           request_params.q += " and '#{path}' in parents " if path.present?
           list_files(drive, request_params, path: path)
         end
-        @files
+
+        @sorter.call(@entries)
       end
 
       # Retrieve a link for a resource
@@ -126,10 +143,22 @@ module BrowseEverything
         Google::Auth::Stores::FileTokenStore.new(file: file_token_store_path)
       end
 
+      def session
+        AuthenticationFactory.new(
+          self.class.authentication_klass,
+          client_id,
+          scope,
+          token_store,
+          callback
+        )
+      end
+
+      delegate :authenticate, to: :session
+
       # Authorization Object for Google API
       # @return [Google::Auth::UserAuthorizer]
       def authorizer
-        @authorizer ||= Google::Auth::UserAuthorizer.new(client_id, scope, token_store, callback)
+        @authorizer ||= authenticate
       end
 
       # Request to authorize the provider
