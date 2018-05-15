@@ -21,6 +21,9 @@ module BrowseEverything
               q: default_query,
               order_by: 'modifiedTime desc,folder,name',
               fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,web_content_link)',
+              supports_team_drives: true,
+              include_team_drive_items: true,
+              corpora: 'user,allTeamDrives',
               page_size: 1000
             }
           end
