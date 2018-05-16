@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'bootstrap-sass', '~> 3.2'
   spec.add_dependency 'dropbox_api', '>= 0.1.10'
   spec.add_dependency 'font-awesome-rails'
-  spec.add_dependency 'google-api-client', '~> 0.9'
+  spec.add_dependency 'google-api-client', '~> 0.21'
   spec.add_dependency 'google_drive', '~> 2.1'
   spec.add_dependency 'httparty', '~> 0.15'
   spec.add_dependency 'rails', '>= 4.2'
