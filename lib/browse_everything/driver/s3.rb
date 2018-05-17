@@ -6,7 +6,7 @@ require_relative 'authentication_factory'
 module BrowseEverything
   module Driver
     class S3 < Base
-      DEFAULTS = { response_type: :signed_url }.freeze
+      DEFAULTS = { response_type: :signed_url, expires_in: 14400 }.freeze
       RESPONSE_TYPES = %i[signed_url public_url s3_uri].freeze
       CONFIG_KEYS = %i[bucket].freeze
 
@@ -62,7 +62,7 @@ module BrowseEverything
       def link_for(path)
         obj = bucket.object(full_path(path))
         case config[:response_type].to_sym
-        when :signed_url then obj.presigned_url(:get, expires_in: 14400)
+        when :signed_url then obj.presigned_url(:get, expires_in: config[:expires_in])
         when :public_url then obj.public_url
         when :s3_uri     then "s3://#{obj.bucket_name}/#{obj.key}"
         end
