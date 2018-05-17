@@ -13,7 +13,7 @@
 #   client_secret: YOUR_GOOGLE_API_CLIENT_SECRET
 # s3:
 #   bucket: YOUR_AWS_S3_BUCKET
-#   response_type: :signed_url # set to :public_url for public urls or :s3_uri for an s3://BUCKET/KEY uri
+#   response_type: signed_url # set to :public_url for public urls or :s3_uri for an s3://BUCKET/KEY uri
 #   expires_in: 14400 # for signed_url response_type, number of seconds url will be valid for.
 #   app_key: YOUR_AWS_S3_KEY       # :app_key, :app_secret, and :region can be specified
 #   app_secret: YOUR_AWS_S3_SECRET # explicitly here, or left out to use system-configured
