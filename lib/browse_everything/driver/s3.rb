@@ -61,11 +61,19 @@ module BrowseEverything
 
       def link_for(path)
         obj = bucket.object(full_path(path))
-        case config[:response_type].to_sym
-        when :signed_url then obj.presigned_url(:get, expires_in: config[:expires_in])
-        when :public_url then obj.public_url
-        when :s3_uri     then "s3://#{obj.bucket_name}/#{obj.key}"
-        end
+
+        extras = {
+          file_name: File.basename(path),
+          expires: (config[:expires_in] if config[:response_type] == :signed_url)
+        }.compact
+
+        url = case config[:response_type].to_sym
+              when :signed_url then obj.presigned_url(:get, expires_in: config[:expires_in])
+              when :public_url then obj.public_url
+              when :s3_uri     then "s3://#{obj.bucket_name}/#{obj.key}"
+              end
+
+        [url, extras]
       end
 
       def authorized?
