@@ -89,7 +89,7 @@ module BrowseEverything
       end
 
       # Abstract method
-      def auth_link
+      def auth_link(*_args)
         []
       end
 

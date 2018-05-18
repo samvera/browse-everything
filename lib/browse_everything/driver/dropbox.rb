@@ -79,6 +79,7 @@ module BrowseEverything
       end
 
       def contents(path = '')
+        path = '/' + path unless path == ''
         response = client.list_folder(path)
         @entries = response.entries.map { |entry| FileEntryFactory.build(metadata: entry, key: key) }
         @sorter.call(@entries)
@@ -103,12 +104,12 @@ module BrowseEverything
         [uri_for(path), {}]
       end
 
-      def auth_link
-        authenticator.authorize_url
+      def auth_link(url_options)
+        authenticator.authorize_url redirect_uri: redirect_uri(url_options)
       end
 
-      def connect(params, _data)
-        auth_bearer = authenticator.get_token(params[:code])
+      def connect(params, _data, url_options)
+        auth_bearer = authenticator.get_token params[:code], redirect_uri: redirect_uri(url_options)
         self.token = auth_bearer.token
       end
 
@@ -136,6 +137,10 @@ module BrowseEverything
 
         def client
           DropboxApi::Client.new(token)
+        end
+
+        def redirect_uri(url_options)
+          connector_response_url(**url_options)
         end
     end
   end

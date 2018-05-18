@@ -62,7 +62,7 @@ module BrowseEverything
 
       # @return [String]
       # Authorization url that is used to request the initial access code from Box
-      def auth_link
+      def auth_link(*_args)
         box_session.authorize_url(callback.to_s)
       end
 
