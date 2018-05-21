@@ -52,6 +52,12 @@ In `app/assets/javascripts/application.js` include jquery and the BrowseEverythi
 //= require browse_everything
 ```
 
+## Testing
+This is a Rails Engine which is tested using the [engine_cart](https://github.com/cbeer/engine_cart) Gem.  Test suites may be executed with the following invocation:
+
+```bash
+bundle exec rake
+```
 
 ## Usage
 
