@@ -16,6 +16,20 @@ download the files.
 
 **This gem does not depend on hydra-head**
 
+## Supported Ruby Releases
+Currently, the following releases of Ruby are supported:
+- 2.5.1
+- 2.4.4
+- 2.3.7
+  - Please note that this is the last release in the 2.3.x series, and support is [scheduled to be withdrawn](https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-3-7-released/).  We would strongly recommend that one upgrades from 2.3.7 in response to this.
+
+## Supported Rails Releases
+- 5.2.0
+- 5.1.6
+- 5.0.7
+- 4.2.10
+  - The supported Rail releases follow those specified by [the security policy of the Rails Community](https://rubyonrails.org/security/).  As is the case with the supported Ruby releases, it is recommended that one upgrades from any Rails release no longer receiving security updates.
+
 ## Installation
 
 Add this lines to your application's Gemfile:
