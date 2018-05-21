@@ -11,8 +11,8 @@ describe 'Choosing files', type: :feature, js: true do
       wait_for_ajax
 
       expect(page).to have_selector '#browse-everything'
-      expect(page).to have_link 'README.md'
-      find(:css, '#readme-md').set(true)
+      expect(page).to have_link 'config.ru'
+      find(:css, '#config-ru').set(true)
 
       within('.modal-footer') do
         click_button('Submit')
