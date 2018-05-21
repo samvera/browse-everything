@@ -18,7 +18,8 @@ class BrowseEverything::ConfigGenerator < Rails::Generators::Base
   end
 
   def copy_example_config
-    copy_file 'browse_everything_providers.yml.example', 'config/browse_everything_providers.yml'
+    FileUtils.rm 'config/browse_everything_providers.yml', force: true if File.exists? 'config/browse_everything_providers.yml'
+    copy_file 'browse_everything_providers.yml.example', 'config/browse_everything_providers.yml', force: true
   end
 
   def insert_file_system_path

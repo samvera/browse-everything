@@ -1,2 +1,2 @@
 gem 'jquery-rails'
-gem 'puma'
+gem 'puma-rails'

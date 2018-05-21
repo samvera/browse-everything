@@ -3,7 +3,11 @@
 require 'rails/generators'
 
 class TestAppGenerator < Rails::Generators::Base
-  source_root File.expand_path('../../../spec/support', __dir__)
+  source_root File.expand_path('../../../../spec/test_app_templates/', __FILE__)
+
+  def install_engine
+    generate 'browse_everything:install -f'
+  end
 
   def run_config_generator
     generate 'browse_everything:config'
@@ -44,8 +48,8 @@ class TestAppGenerator < Rails::Generators::Base
   end
 
   def create_test_route
-    copy_file 'app/controllers/file_handler_controller.rb', 'app/controllers/file_handler_controller.rb'
-    copy_file 'app/views/file_handler/main.html.erb', 'app/views/file_handler/main.html.erb'
-    copy_file 'app/views/file_handler/index.html.erb', 'app/views/file_handler/index.html.erb'
+    copy_file '../support/app/controllers/file_handler_controller.rb', 'app/controllers/file_handler_controller.rb'
+    copy_file '../support/app/views/file_handler/main.html.erb', 'app/views/file_handler/main.html.erb'
+    copy_file '../support/app/views/file_handler/index.html.erb', 'app/views/file_handler/index.html.erb'
   end
 end
