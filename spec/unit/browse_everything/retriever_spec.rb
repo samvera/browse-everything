@@ -62,6 +62,37 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
         expect { |block| retriever.download(spec['0'], &block) }.to yield_with_args(String, data.length, data.length)
       end
     end
+
+    context 'when downloading content and a server error occurs' do
+      let(:download_options) { spec['0'] }
+      let(:response) { instance_double(HTTParty::Response) }
+      let(:error) do
+        {
+          'error' =>
+          {
+            'errors' => [
+              {
+                'domain' => 'usageLimits',
+                'reason' => 'dailyLimitExceededUnreg',
+                'message' => 'Daily Limit for Unauthenticated Use Exceeded. Continued use requires signup.',
+                'extendedHelp' => 'https://code.google.com/apis/console'
+              }
+            ],
+            'code' => 403,
+            'message' => 'Daily Limit for Unauthenticated Use Exceeded. Continued use requires signup.'
+          }
+        }
+      end
+
+      before do
+        allow(response).to receive(:code).and_return(403)
+        allow(response).to receive(:body).and_return(error)
+        allow(HTTParty).to receive(:get).and_return(response)
+      end
+      it 'raises an exception' do
+        expect { retriever.download(download_options) }.to raise_error(BrowseEverything::DownloadError, /BrowseEverything::Retriever: Failed to download/)
+      end
+    end
   end
 
   context 'when retrieving file content' do
