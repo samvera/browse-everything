@@ -50,15 +50,6 @@ module BrowseEverything
         @sorter.call(@entries)
       end
 
-      def details(path)
-        entry = client.head_object(full_path(path))
-        BrowseEverything::FileEntry.new(
-          entry.key, [key, entry.key].join(':'),
-          File.basename(entry.key), entry.size,
-          entry.last_modified, false
-        )
-      end
-
       def link_for(path)
         obj = bucket.object(full_path(path))
 

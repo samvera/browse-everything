@@ -1,26 +1,46 @@
 # frozen_string_literal: true
+ENV["RAILS_ENV"] ||= 'test'
+require "bundler/setup"
+
+def coverage_needed?
+  ENV['COVERAGE'] || ENV['TRAVIS']
+end
+
+if coverage_needed?
+  require 'simplecov'
+  require 'coveralls'
+  SimpleCov.root(File.expand_path('../..', __FILE__))
+  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
+    [
+      SimpleCov::Formatter::HTMLFormatter,
+      Coveralls::SimpleCov::Formatter
+    ]
+  )
+  SimpleCov.start('rails') do
+    add_filter '/.internal_test_app'
+    add_filter '/lib/browse_everything/engine.rb'
+    add_filter '/lib/browse_everything/version.rb'
+    add_filter '/lib/generators'
+    add_filter '/spec'
+    add_filter '/tasks'
+  end
+end
 
 require 'engine_cart'
 require File.expand_path('config/environment', EngineCart.destination)
+EngineCart.load_application!
+
+require 'capybara/rails'
+require 'capybara/rspec'
 require 'rspec'
 require 'rspec/rails'
 require 'rspec/its'
-require 'webmock/rspec'
-require 'simplecov'
 require 'vcr'
-require 'capybara/rails'
-require 'capybara/rspec'
-require 'coveralls'
+require 'webmock/rspec'
+
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[Pathname.new(File.expand_path('support/**/*.rb', __dir__))].each { |f| require f }
-
-Coveralls.wear!
-EngineCart.load_application!
-
-SimpleCov.start do
-  add_filter '/spec/'
-end
 
 VCR.configure do |c|
   c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'

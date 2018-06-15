@@ -99,4 +99,11 @@ describe BrowseEverything::Browser do
       expect(Rails.logger).to have_received(:warn).with('Unknown provider: foo')
     end
   end
+
+  describe '#first_provider' do
+    subject(:browser) { described_class.new(url_options) }
+    it 'retrieves the first configured provider' do
+      expect(browser.first_provider).to be_a BrowseEverything::Driver::FileSystem
+    end
+  end
 end

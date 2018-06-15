@@ -39,7 +39,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'engine_cart', '~> 1.0'
   spec.add_development_dependency 'factory_bot_rails'
   spec.add_development_dependency 'jasmine', '~> 2.3'
-  spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'rails-controller-testing'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '~> 3.0'
