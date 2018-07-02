@@ -206,8 +206,12 @@ module BrowseEverything
           Tempfile.new('gdrive.yaml')
         end
 
+        # Specifies the scope for the OAuth client interfacing with Google
+        # Services
+        # @see https://developers.google.com/drive/api/v3/about-auth#what_scope_or_scopes_does_my_app_need
+        # @return [String] the scope
         def scope
-          Google::Apis::DriveV3::AUTH_DRIVE
+          Google::Apis::DriveV3::AUTH_DRIVE_READONLY
         end
 
         # Provides the user ID for caching access tokens
