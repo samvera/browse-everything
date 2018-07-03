@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundler', '~> 1.3'
   spec.add_development_dependency 'capybara'
-  spec.add_development_dependency 'chromedriver-helper'
+  spec.add_development_dependency 'chromedriver-helper', '~> 1.2'
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'engine_cart', '~> 1.0'
   spec.add_development_dependency 'factory_bot_rails'
@@ -47,7 +47,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-rails'
   spec.add_development_dependency 'rubocop', '~> 0.53'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.23'
-  spec.add_development_dependency 'selenium-webdriver'
+  spec.add_development_dependency 'selenium-webdriver', '~> 3.13'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'vcr'
