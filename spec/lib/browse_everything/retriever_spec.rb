@@ -29,30 +29,11 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
 
     context "when retrieving a resource from a cloud storage provider" do
       let(:url) { URI.parse("https://drive.google.com/uc?id=id&export=download") }
-      let(:response) { double }
-      let(:headers) do
-        {
-          'Authorization:' => 'Bearer access-token'
-        }
-      end
-
-      before do
-        WebMock.disable!
-        allow(response).to receive(:content).and_return('content')
-        allow(response).to receive(:content_length).and_return('1234')
-        allow(response).to receive(:code).and_return(200)
-        allow(HTTParty).to receive(:head).and_return(response)
-        allow(HTTParty).to receive(:get).and_return(response)
-      end
 
       it 'calculates or retrieves the size of a file' do
         retriever.retrieve(options) do |chunk, retrieved, total|
           expect(total).to eq 1234
         end
-      end
-
-      after do
-        WebMock.enable!
       end
     end
 
@@ -121,31 +102,19 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
     end
 
     context 'when downloading content and a server error occurs' do
-      let(:download_options) { spec['0'] }
-      let(:response) { instance_double(HTTParty::Response) }
-      let(:error) do
+      let(:spec) do
         {
-          'error' =>
-          {
-            'errors' => [
-              {
-                'domain' => 'usageLimits',
-                'reason' => 'dailyLimitExceededUnreg',
-                'message' => 'Daily Limit for Unauthenticated Use Exceeded. Continued use requires signup.',
-                'extendedHelp' => 'https://code.google.com/apis/console'
-              }
-            ],
-            'code' => 403,
-            'message' => 'Daily Limit for Unauthenticated Use Exceeded. Continued use requires signup.'
+          '0' => {
+            'url' => 'https://retrieve.cloud.example.com/some/dir/file_error.pdf',
+            'auth_header' => { 'Authorization' => 'Bearer ya29.kQCEAHj1bwFXr2AuGQJmSGRWQXpacmmYZs4kzCiXns3d6H1ZpIDWmdM8' },
+            'expires' => expiry_time,
+            'file_name' => 'file.pdf',
+            'file_size' => size.to_s
           }
         }
       end
+      let(:download_options) { spec['0'] }
 
-      before do
-        allow(response).to receive(:code).and_return(403)
-        allow(response).to receive(:body).and_return(error)
-        allow(HTTParty).to receive(:get).and_return(response)
-      end
       it 'raises an exception' do
         expect { retriever.download(download_options) }.to raise_error(BrowseEverything::DownloadError, /BrowseEverything::Retriever: Failed to download/)
       end
@@ -198,4 +167,34 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
     end
   end
 
+  context '.can_retrieve?' do
+    let(:expiry_time) { (Time.current + 3600).xmlschema }
+    let(:spec) do
+      {
+        '0' => {
+          'url' => url,
+          'auth_header' => { 'Authorization' => 'Bearer ya29.kQCEAHj1bwFXr2AuGQJmSGRWQXpacmmYZs4kzCiXns3d6H1ZpIDWmdM8' },
+          'expires' => expiry_time,
+          'file_name' => 'file.pdf',
+          'file_size' => '64134'
+        }
+      }
+    end
+
+    context 'can retrieve' do
+      let(:url) { 'https://retrieve.cloud.example.com/some/dir/can_retrieve.pdf' }
+
+      it 'says it can' do
+        expect(described_class.can_retrieve?(url)).to be_truthy
+      end
+    end
+
+    context 'cannot retrieve' do
+      let(:url) { 'https://retrieve.cloud.example.com/some/dir/cannot_retrieve.pdf' }
+
+      it 'says it cannot' do
+        expect(described_class.can_retrieve?(url)).to be_falsey
+      end
+    end
+  end
 end

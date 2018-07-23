@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'font-awesome-rails'
   spec.add_dependency 'google-api-client', '~> 0.21'
   spec.add_dependency 'google_drive', '~> 2.1'
-  spec.add_dependency 'httparty', '~> 0.15'
+  spec.add_dependency 'typhoeus'
   spec.add_dependency 'rails', '>= 4.2'
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'sass-rails'
