@@ -1,21 +1,21 @@
 # How to Contribute
 
-We want your help to make Project Hydra great.
+We want your help to make Samvera Community great.
 There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
 
 ## Code of Conduct
 
-The Hydra community is dedicated to providing a welcoming and positive experience for all its
+The Samvera Community is dedicated to providing a welcoming and positive experience for all its
 members, whether they are at a formal gathering, in a social setting, or taking part in activities
-online.  Please see our [Code of Conduct](https://wiki.duraspace.org/display/hydra/Code+of+Conduct)
+online.  Please see our [Code of Conduct](https://wiki.duraspace.org/display/samvera/Code+of+Conduct)
 for more information.
 
-## Hydra Project Intellectual Property Licensing and Ownership
+## Samvera Community Intellectual Property Licensing and Ownership
 
 All code contributors must have an Individual Contributor License Agreement (iCLA) on file with the Hydra Project Steering Group.
 If the contributor works for an institution, the institution must have a Corporate Contributor License Agreement (cCLA) on file.
 
-https://wiki.duraspace.org/display/hydra/Hydra+Project+Intellectual+Property+Licensing+and+Ownership
+https://wiki.duraspace.org/display/samvera/Samvera+Community+Intellectual+Property+Licensing+and+Ownership
 
 You should also add yourself to the `CONTRIBUTORS.md` file in the root of the project.
 
@@ -61,7 +61,7 @@ You should also add yourself to the `CONTRIBUTORS.md` file in the root of the pr
   * This work greatly increases the usability of the code base and supports the on-ramping of new committers.
   * We will all be understanding of one another's time constraints in this area.
 * YARD examples:
-  * [Hydra::Works::RemoveGenericFile](https://github.com/projecthydra-labs/hydra-works/blob/master/lib/hydra/works/services/generic_work/remove_generic_file.rb)
+  * [Hyrax::AdminSet](https://github.com/samvera/hyrax/blob/master/app/models/admin_set.rb)
   * [ActiveTriples::LocalName::Minter](https://github.com/ActiveTriples/active_triples-local_name/blob/master/lib/active_triples/local_name/minter.rb)
 * [Getting started with YARD](http://www.rubydoc.info/gems/yard/file/docs/GettingStarted.md)
 

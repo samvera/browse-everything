@@ -34,9 +34,9 @@ else
   end
 
   case ENV['RAILS_VERSION']
-  when /^5.1/
-    gem 'capybara', '~> 2.13.0'
-  when /^4.2/
+  when /^5\./
+    gem 'capybara', '~> 2.18.0'
+  when /^4\.2/
     gem 'coffee-rails', '~> 4.1.0'
     gem 'json', '~> 1.8'
     gem 'responders', '~> 2.0'

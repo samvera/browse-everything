@@ -15,7 +15,7 @@ module BrowseEverything
     end
 
     def relative_parent_path?
-      name.match?(/^\.\.?$/) ? true : false
+      /^\.\.?$/.match(name) ? true : false
     end
 
     def container?
