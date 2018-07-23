@@ -5,6 +5,10 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in browse_everything.gemspec
 gemspec
 
+group :development, :test do
+  gem 'pry-byebug' unless ENV['CI']
+end
+
 # BEGIN ENGINE_CART BLOCK
 # engine_cart: 0.10.0
 # engine_cart stanza: 0.10.0

@@ -82,11 +82,6 @@ module BrowseEverything
         @sorter.call(@entries)
       end
 
-      def details(path)
-        metadata = client.get_metadata(path)
-        FileEntryFactory.build(metadata: metadata, key: key)
-      end
-
       def download(path)
         temp_file = Tempfile.open(File.basename(path), encoding: 'ascii-8bit')
         client.download(path) do |chunk|
