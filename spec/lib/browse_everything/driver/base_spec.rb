@@ -24,11 +24,6 @@ describe BrowseEverything::Driver::Base do
 
     it { is_expected.to be_empty }
   end
-  describe '#details' do
-    subject { driver.details('/path/to/foo.txt') }
-
-    it { is_expected.to be_nil }
-  end
   describe '#link_for' do
     subject { driver.link_for('/path/to/foo.txt') }
 

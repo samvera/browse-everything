@@ -73,20 +73,6 @@ describe BrowseEverything::Driver::Dropbox, vcr: { cassette_name: 'dropbox', rec
       end
     end
 
-    describe '#details' do
-      subject(:file_metadata) { driver.details('/Getting Started.pdf') }
-
-      it 'retrieves the metadata for a file' do
-        expect(file_metadata).to be_a BrowseEverything::FileEntry
-        expect(file_metadata.id).to eq '/Getting Started.pdf'
-        expect(file_metadata.location).to eq 'dropbox:/Getting Started.pdf'
-        expect(file_metadata.name).to eq 'Getting Started.pdf'
-        expect(file_metadata.size).to eq 249159
-        expect(file_metadata.mtime).to be_a Time
-        expect(file_metadata.container?).to eq false
-      end
-    end
-
     describe '#link_for' do
       subject(:link_args) { driver.link_for('/Getting Started.pdf') }
 

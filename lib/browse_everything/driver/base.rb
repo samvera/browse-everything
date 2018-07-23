@@ -76,11 +76,6 @@ module BrowseEverything
         []
       end
 
-      # Abstract method
-      def details(*_args)
-        nil
-      end
-
       # Generate the link for a resource at a given path
       # @param path [String] the path to the resource
       # @return [Array<String, Hash>]

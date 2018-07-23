@@ -56,13 +56,13 @@ module BrowseEverything
         config_values = YAML.safe_load(config_file_template.result)
         @config = ActiveSupport::HashWithIndifferentAccess.new config_values
         @config.deep_symbolize_keys
-
-        if @config.include? 'drop_box'
-          warn '[DEPRECATION] `drop_box` is deprecated.  Please use `dropbox` instead.'
-          @config['dropbox'] = @config.delete('drop_box')
-        end
       else
         raise InitializationError, "Unrecognized configuration: #{value.inspect}"
+      end
+
+      if @config.include? 'drop_box'
+        warn '[DEPRECATION] `drop_box` is deprecated.  Please use `dropbox` instead.'
+        @config['dropbox'] = @config.delete('drop_box')
       end
     end
 
