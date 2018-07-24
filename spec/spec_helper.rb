@@ -1,6 +1,7 @@
 # frozen_string_literal: true
-ENV["RAILS_ENV"] ||= 'test'
-require "bundler/setup"
+
+ENV['RAILS_ENV'] ||= 'test'
+require 'bundler/setup'
 
 def coverage_needed?
   ENV['COVERAGE'] || ENV['TRAVIS']
@@ -9,7 +10,7 @@ end
 if coverage_needed?
   require 'simplecov'
   require 'coveralls'
-  SimpleCov.root(File.expand_path('../..', __FILE__))
+  SimpleCov.root(File.expand_path('..', __dir__))
   SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
     [
       SimpleCov::Formatter::HTMLFormatter,

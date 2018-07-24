@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 describe BrowseEverything::Driver do
-
   let(:my_driver) do
     MyDriver.new
   end
@@ -10,7 +9,7 @@ describe BrowseEverything::Driver do
     class MyDriver
       include BrowseEverything::Driver
 
-      def get_sorter
+      def get_sorter # rubocop:disable Naming/AccessorMethodName
         sorter
       end
     end
@@ -18,17 +17,17 @@ describe BrowseEverything::Driver do
 
   describe '#sorter' do
     it 'defaults to nil' do
-      expect(BrowseEverything::Driver.sorter).to be nil
+      expect(described_class.sorter).to be nil
     end
   end
 
   describe '#sorter=' do
     let(:new_sorter) do
-      lambda { |files| }
+      ->(files) {}
     end
 
     before do
-      BrowseEverything::Driver.sorter = new_sorter
+      described_class.sorter = new_sorter
     end
 
     it 'mutates the sorter from the initializer' do

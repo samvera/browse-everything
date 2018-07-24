@@ -36,6 +36,7 @@ describe 'browse_everything/_files.html.erb', type: :view do
       allow(view).to receive(:file).and_return(file)
       render
     end
+
     context 'when a file is not too big' do
       let(:config) { { max_upload_file_size: (5 * 1024 * 1024 * 1024) } }
 

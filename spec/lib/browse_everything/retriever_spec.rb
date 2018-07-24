@@ -9,7 +9,8 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
   let(:size) { File.size(datafile) }
 
   describe '#get_file_size' do
-    subject(:file_size) { retriever.file_size(options) }
+    subject(:computed_file_size) { retriever.file_size(options) }
+
     let(:url) { URI.parse("file://#{datafile}") }
     let(:headers) { [] }
     let(:file_size) { 0 }
@@ -22,26 +23,26 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
     end
 
     it 'calculates or retrieves the size of a file' do
-      retriever.retrieve(options) do |chunk, retrieved, total|
+      retriever.retrieve(options) do |_chunk, _retrieved, total|
         expect(total).to eq 2256
       end
     end
 
-    context "when retrieving a resource from a cloud storage provider" do
-      let(:url) { URI.parse("https://drive.google.com/uc?id=id&export=download") }
+    context 'when retrieving a resource from a cloud storage provider' do
+      let(:url) { URI.parse('https://drive.google.com/uc?id=id&export=download') }
 
       it 'calculates or retrieves the size of a file' do
-        retriever.retrieve(options) do |chunk, retrieved, total|
+        retriever.retrieve(options) do |_chunk, _retrieved, total|
           expect(total).to eq 1234
         end
       end
     end
 
-    context "when retrieving a resource with an unsupported protocol" do
-      let(:url) { URI.parse("ftp://invalid") }
+    context 'when retrieving a resource with an unsupported protocol' do
+      let(:url) { URI.parse('ftp://invalid') }
 
-      it "raises an error" do
-        expect { retriever.retrieve(options) {|c, r, t|} }.to raise_error(URI::BadURIError, "Unknown URI scheme: ftp")
+      it 'raises an error' do
+        expect { retriever.retrieve(options) { |c, r, t| } }.to raise_error(URI::BadURIError, 'Unknown URI scheme: ftp')
       end
     end
   end
@@ -167,7 +168,7 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
     end
   end
 
-  context '.can_retrieve?' do
+  describe '.can_retrieve?' do
     let(:expiry_time) { (Time.current + 3600).xmlschema }
     let(:spec) do
       {
@@ -181,19 +182,19 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
       }
     end
 
-    context 'can retrieve' do
+    context 'when can retrieve' do
       let(:url) { 'https://retrieve.cloud.example.com/some/dir/can_retrieve.pdf' }
 
       it 'says it can' do
-        expect(described_class.can_retrieve?(url)).to be_truthy
+        expect(described_class).to be_can_retrieve(url)
       end
     end
 
-    context 'cannot retrieve' do
+    context 'when cannot retrieve' do
       let(:url) { 'https://retrieve.cloud.example.com/some/dir/cannot_retrieve.pdf' }
 
       it 'says it cannot' do
-        expect(described_class.can_retrieve?(url)).to be_falsey
+        expect(described_class).not_to be_can_retrieve(url)
       end
     end
   end

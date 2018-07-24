@@ -11,7 +11,7 @@ describe BrowseEverythingHelper do
     end
   end
 
-  let(:test_file) { BrowseEverything::FileEntry.new 0, '/path/to/file.mp4', 'file.mp4', 12345, Time.now, false }
+  let(:test_file) { BrowseEverything::FileEntry.new 0, '/path/to/file.mp4', 'file.mp4', 12345, Time.current, false }
 
   it 'matches a full type' do
     expect(test_class.new(accept: 'video/mp4').is_acceptable?(test_file)).to eq(true)

@@ -3,7 +3,7 @@
 require 'rails/generators'
 
 class TestAppGenerator < Rails::Generators::Base
-  source_root File.expand_path('../../../../spec/test_app_templates/', __FILE__)
+  source_root File.expand_path('../../../spec/test_app_templates', __dir__)
 
   def install_engine
     generate 'browse_everything:install -f'

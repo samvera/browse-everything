@@ -67,6 +67,7 @@ describe BrowseEverything::Driver::S3 do
         its(:name) { is_expected.to eq('bar') }
         specify    { is_expected.to be_container }
       end
+
       context 'with two assets' do
         subject { contents[1] }
 
@@ -100,6 +101,7 @@ describe BrowseEverything::Driver::S3 do
         its(:name) { is_expected.to eq('..') }
         specify    { is_expected.to be_container }
       end
+
       context 'with a JPEG asset' do
         subject { contents[1] }
 
@@ -109,6 +111,7 @@ describe BrowseEverything::Driver::S3 do
         its(:size)     { is_expected.to eq(52645)             }
         specify        { is_expected.not_to be_container }
       end
+
       context 'with a PNG asset' do
         subject { contents[2] }
 
@@ -133,17 +136,17 @@ describe BrowseEverything::Driver::S3 do
 
         it ':signed_url' do
           provider.config[:response_type] = :signed_url
-          expect(provider.link_for('foo/quux.png')).to eq ["https://s3.amazonaws.com/presigned_url", {:file_name=>"quux.png", :expires=>14400}]
+          expect(provider.link_for('foo/quux.png')).to eq ['https://s3.amazonaws.com/presigned_url', { file_name: 'quux.png', expires: 14400 }]
         end
 
         it ':public_url' do
           provider.config[:response_type] = :public_url
-          expect(provider.link_for('foo/quux.png')).to eq ["https://s3.amazonaws.com/public_url", {:file_name=>"quux.png"}]
+          expect(provider.link_for('foo/quux.png')).to eq ['https://s3.amazonaws.com/public_url', { file_name: 'quux.png' }]
         end
 
         it ':s3_uri' do
           provider.config[:response_type] = :s3_uri
-          expect(provider.link_for('foo/quux.png')).to eq ['s3://s3.bucket/foo/quux.png', {:file_name=>"quux.png"}]
+          expect(provider.link_for('foo/quux.png')).to eq ['s3://s3.bucket/foo/quux.png', { file_name: 'quux.png' }]
         end
       end
     end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module FontAwesomeVersionHelper
-
   # Determines if the App uses Font Awesome releases 3.x or 4.x
   # @return [TrueClass, FalseClass]
   def font_awesome_four?

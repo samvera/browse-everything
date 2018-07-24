@@ -131,7 +131,7 @@ module BrowseEverything
         url = options.fetch(:url)
         retrieved = 0
 
-        request = Typhoeus::Request.new(url.to_s)
+        request = Typhoeus::Request.new(url.to_s, headers: headers)
         request.on_headers do |response|
           raise DownloadError.new("#{self.class}: Failed to download #{url}", response) unless response.code == 200
         end

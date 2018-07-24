@@ -38,12 +38,14 @@ describe BrowseEverything::Driver::FileSystem do
         its(:name) { is_expected.to eq('dir_1') }
         specify    { is_expected.to be_container }
       end
+
       context 'when there are multiple directories' do
         subject { contents[1] }
 
         its(:name) { is_expected.to eq('dir_2') }
         specify    { is_expected.to be_container }
       end
+
       context 'when there is a PDF' do
         subject { contents[2] }
 
@@ -64,6 +66,7 @@ describe BrowseEverything::Driver::FileSystem do
         its(:name) { is_expected.to eq('dir_3') }
         specify    { is_expected.to be_container }
       end
+
       context 'when there is a text file' do
         subject { contents.last }
 
