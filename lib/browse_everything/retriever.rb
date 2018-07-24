@@ -1,18 +1,17 @@
 # frozen_string_literal: true
 
 require 'addressable'
-require 'httparty'
 require 'tempfile'
+require 'typhoeus'
 
 module BrowseEverything
   # Class for raising errors when a download is invalid
-  # @see HTTParty::Error
-  class DownloadError < HTTParty::Error
+  class DownloadError < StandardError
     attr_reader :response
 
     # Constructor
     # @param msg [String]
-    # @param response [HTTParty::Response] response from the server
+    # @param response [Typhoeus::Response] response from the server
     def initialize(msg, response)
       @response = response
       super(msg)
@@ -30,6 +29,12 @@ module BrowseEverything
     CHUNK_SIZE = 16384
 
     attr_accessor :chunk_size
+
+    class << self
+      def can_retrieve?(uri)
+        Typhoeus.get(uri, headers: { Range: 'bytes=0-0' }).success?
+      end
+    end
 
     # Constructor
     def initialize
@@ -126,14 +131,15 @@ module BrowseEverything
         url = options.fetch(:url)
         retrieved = 0
 
-        # Determine whether or not to stream the body by the size of the resource requested
-        stream_body = file_size > 500.megabytes
-
-        response = HTTParty.get(url.to_s, stream_body: stream_body, headers: headers) do |chunk|
-          retrieved += chunk.length
+        request = Typhoeus::Request.new(url.to_s)
+        request.on_headers do |response|
+          raise DownloadError.new("#{self.class}: Failed to download #{url}", response) unless response.code == 200
+        end
+        request.on_body do |chunk|
+          retrieved += chunk.bytesize
           yield(chunk, retrieved, file_size)
         end
-        raise DownloadError.new("#{self.class}: Failed to download #{url}", response) unless response.code == 200
+        request.run
       end
 
       # Retrieve the file size
@@ -148,8 +154,8 @@ module BrowseEverything
         when 'file'
           File.size(url.path)
         when /https?/
-          response = HTTParty.head(url.to_s, headers: headers)
-          length_value = response.content_length || file_size
+          response = Typhoeus.head(url.to_s, headers: headers)
+          length_value = response.headers['Content-Length'] || file_size
           length_value.to_i
         else
           raise URI::BadURIError, "Unknown URI scheme: #{url.scheme}"
