@@ -22,6 +22,7 @@ RSpec.describe BrowseEverythingController, type: :controller do
       allow(provider).to receive(:connect)
       controller.auth
     end
+
     it 'retrieves the authorization code from the parameters' do
       expect(provider).to have_received(:connect).with({ 'code' => 'test-code' }, nil)
     end

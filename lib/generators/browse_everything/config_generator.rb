@@ -7,7 +7,7 @@ class BrowseEverything::ConfigGenerator < Rails::Generators::Base
   This generator makes the following changes to your application:
    1. Creates config/browse_everything_providers.yml with a placeholder value
    2. Modifies your app's routes.rb to mount BrowseEverything at /browse
-    DESC
+  DESC
   source_root File.expand_path('templates', __dir__)
 
   def inject_routes
@@ -18,7 +18,7 @@ class BrowseEverything::ConfigGenerator < Rails::Generators::Base
   end
 
   def copy_example_config
-    FileUtils.rm 'config/browse_everything_providers.yml', force: true if File.exists? 'config/browse_everything_providers.yml'
+    FileUtils.rm 'config/browse_everything_providers.yml', force: true if File.exist? 'config/browse_everything_providers.yml'
     copy_file 'browse_everything_providers.yml.example', 'config/browse_everything_providers.yml', force: true
   end
 

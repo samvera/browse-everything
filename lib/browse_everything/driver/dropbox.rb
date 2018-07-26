@@ -13,7 +13,9 @@ module BrowseEverything
         end
 
         class << self
-          private def klass_for(metadata)
+          private
+
+          def klass_for(metadata)
             case metadata
             when DropboxApi::Metadata::File
               FileFactory

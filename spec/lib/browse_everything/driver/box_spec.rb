@@ -66,16 +66,22 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: :no
     context 'when the access token is not registered' do
       it { is_expected.to be(false) }
     end
+
     context 'when the access tokens are registered and not expired' do
       before { provider.token = token.merge('expires_at' => Time.now.to_i + 360) }
+
       it { is_expected.to be(true) }
     end
+
     context 'when the access tokens are registered but no expiration time' do
       before { provider.token = token }
+
       it { is_expected.to be(false) }
     end
+
     context 'when the access tokens are registered but expired' do
       before { provider.token = token.merge('expires_at' => Time.now.to_i - 360) }
+
       it { is_expected.to be(false) }
     end
   end
@@ -143,6 +149,7 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: :no
         its(:id)       { is_expected.to be_kind_of(Pathname) }
         it             { is_expected.to be_container }
       end
+
       describe 'the second item' do
         subject { apps_dir }
 
@@ -150,6 +157,7 @@ describe BrowseEverything::Driver::Box, vcr: { cassette_name: 'box', record: :no
         its(:id)       { is_expected.to eq('2459974427') }
         it             { is_expected.to be_container }
       end
+
       describe 'a file' do
         subject { equipment }
 

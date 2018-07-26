@@ -60,7 +60,7 @@ module BrowseEverything
         raise InitializationError, "Unrecognized configuration: #{value.inspect}"
       end
 
-      if @config.include? 'drop_box'
+      if @config.include? 'drop_box' # rubocop:disable Style/GuardClause
         warn '[DEPRECATION] `drop_box` is deprecated.  Please use `dropbox` instead.'
         @config['dropbox'] = @config.delete('drop_box')
       end
