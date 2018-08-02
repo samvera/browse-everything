@@ -1,0 +1,10 @@
+---
+:dropbox:
+  :app_key: test-key
+  :app_secret: test-secret
+:box:
+  :client_id: test-id
+  :client_secret: test-secret
+:google_drive:
+  :client_id: test-id
+  :client_secret: test-secret
