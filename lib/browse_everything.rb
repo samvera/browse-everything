@@ -53,7 +53,7 @@ module BrowseEverything
       elsif value.is_a?(String)
         config_file_content = File.read(value)
         config_file_template = ERB.new(config_file_content)
-        config_values = YAML.safe_load(config_file_template.result)
+        config_values = YAML.safe_load(config_file_template.result, [Symbol])
         @config = ActiveSupport::HashWithIndifferentAccess.new config_values
         @config.deep_symbolize_keys
       else
