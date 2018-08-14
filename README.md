@@ -1,8 +1,17 @@
+# BrowseEverything
+
+Code:
 [![Gem Version](https://badge.fury.io/rb/browse-everything.png)](http://badge.fury.io/rb/browse-everything)
 [![Build Status](https://travis-ci.org/samvera/browse-everything.svg?branch=master)](https://travis-ci.org/samvera/browse-everything)
 [![Coverage Status](https://coveralls.io/repos/samvera/browse-everything/badge.svg?branch=master&service=github)](https://coveralls.io/github/samvera/browse-everything?branch=master)
 
-# BrowseEverything
+Docs:
+[![Contribution Guidelines](http://img.shields.io/badge/CONTRIBUTING-Guidelines-blue.svg)](./CONTRIBUTING.md)
+[![Apache 2.0 License](http://img.shields.io/badge/APACHE2-license-blue.svg)](./LICENSE.txt)
+
+Jump in: [![Slack Status](http://slack.samvera.org/badge.svg)](http://slack.samvera.org/)
+
+# What is BrowseEverything?
 
 This Gem allows your rails application to access user files from cloud storage.
 Currently there are drivers implemented for [Dropbox](http://www.dropbox.com),
@@ -15,6 +24,18 @@ generate a list of single use urls that your application can then use to
 download the files.
 
 **This gem does not depend on hydra-head**
+
+## Product Owner & Maintenance
+
+BrowseEverything is a Core Component of the Samvera community. The documentation for
+what this means can be found
+[here](http://samvera.github.io/core_components.html#requirements-for-a-core-component).
+
+### Product Owner
+
+[mbklein](https://github.com/mbklein)
+
+# Getting Started
 
 ## Supported Ruby Releases
 Currently, the following releases of Ruby are supported:
@@ -213,14 +234,13 @@ See `spec/support/app/views/file_handler/index.html` for an example use case. Yo
 create a fully-functioning demo app in `spec/internal` (though you will have to create
 `spec/internal/config/browse_everything.providers.yml` file with your own configuration info.)
 
-## Contributing
+# Help
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+The Samvera community is here to help. Please see our [support guide](./SUPPORT.md).
 
-## Help
+# Acknowledgments
 
-For help with Browse Everything, contact <samvera-tech@googlegroups.com>.
+This software has been developed by and is brought to you by the Samvera community.  Learn more at the
+[Samvera website](http://samvera.org/).
+
+![Samvera Logo](https://wiki.duraspace.org/download/thumbnails/87459292/samvera-fall-font2-200w.png?version=1&modificationDate=1498550535816&api=v2)
