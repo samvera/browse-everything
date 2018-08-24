@@ -13,6 +13,9 @@ Rails:
 Rails/FilePath:
   Exclude:
     - 'lib/generators/browse_everything/config_generator.rb'
+Rails/HttpPositionalArguments:
+  Exclude:
+    - 'spec/controllers/browse_everything_controller_spec.rb'
 
 Metrics/ClassLength:
   Max: 130

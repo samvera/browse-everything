@@ -1,4 +1,11 @@
-  <table id="file-list" role="grid" tabindex="-1" title="Choose files to upload from the table below" aria-live="polite">
+  <table id="file-list"
+         class="provider-contents"
+         role="grid"
+         tabindex="-1"
+         title="Choose files to upload from the table below"
+         aria-live="polite"
+         data-provider-contents-page-number="<%= provider_contents_current_page %>">
+
     <thead>
       <tr role="row" tabindex="-1">
         <th role="columnheader">Name</th>
@@ -18,7 +25,8 @@
          <% disabled = file.size > max_size %>
       <% end %>
 
-      <tr role="row"
+      <tr class="provider-contents-row"
+          role="row"
           tabindex="-1"
           data-ev-location="<%= file.location %>"
           data-tt-id="<%= path %>"
@@ -71,4 +79,5 @@
         <% end %>
     </tr>
   <% end %>
+  <%= render partial: 'files_pages' %>
 </table>

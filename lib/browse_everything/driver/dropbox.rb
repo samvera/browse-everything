@@ -73,13 +73,19 @@ module BrowseEverything
         'dropbox'
       end
 
+      def handle_deprecated_config(deprecated_key, new_key)
+        warn("[DEPRECATION] Dropbox driver: `#{deprecated_key}` is deprecated.  Please use `#{new_key}` instead.")
+        @config[new_key] = @config[deprecated_key]
+      end
+
       def validate_config
+        handle_deprecated_config(:app_key, :client_id) if config[:app_key]
+        handle_deprecated_config(:app_secret, :client_secret) if config[:app_secret]
         raise InitializationError, 'Dropbox driver requires a :client_id argument' unless config[:client_id]
         raise InitializationError, 'Dropbox driver requires a :client_secret argument' unless config[:client_secret]
       end
 
-      def contents(path = '')
-        path = '/' + path unless path == ''
+      def contents(path = '', _page_index = 0)
         response = client.list_folder(path)
         @entries = response.entries.map { |entry| FileEntryFactory.build(metadata: entry, key: key) }
         @sorter.call(@entries)

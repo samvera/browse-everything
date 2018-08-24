@@ -72,8 +72,31 @@ module BrowseEverything
       end
 
       # Abstract method
-      def contents(*_args)
+      def contents(_path = '', _page_index = 0)
         []
+      end
+
+      # Return the number of pages for the content entry list retrieved by the provider
+      # Defaults to 0
+      # @return [Integer]
+      def contents_pages
+        0
+      end
+
+      # Return the current page in the content entry list
+      # Defaults to 0
+      # @param [String] _ctx the context of the request
+      # @return [Integer]
+      def contents_current_page(_ctx)
+        0
+      end
+
+      def contents_next_page(ctx)
+        contents_current_page(ctx) + 1
+      end
+
+      def contents_last_page?(ctx)
+        contents_current_page(ctx) == contents_pages
       end
 
       # Generate the link for a resource at a given path

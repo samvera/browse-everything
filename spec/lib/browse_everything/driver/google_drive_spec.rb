@@ -56,6 +56,44 @@ describe BrowseEverything::Driver::GoogleDrive do
     end
   end
 
+  describe '#pages_for_root_path' do
+    it 'accesses the paginator object for the root drive path' do
+      expect(provider.pages_for_root_path).to be_a BrowseEverything::Driver::Paginator::GoogleDrive
+    end
+  end
+
+  describe '#contents_pages' do
+    it 'accesses the length of the entry pages from the paginator object' do
+      expect(provider.contents_pages).to eq(1)
+    end
+  end
+
+  describe '#contents_current_page' do
+    let(:controller) { instance_double(BrowseEverythingController) }
+    let(:page_token) { 'test-page-token' }
+    let(:params) { { page_token: page_token } }
+
+    before do
+      allow(controller).to receive(:params).and_return(params)
+    end
+
+    it 'accesses the current page token' do
+      expect(provider.contents_current_page(controller)).to eq(page_token)
+    end
+  end
+
+  describe '#contents_next_page' do
+    it 'accesses the next or first page token' do
+      expect(provider.contents_next_page(nil)).to eq(BrowseEverything::Driver::Paginator::GoogleDrive::FIRST_PAGE_TOKEN)
+    end
+  end
+
+  describe '#contents_last_page?' do
+    it 'determines whether the current page is the last page' do
+      expect(provider.contents_last_page?(nil)).to be false
+    end
+  end
+
   context 'without valid credentials' do
     let(:driver) { described_class.new(provider_yml) }
 
@@ -104,7 +142,7 @@ describe BrowseEverything::Driver::GoogleDrive do
       let(:file_list) { instance_double(Google::Apis::DriveV3::FileList) }
       let(:file1) { instance_double(Google::Apis::DriveV3::File) }
       let(:file2) { instance_double(Google::Apis::DriveV3::File) }
-      let(:files) { [file1, file2] }
+      let(:files) { [file2, file1] }
 
       before do
         allow(file1).to receive(:id).and_return('asset-id2')

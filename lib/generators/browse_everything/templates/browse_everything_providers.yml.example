@@ -3,8 +3,8 @@
 # The file_system provider can be a path to any directory on the server where your application is running.
 #
 # dropbox:
-#   client_id: YOUR_DROPBOX_APP_KEY
-#   client_secret: YOUR_DROPBOX_APP_SECRET
+#   client_id: YOUR_DROPBOX_CLIENT_ID
+#   client_secret: YOUR_DROPBOX_CLIENT_SECRET
 # box:
 #   client_id: YOUR_BOX_CLIENT_ID
 #   client_secret: YOUR_BOX_CLIENT_SECRET

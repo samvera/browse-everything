@@ -43,7 +43,7 @@ module BrowseEverything
 
       # Retrieve the entries from the S3 Bucket
       # @return [Array<BrowseEverything::FileEntry>]
-      def contents(path = '')
+      def contents(path = '', _page_index = 0)
         path = File.join(path, '') unless path.empty?
         init_entries(path)
         generate_listing(path)

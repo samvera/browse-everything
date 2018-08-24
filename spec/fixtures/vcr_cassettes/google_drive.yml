@@ -1,0 +1,331 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://oauth2.googleapis.com/token
+    body:
+      encoding: ASCII-8BIT
+      string: grant_type=authorization_code&code=code&redirect_uri=uri&client_id=id.apps.googleusercontent.com&client_secret=SECRET
+    headers:
+      User-Agent:
+      - Faraday v0.13.1
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      Pragma:
+      - no-cache
+      Expires:
+      - Mon, 01 Jan 1990 00:00:00 GMT
+      Date:
+      - Mon, 30 Oct 2017 13:55:49 GMT
+      Vary:
+      - Origin
+      - X-Origin
+      Content-Type:
+      - application/json; charset=UTF-8
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      Server:
+      - GSE
+      Alt-Svc:
+      - quic=":443"; ma=2592000; v="41,39,38,37,35"
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+         "access_token": "access-token",
+         "token_type": "Bearer",
+         "expires_in": 3600,
+         "refresh_token": "refresh-token"
+        }
+    http_version:
+  recorded_at: Mon, 30 Oct 2017 13:55:49 GMT
+- request:
+    method: get
+    uri: https://www.googleapis.com/drive/v3/files?fields=nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,webContentLink)&orderBy=folder,modifiedTime%20desc,name&pageSize=1000
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - |-
+        Samvera Application/0.0.0 google-api-ruby-client/0.15.0 Mac OS X/10.12.6
+         (gzip)
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip,deflate
+      Date:
+      - Mon, 30 Oct 2017 13:55:49 GMT
+      Authorization:
+      - Bearer access-token
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Mon, 30 Oct 2017 13:55:50 GMT
+      Date:
+      - Mon, 30 Oct 2017 13:55:50 GMT
+      Cache-Control:
+      - private, max-age=0, must-revalidate, no-transform
+      Vary:
+      - Origin
+      - X-Origin
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Encoding:
+      - gzip
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      Server:
+      - GSE
+      Alt-Svc:
+      - quic=":443"; ma=2592000; v="41,39,38,37,35"
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |
+        {
+         "nextPageToken": "next-page-token",
+         "files": [
+          {
+           "id": "asset-id1",
+           "name": "asset-name1",
+           "mimeType": "application/vnd.google-apps.folder",
+           "parents": [
+            "asset-id4"
+           ],
+           "modifiedTime": "2017-02-08T16:39:53.000Z"
+          },
+          {
+           "id": "asset-id2",
+           "name": "asset-name2.pdf",
+           "mimeType": "application/pdf",
+           "webContentLink": "https://drive.google.com/uc?id=id&export=download",
+           "modifiedTime": "2017-10-20T16:48:50.001Z",
+           "size": "891764"
+          },
+          {
+           "id": "asset-id3",
+           "name": "asset-name3.pdf",
+           "mimeType": "application/pdf",
+           "parents": [
+            "asset-id6"
+           ],
+           "webContentLink": "https://drive.google.com/uc?id=id&export=download",
+           "modifiedTime": "2017-10-20T16:48:50.001Z",
+           "size": "891764"
+          }
+         ]
+        }
+    http_version:
+  recorded_at: Mon, 30 Oct 2017 13:55:50 GMT
+- request:
+    method: get
+    uri: https://www.googleapis.com/drive/v3/files?fields=nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,webContentLink)&orderBy=folder,modifiedTime%20desc,name&pageSize=1000&pageToken=next-page-token
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - |-
+        Samvera Application/0.0.0 google-api-ruby-client/0.15.0 Mac OS X/10.12.6
+         (gzip)
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip,deflate
+      Date:
+      - Mon, 30 Oct 2017 13:55:49 GMT
+      Authorization:
+      - Bearer access-token
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Mon, 30 Oct 2017 13:55:50 GMT
+      Date:
+      - Mon, 30 Oct 2017 13:55:50 GMT
+      Cache-Control:
+      - private, max-age=0, must-revalidate, no-transform
+      Vary:
+      - Origin
+      - X-Origin
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Encoding:
+      - gzip
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      Server:
+      - GSE
+      Alt-Svc:
+      - quic=":443"; ma=2592000; v="41,39,38,37,35"
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |
+        {
+         "files": []
+        }
+    http_version:
+  recorded_at: Mon, 30 Oct 2017 13:55:50 GMT
+- request:
+    method: post
+    uri: https://www.googleapis.com/batch/drive/v3
+    body:
+      encoding: UTF-8
+      string: "--a2f3ce3d4c24a197cbba0300e98666b974a6eefc\r\nContent-Type: application/http\r\nContent-Id:
+        <b9edfb4e-045e-491e-8706-39513675fcc4+0>\r\nContent-Length: 239\r\nContent-Transfer-Encoding:
+        binary\r\n\r\nGET /drive/v3/files?fields=nextPageToken%2Cfiles%28name%2Cid%2CmimeType%2Csize%2CmodifiedTime%2Cparents%2CwebContentLink%29&orderBy=modifiedByMeTime%2CmodifiedTime%2Cfolder%20desc%2Cname&pageSize=1000
+        HTTP/1.1\r\nHost: www.googleapis.com\r\n\r\n\r\n--a2f3ce3d4c24a197cbba0300e98666b974a6eefc--\r\n\r\n"
+    headers:
+      User-Agent:
+      - |-
+        Samvera Application/0.0.0 google-api-ruby-client/0.18.0 Mac OS X/10.12.6
+         (gzip)
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip,deflate
+      Date:
+      - Mon, 18 Dec 2017 01:12:40 GMT
+      Content-Type:
+      - multipart/mixed; boundary=a2f3ce3d4c24a197cbba0300e98666b974a6eefc
+      Authorization:
+      - Bearer access-token
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Vary:
+      - Origin
+      - X-Origin
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      Pragma:
+      - no-cache
+      Expires:
+      - Mon, 01 Jan 1990 00:00:00 GMT
+      Date:
+      - Mon, 18 Dec 2017 01:12:43 GMT
+      Content-Type:
+      - multipart/mixed; boundary=batch_kIUSyvoB-sA_AAkZDwojjgg
+      Content-Encoding:
+      - gzip
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      Server:
+      - GSE
+      Alt-Svc:
+      - hq=":443"; ma=2592000; quic=51303431; quic=51303339; quic=51303338; quic=51303337;
+        quic=51303335,quic=":443"; ma=2592000; v="41,39,38,37,35"
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        testdata
+    http_version:
+  recorded_at: Mon, 18 Dec 2017 01:12:42 GMT
+- request:
+    method: get
+    uri: https://www.googleapis.com/drive/v3/files/asset-id2?fields=id,%20name,%20size
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      User-Agent:
+      - |-
+        Samvera Application/0.0.0 google-api-ruby-client/0.15.0 Mac OS X/10.12.6
+         (gzip)
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip,deflate
+      Date:
+      - Mon, 30 Oct 2017 13:55:49 GMT
+      Authorization:
+      - Bearer access-token
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Mon, 30 Oct 2017 18:33:52 GMT
+      Date:
+      - Mon, 30 Oct 2017 18:33:52 GMT
+      Cache-Control:
+      - private, max-age=0, must-revalidate, no-transform
+      Vary:
+      - Origin
+      - X-Origin
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Encoding:
+      - gzip
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      Server:
+      - GSE
+      Alt-Svc:
+      - quic=":443"; ma=2592000; v="41,39,38,37,35"
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: UTF-8
+      string: |
+        {
+         "id": "asset-id2",
+         "name": "asset-name2.pdf",
+         "webContentLink": "https://drive.google.com/uc?id=id&export=download"
+        }
+    http_version:
+  recorded_at: Mon, 30 Oct 2017 18:33:52 GMT
+recorded_with: VCR 3.0.3

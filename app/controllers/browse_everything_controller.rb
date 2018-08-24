@@ -12,11 +12,43 @@ class BrowseEverythingController < ActionController::Base
     provider_session.token = provider.token unless provider.nil? || provider.token.blank?
   end
 
-  def provider_contents
+  def validate_provider_supported
     raise BrowseEverything::NotImplementedError, 'No provider supported' if provider.nil?
-    raise BrowseEverything::NotAuthorizedError, 'Not authorized' unless provider.authorized?
+  end
 
-    provider.contents(browse_path)
+  def validate_provider_authorized
+    raise BrowseEverything::NotAuthorizedError, 'Not authorized' unless provider.authorized?
+  end
+
+  # This requires that the API for the provider service be queried
+  def provider_contents
+    validate_provider_supported && validate_provider_authorized
+
+    provider.contents(browse_path, provider_contents_current_page)
+  end
+
+  # This requires that the number of pages be known
+  def provider_contents_pages
+    validate_provider_supported && validate_provider_authorized
+
+    provider.contents_pages
+  end
+
+  # This may be obtained by strictly parsing the request parameters
+  def provider_contents_current_page
+    provider.contents_current_page(self)
+  end
+
+  # This may be obtained by strictly parsing the request parameters
+  def provider_contents_next_page
+    provider.contents_next_page(self)
+  end
+
+  # This requires that the number of pages be known
+  def provider_contents_last_page?
+    validate_provider_supported && validate_provider_authorized
+
+    provider.contents_last_page?(self)
   end
 
   def index
@@ -109,12 +141,6 @@ class BrowseEverythingController < ActionController::Base
       params[:provider] || provider_name_from_state || browser.providers.each_key.to_a.first
     end
 
-    # Retrieve the Driver for each request
-    # @return [BrowseEverything::Driver::Base]
-    def provider
-      browser.providers[provider_name.to_sym] || browser.first_provider
-    end
-
     # Constructs a browser manager Object
     # Browser state cannot persist between requests to the Controller
     # Hence, a Browser must be reinstantiated for each request using the state provided in the Rails session
@@ -123,10 +149,24 @@ class BrowseEverythingController < ActionController::Base
       BrowserFactory.build(session: session, url_options: url_options)
     end
 
+    def build_provider
+      browser.providers[provider_name.to_sym] || browser.first_provider
+    end
+
+    # Retrieve the Driver for each request
+    # @return [BrowseEverything::Driver::Base]
+    def provider
+      @provider ||= build_provider
+    end
+
     helper_method :auth_link
     helper_method :browser
     helper_method :browse_path
     helper_method :provider
     helper_method :provider_name
     helper_method :provider_contents
+    helper_method :provider_contents_pages
+    helper_method :provider_contents_current_page
+    helper_method :provider_contents_next_page
+    helper_method :provider_contents_last_page?
 end

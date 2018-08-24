@@ -16,10 +16,11 @@ module BrowseEverything
 
           # The default query parameters for the Google Drive API
           # @return [Hash]
+          # order_by: 'modifiedTime desc,folder,name',
           def default_params
             {
               q: default_query,
-              order_by: 'modifiedTime desc,folder,name',
+              order_by: 'folder,name,modifiedTime desc',
               fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,web_content_link)',
               supports_team_drives: true,
               include_team_drive_items: true,
@@ -34,7 +35,7 @@ module BrowseEverything
               field_constraint = constraints.join(" and #{field} ")
               field_queries << "#{field} #{field_constraint}"
             end
-            field_queries.join(' ')
+            field_queries.join(' and ')
           end
 
           def contraints

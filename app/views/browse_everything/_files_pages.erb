@@ -1,0 +1,13 @@
+<% if provider_contents_pages > 1 %>
+  <tfoot class="provider-contents-pages">
+    <tr>
+      <% unless provider_contents_last_page? %>
+        <td></td>
+        <td></td>
+        <td class="provider-contents-pages-cell"><%= render partial: 'next_page' %></td>
+        <td></td>
+        <td></td>
+      <% end %>
+    </tr>
+  </tfoot>
+<% end %>

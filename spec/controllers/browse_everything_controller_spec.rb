@@ -85,4 +85,59 @@ RSpec.describe BrowseEverythingController, type: :controller do
       end
     end
   end
+
+  describe '#validate_provider_authorized' do
+    it 'raises an exception if the provider is not authorized' do
+      expect { controller.validate_provider_authorized }.not_to raise_error
+
+      allow(provider).to receive(:authorized?).and_return(false)
+      expect { controller.validate_provider_authorized }.to raise_error(BrowseEverything::NotAuthorizedError)
+    end
+  end
+
+  describe '#provider_contents_next_page' do
+    before do
+      allow(provider).to receive(:contents_next_page).and_return(1)
+    end
+
+    it 'calculates the next page number' do
+      expect(controller.provider_contents_next_page).to eq(1)
+
+      allow(provider).to receive(:contents_next_page).and_return(2)
+      expect(controller.provider_contents_next_page).to eq(2)
+    end
+  end
+
+  describe '#provider_contents_last_page?' do
+    before do
+      allow(provider).to receive(:contents_last_page?).and_return(false)
+    end
+
+    it 'determines whether or not the client is requesting the last page of results' do
+      expect(controller.provider_contents_last_page?).to be false
+
+      allow(provider).to receive(:contents_last_page?).and_return(true)
+      expect(controller.provider_contents_last_page?).to be true
+    end
+  end
+
+  describe '#resolve' do
+    routes { BrowseEverything::Engine.routes }
+    let(:selected_files) { ['file_system:/my/test/file.txt'] }
+
+    before do
+      allow(provider).to receive(:token).and_return(nil)
+    end
+
+    it 'renders the download links' do
+      get :resolve, format: :json, params: { selected_files: selected_files }
+      expect(response.body).not_to be_empty
+      json_response = JSON.parse(response.body)
+      expect(json_response).not_to be_empty
+      resolved = json_response.first
+      expect(resolved).to include 'url' => 'file:///my/test/file.txt'
+      expect(resolved).to include 'file_name' => 'file.txt'
+      expect(resolved).to include 'file_size' => 0
+    end
+  end
 end

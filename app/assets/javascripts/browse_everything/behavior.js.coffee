@@ -1,13 +1,24 @@
 $ ->
+  # Find the element for the Bootstrap Modal dialog
   dialog = $('div#browse-everything')
 
+  # Define the (anonymous) constructor for the browse-everything behavior
+  # @param obj
+  # @param options
   initialize = (obj,options) ->
+    # If the dialog could not be loaded, dynamically create it and append it to
+    #   the DOM
     if $('div#browse-everything').length == 0
       dialog = $('<div tabindex="-1" id="browse-everything" class="ev-browser modal fade" aria-live="polite" role="dialog" aria-labelledby="beModalLabel"></div>').hide().appendTo('body')
 
+    # Provide default options to the Modal plugin
     dialog.modal
       backdrop: 'static'
       show:     false
+
+    # Initialize the ctx options Object
+    # (This ensures that the ctx can pass functions for overriding event-driven
+    #   behavior)
     ctx =
       opts: $.extend(true, {}, options)
       callbacks:
@@ -20,9 +31,13 @@ $ ->
       done:   (func) -> ctx.callbacks.done.add(func)   ; return this
       cancel: (func) -> ctx.callbacks.cancel.add(func) ; return this
       fail:   (func) -> ctx.callbacks.fail.add(func)   ; return this
+
+    # Set the current state on the DOM using the data-ev-state attribute
     $(obj).data('ev-state',ctx)
     ctx
 
+  # Generates <input type="hidden"> elements using HTTP request parameters
+  # @param data the HTTP request data (as a string)
   toHiddenFields = (data) ->
     fields = $.param(data)
       .split('&')
@@ -33,10 +48,15 @@ $ ->
         .val(decodeURIComponent(this[1]))[0].outerHTML
     $(elements.toArray().join("\n"))
 
+  # Updates the DOM by setting the "ev-selected" class on elements which have
+  #   been selected (using the data-ev-location attribute)
   indicateSelected = () ->
     $('input.ev-url').each () ->
       $("*[data-ev-location='#{$(this).val()}']").addClass('ev-selected')
 
+  # Determines whether or not at least child element of <input> has been
+  #   selected within the <tr> rows of file entries
+  # @param row the <tr> row element
   fileIsSelected = (row) ->
     result = false
     $('input.ev-url').each () ->
@@ -44,6 +64,9 @@ $ ->
         result = true
     return result
 
+  # For a given <tr> row element, toggle the Class and ensure that the checkboxes
+  #   are appropriately updated
+  # @param row the <tr> row element
   toggleFileSelect = (row) ->
     row.toggleClass('ev-selected')
     if row.hasClass('ev-selected')
@@ -52,6 +75,11 @@ $ ->
       unselectFile(row)
     updateFileCount()
 
+  # Given a selected <tr> row, ensure that the <input type="hidden"> elements
+  #   are updated, as well as ensuring that the checkboxes are updated
+  # Note that this dynamically creates the <input> elements and adds them to
+  #   the DOM
+  # @param row the <tr> row element
   selectFile = (row) ->
     target_form = $('form.ev-submit-form')
     file_location = row.data('ev-location')
@@ -60,6 +88,11 @@ $ ->
     unless $(row).find('.ev-select-file').prop('checked')
       $(row).find('.ev-select-file').prop('checked', true)
 
+  # Given an unselected <tr> row, ensure that the <input type="hidden">
+  #   elements are updated, as well as ensuring that the checkboxes are updated
+  # Note that this retrieves the <input> elements and removes them from
+  #   the DOM
+  # @param row the <tr> row element
   unselectFile = (row) ->
     target_form = $('form.ev-submit-form')
     file_location = row.data('ev-location')
@@ -67,16 +100,27 @@ $ ->
     if $(row).find('.ev-select-file').prop('checked')
         $(row).find('.ev-select-file').prop('checked', false)
 
+  # Update the text within the .ev-status element after a file has been
+  # selected
   updateFileCount = () ->
     count = $('input.ev-url').length
     files = if count == 1 then "file" else "files"
     $('.ev-status').html("#{count} #{files} selected")
 
+  # Given a selected <tr> row, ensure trigger the expansion of the treetable
+  #   node subtree (this models the browsing of directories)
+  # Note that this is called after the tree itself has been updated with
+  #   entries from the server
+  # @param row the <tr> row element
   toggleBranchSelect = (row) ->
     if row.hasClass('collapsed')
       node_id = row.find('td.ev-file-name a.ev-link').attr('href')
       $('table#file-list').treetable('expandNode',node_id)
 
+  # Given the set of all <tr> rows, ensure that each checkbox (for a file node)
+  #   and branch/subtree (directory node) is selected, along with any child
+  # nodes
+  # @param rows the array of <tr> row elements
   selectAll = (rows) ->
     rows.each () ->
       if $(this).data('tt-branch')
@@ -110,6 +154,10 @@ $ ->
               unselectFile($(this))
             updateFileCount()
 
+  # Initialize the jQuery treetable plugin given an existing <table> element
+  # This handles the interaction of "expanding" nodes on the tree (in order to
+  #   retrieve server-side generated View markup)
+  # @param table the <table> element
   tableSetup = (table) ->
     table.treetable
       expandable: true
@@ -141,6 +189,9 @@ $ ->
     $("#file-list tr:first").focus()
     sizeColumns(table)
 
+  # This adjusts the width of the <table> columns <th> using the current width
+  #   of the .ev-files element
+  # @param table the <table> element
   sizeColumns = (table) ->
     full_width = $('.ev-files').width()
     table.width(full_width)
@@ -152,6 +203,11 @@ $ ->
     set_size '.ev-kind', 0.3
     set_size '.ev-date', 0.2
 
+  # This retrieves files from the Rails endpoint using an AJAX request
+  # @param node the treetable node for which children are retrieved
+  # @param table the <table> element with the table of element nodes
+  # @param progressIntervalID the ID used to update the progress of the
+  #   response
   loadFiles = (node, table, progressIntervalID)->
     $.ajax
       async: true # Must be false, otherwise loadBranch happens after showChildren?
@@ -174,6 +230,7 @@ $ ->
         clearInterval progressIntervalID
         stopWait()
 
+
   setProgress = (done)->
     $('.loading-text').text(done+'% complete')
 
@@ -194,20 +251,80 @@ $ ->
     $(".ev-browser").removeClass("loading")
     $('.ev-submit').attr('disabled', false)
 
+  handleScroll = (event)->
+    event.stopPropagation()
+    event.preventDefault()
+
+    table = $('#file-list')
+    page = $('#file-list tfoot .ev-next-page').data('provider-contents-pages-next')
+
+    scrolled_offset = $(this).scrollTop()
+    height = $(this).innerHeight()
+    scrolled_height = this.scrollHeight
+    window_offset = Math.ceil(scrolled_offset + height, 1)
+
+    return unless page? && window_offset >= scrolled_height
+
+    provider_select = $('#provider-select')
+    url = provider_select.val()
+    table_body = table.find('tbody')
+    last_row = table_body.find('tr:last')
+
+    $.ajax
+      url: url,
+      data:
+        accept: dialog.data('ev-state').opts.accept
+        context: dialog.data('ev-state').opts.context
+        page_token: page
+    .done (data) ->
+      new_table = $(data)
+      new_rows = $(new_table).find('tbody tr')
+      new_table_foot = $(new_table).find('tfoot')
+      table.find('tfoot').replaceWith(new_table_foot)
+
+      table.treetable("loadBranch", null, new_rows)
+
+      last_row.focus()
+      sizeColumns(table)
+      indicateSelected()
+    .fail (xhr,status,error) ->
+      if (xhr.responseText.indexOf("Refresh token has expired") > -1)
+        $('.ev-files').html("Your sessison has expired please clear your cookies.")
+      else
+        $('.ev-files').html(xhr.responseText)
+    .always ->
+      stopWait()
+
+  ## Handlers for DOM events
+
   $(window).on('resize', -> sizeColumns($('table#file-list')))
 
+  # Define the browseEverything jQuery plugin
   $.fn.browseEverything = (options) ->
     ctx = $(this).data('ev-state')
+
+    # Unless options have been passed to the @data-ev-state attribute or
+    #   initializer, default to all of the options within @data-* attributes
     options = $(this).data() unless (ctx? or options?)
     if options?
+      # Reinitialize the ctx using the element passed to the initializer
+      # (This is typically a <button> element)
       ctx = initialize(this[0], options)
+
+      # Override the onClick event handler
       $(this).click () ->
+        # Ensure that data-ev-state attribute is updated
         dialog.data('ev-state',ctx)
+
+        # Using the options.opts.route to the Rails controller action, load the
+        #   Bootstrap Modal with the server-generated markup
         dialog.load ctx.opts.route, () ->
           setTimeout refreshFiles, 500
           ctx.callbacks.show.fire()
           dialog.modal('show')
 
+    # Provide a callback proxy for the options, or just define a set of methods
+    #   which should be exposed to the jQuery plugin Object
     if ctx
       ctx.callback_proxy
     else
@@ -231,6 +348,10 @@ $ ->
     dialog.data('ev-state').callbacks.cancel.fire()
     $('.ev-browser').modal('hide')
 
+  # Handle the event triggered by submitting the form with in the modal
+  # Once the event has been triggered, <input> elements specifying the URLs for
+  #   the file resources are appended to the DOM
+  # @param event
   $(document).on 'click', 'button.ev-submit', (event) ->
     event.preventDefault()
     $(this).button('loading')
@@ -255,6 +376,9 @@ $ ->
       $('.ev-browser').modal('hide')
       $('#browse-btn').focus()
 
+  # Handle onClick events for links or containers for the file resource tree
+  # Note: This handles both cases where a file/directory node is collapsed or
+  #   expanded
   $(document).on 'click', '.ev-files .ev-container a.ev-link', (event) ->
     event.stopPropagation()
     event.preventDefault()
@@ -263,16 +387,25 @@ $ ->
     node_id = $(this).attr('href')
     $('table#file-list').treetable(action,node_id)
 
+  # Handles the onChange event and refreshes the server-side HTML
+  # Note: This is called when the <table> element is initially appended from
+  #   the Rails View template
   $(document).on 'change', '.ev-providers select', (event) ->
     event.preventDefault()
     startWait()
+    table_id = $(this).data('table-id')
+    table = $(table_id)
+    page = table.data('provider-contents-page-number')
     $.ajax
       url: $(this).val(),
       data:
         accept: dialog.data('ev-state').opts.accept
         context: dialog.data('ev-state').opts.context
+        page: page
     .done (data) ->
       $('.ev-files').html(data)
+      $('.ev-files').off 'scroll.browseEverything'
+      $('.ev-files').on 'scroll.browseEverything', handleScroll
       indicateSelected();
       $('#provider_auth').focus();
       tableSetup($('table#file-list'))

@@ -16,6 +16,66 @@ module BrowseEverything
         end
       end
 
+      # Page methods
+      # @note This should be refactored into a separate Class or mixin
+
+      def pagination_klass
+        Paginator::GoogleDrive
+      end
+
+      # Initialize the Hash used to map paths to pages
+      # @return [Hash]
+      def path_pages
+        @path_pages ||= {}
+      end
+
+      # Generate a new Paginator object for a Drive resource path
+      # @param [String] path
+      # @return [Paginator]
+      def new_pages_for_path!(path)
+        new_pages = pagination_klass.new
+        @path_pages[path] = new_pages
+        new_pages
+      end
+
+      # Retrieve the Pagination object stored for a path
+      # @param [String] path
+      # @return [Paginator]
+      def pages_for_path(path)
+        path_pages[path] || new_pages_for_path!(path)
+      end
+
+      # Retrieve the Pagination object stored for the root path
+      # @return [Paginator]
+      def pages_for_root_path
+        pages_for_path('')
+      end
+
+      # Return the number of pages for the content entry list retrieved by the provider
+      # Defaults to 0
+      # @param [String] browse_path the relative path to the resource directory tree
+      # @return [Integer]
+      def contents_pages
+        pages_for_root_path.length
+      end
+
+      # Return the current page in the content entry list
+      # Defaults to 0
+      # @param [BrowseEverythingController] ctx the Controller context for the
+      #   the request
+      # @return [Integer]
+      def contents_current_page(ctx)
+        ctx.params[:page_token] || pagination_klass::FIRST_PAGE_TOKEN
+      end
+
+      def contents_next_page(_ctx)
+        pages_for_root_path.page_tokens.last
+      end
+
+      def contents_last_page?(_ctx)
+        pages_for_root_path.last_page?
+      end
+
       attr_reader :credentials
 
       # Constructor
@@ -69,38 +129,45 @@ module BrowseEverything
       # @param request_params [RequestParameters] the object containing the parameters for the Google Drive API request
       # @param path [String] the path (default to the root)
       # @return [Array<BrowseEverything::FileEntry>] file entries for the path
-      def list_files(drive, request_params, path: '')
+      def list_files(drive, request_params, path: '', page_token:)
+        pages = pages_for_path(path)
+
+        # See https://developers.google.com/drive/api/v3/folder
+        request_params.q += " and 'root' in parents" if path.empty?
+        # Ensures that the next page token is used only if the pages have been populated by an initial response
+        request_params.page_token = page_token unless page_token.nil? || page_token == pagination_klass::FIRST_PAGE_TOKEN
+
         drive.list_files(request_params.to_h) do |file_list, error|
           # Raise an exception if there was an error Google API's
           if error.present?
-            # In order to properly trigger reauthentication, the token must be cleared
-            # Additionally, the error is not automatically raised from the Google Client
             @token = nil
             raise error
           end
 
-          @entries += file_list.files.map do |gdrive_file|
-            details(gdrive_file, path)
-          end
+          gdrive_file_details = file_list.files.map { |gdrive_file| details(gdrive_file, path) }
 
-          request_params.page_token = file_list.next_page_token
+          page_index = page_token || pagination_klass::FIRST_PAGE_TOKEN
+          pages[page_index] = gdrive_file_details
+
+          pages.next_page_token = file_list.next_page_token || pagination_klass::LAST_PAGE_TOKEN
         end
-
-        @entries += list_files(drive, request_params, path: path) if request_params.page_token.present?
       end
 
       # Retrieve the files for any given resource on Google Drive
       # @param path [String] the root or Folder path for which to list contents
       # @return [Array<BrowseEverything::FileEntry>] file entries for the path
-      def contents(path = '')
-        @entries = []
-        drive_service.batch do |drive|
-          request_params = Auth::Google::RequestParameters.new
-          request_params.q += " and '#{path}' in parents " if path.present?
-          list_files(drive, request_params, path: path)
-        end
+      def contents(path = '', page_token = nil)
+        # Return the cached response if its been indexed into memory
+        pages = pages_for_path(path)
+        return pages[page_token] if pages.indexed? page_token
 
-        @sorter.call(@entries)
+        request_params = Auth::Google::RequestParameters.new
+        request_params.q += " and '#{path}' in parents " if path.present?
+
+        list_files(drive_service, request_params, path: path, page_token: page_token)
+
+        page_index = page_token || pagination_klass::FIRST_PAGE_TOKEN
+        pages[page_index]
       end
 
       # Retrieve a link for a resource
@@ -143,6 +210,9 @@ module BrowseEverything
         Google::Auth::Stores::FileTokenStore.new(file: file_token_store_path)
       end
 
+      # Constructs the object capturing the state for the session
+      # @see .default_authentication_klass
+      # @return [Google::Auth::UserAuthorizer]
       def session
         AuthenticationFactory.new(
           self.class.authentication_klass,
@@ -162,7 +232,8 @@ module BrowseEverything
       end
 
       # Request to authorize the provider
-      # This is *the* method which, passing an HTTP request, redeems an authorization code for an access token
+      # This is *the* method which, passing an HTTP request, redeems an
+      #   authorization code for an access token
       # @return [String] a new access token
       def authorize!
         @credentials = authorizer.get_credentials_from_code(user_id: user_id, code: code)
@@ -171,7 +242,8 @@ module BrowseEverything
         @token
       end
 
-      # This is the method accessed by the BrowseEverythingController for authorizing using an authorization code
+      # This is the method accessed by the BrowseEverythingController for
+      #   authorizing using an authorization code
       # @param params [Hash] HTTP response passed to the OAuth callback
       # @param _data [Object,nil] an unused parameter
       # @return [String] a new access token
@@ -190,6 +262,9 @@ module BrowseEverything
 
       private
 
+        # Generate the Hash used for initializing the API client
+        # (Parses the configuration provided by the App.)
+        # @return [Hash]
         def client_secrets
           {
             Google::Auth::ClientId::WEB_APP => {
@@ -206,6 +281,8 @@ module BrowseEverything
           Tempfile.new('gdrive.yaml')
         end
 
+        # Provide the scope for the service granted access to the Google Drive
+        # @return [String]
         def scope
           Google::Apis::DriveV3::AUTH_DRIVE
         end

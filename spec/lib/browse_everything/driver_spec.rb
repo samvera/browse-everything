@@ -25,13 +25,23 @@ describe BrowseEverything::Driver do
     let(:new_sorter) do
       ->(files) {}
     end
+    let(:default_sorter) { described_class.sorter }
 
     before do
+      default_sorter
       described_class.sorter = new_sorter
     end
 
     it 'mutates the sorter from the initializer' do
       expect(my_driver.get_sorter).to eq new_sorter
     end
+
+    after do
+      described_class.sorter = default_sorter
+    end
+  end
+
+  after do
+    Object.send(:remove_const, :MyDriver)
   end
 end

@@ -32,4 +32,16 @@ describe BrowseEverything::Driver::Base do
 
     it { is_expected.to contain_exactly('/path/to/foo.txt', file_name: 'foo.txt') }
   end
+
+  describe '#contents_next_page' do
+    it 'accesses the next or first page token' do
+      expect(driver.contents_next_page(nil)).to eq(1)
+    end
+  end
+
+  describe '#contents_last_page?' do
+    it 'determines whether the current page is the last page' do
+      expect(driver.contents_last_page?(nil)).to be true
+    end
+  end
 end

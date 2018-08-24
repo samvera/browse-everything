@@ -10,6 +10,11 @@ module BrowseEverything
   autoload :FileEntry, 'browse_everything/file_entry'
 
   module Driver
+    module Paginator
+      autoload :Base,         'browse_everything/driver/paginator/base'
+      autoload :GoogleDrive,  'browse_everything/driver/paginator/google_drive'
+    end
+
     autoload :Base,        'browse_everything/driver/base'
     autoload :FileSystem,  'browse_everything/driver/file_system'
     autoload :Dropbox,     'browse_everything/driver/dropbox'

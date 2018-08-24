@@ -1,6 +1,6 @@
 <form class="form-inline">
   <label target="provider-select">Source:</label>
-  <select class="form-control" id="provider-select">
+  <select class="form-control" id="provider-select" data-table-id="#file-list">
     <% browser.providers.each_pair do |key, provider| %>
       <option value="<%=browse_everything_engine.contents_path(key)%>">
         <%= provider.name %>

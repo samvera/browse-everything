@@ -135,4 +135,21 @@ describe BrowseEverything::Driver::Dropbox do
       end
     end
   end
+
+  describe '#handle_deprecated_config' do
+    let(:provider_yml) do
+      {
+        app_key: 'client-id',
+        client_secret: 'client-secret'
+      }
+    end
+    let(:driver) { described_class.new(provider_yml) }
+
+    it 'maps the deprecated config value pair to the new one' do
+      driver.handle_deprecated_config(:app_key, :client_id)
+      expect(driver.config).to include :app_key
+      expect(driver.config).to include :client_id
+      expect(driver.config[:app_key]).to eq('client-id')
+    end
+  end
 end

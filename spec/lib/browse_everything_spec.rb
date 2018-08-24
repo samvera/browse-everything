@@ -7,8 +7,8 @@ describe BrowseEverything do
         expect(described_class.config).to be_a ActiveSupport::HashWithIndifferentAccess
 
         expect(described_class.config).to include 'dropbox'
-        expect(described_class.config['dropbox']).to include('app_key' => 'test-key')
-        expect(described_class.config['dropbox']).to include('app_secret' => 'test-secret')
+        expect(described_class.config['dropbox']).to include('client_id' => 'test-key')
+        expect(described_class.config['dropbox']).to include('client_secret' => 'test-secret')
 
         expect(described_class.config).to include 'box'
         expect(described_class.config['box']).to include('client_id' => 'test-id')
@@ -26,8 +26,8 @@ describe BrowseEverything do
       let(:config) do
         {
           dropbox: {
-            app_key: 'test-key',
-            app_secret: 'test-secret'
+            client_id: 'test-key',
+            client_secret: 'test-secret'
           },
           box: {
             client_id: 'test-id',

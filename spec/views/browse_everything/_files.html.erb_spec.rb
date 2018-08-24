@@ -16,13 +16,20 @@ describe 'browse_everything/_files.html.erb', type: :view do
 
   let(:provider) { instance_double(BrowseEverything::Driver::Base) }
   let(:page) { Capybara::Node::Simple.new(rendered) }
+  let(:provider_contents_last_page) { false }
+  let(:provider_contents_pages) { 1 }
+  let(:provider_contents_current_page) { 0 }
 
   before do
+    allow(view).to receive(:provider_contents_last_page?).and_return(provider_contents_last_page)
+    allow(view).to receive(:provider_contents_pages).and_return(provider_contents_pages)
+    allow(view).to receive(:provider_contents_current_page).and_return(provider_contents_current_page)
     allow(view).to receive(:browse_everything_engine).and_return(BrowseEverything::Engine.routes.url_helpers)
     allow(view).to receive(:provider).and_return(provider)
     allow(view).to receive(:path).and_return('path')
     allow(view).to receive(:parent).and_return('parent')
     allow(view).to receive(:provider_name).and_return('my provider')
+
     allow(provider).to receive(:config).and_return(config)
 
     allow(view).to receive(:provider_contents).and_return provider_contents
