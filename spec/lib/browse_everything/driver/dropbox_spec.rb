@@ -40,11 +40,18 @@ describe BrowseEverything::Driver::Dropbox, vcr: { cassette_name: 'dropbox', rec
 
   context 'with a valid configuration' do
     let(:driver) { described_class.new(provider_yml) }
+    let(:connector_response_url_options) do
+      {
+        protocol: 'http://',
+        host: 'test.host',
+        port: 80
+      }
+    end
 
-    before { driver.connect({ code: 'code' }, {}) }
+    before { driver.connect({ code: 'code' }, {}, connector_response_url_options) }
 
     describe '#auth_link' do
-      subject { driver.auth_link }
+      subject { driver.auth_link(connector_response_url_options) }
 
       it { is_expected.to start_with('https://www.dropbox.com/oauth2/authorize') }
     end

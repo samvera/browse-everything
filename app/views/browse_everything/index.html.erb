@@ -12,7 +12,13 @@
       </div>
       <div class="ev-browser row" aria-live="polite">
         <div class="<%=fa3or4('fa3','fa4')%> col-xs-12 ev-files list">
-          <%= render :partial => 'files' if provider.present? %>
+          <% if provider.present? %>
+            <% if provider.authorized? %>
+              <%= render :partial => 'files' %>
+            <% else %>
+              <%= render :partial => 'auth' %>
+            <% end %>
+          <% end %>
         </div>
       </div>
     </div>

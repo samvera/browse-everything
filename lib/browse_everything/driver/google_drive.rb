@@ -120,7 +120,7 @@ module BrowseEverything
 
       # Provides a URL for authorizing against Google Drive
       # @return [String] the URL
-      def auth_link
+      def auth_link(*_args)
         Addressable::URI.parse(authorizer.get_authorization_url)
       end
 

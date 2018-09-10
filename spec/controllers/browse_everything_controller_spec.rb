@@ -15,6 +15,13 @@ RSpec.describe BrowseEverythingController, type: :controller do
 
   describe '#auth' do
     let(:provider_session) { instance_double(BrowseEverythingSession::ProviderSession) }
+    let(:connector_response_url_options) do
+      {
+        protocol: 'http://',
+        host: 'test.host',
+        port: 80
+      }
+    end
 
     before do
       allow(controller).to receive(:params).and_return('code' => 'test-code')
@@ -24,7 +31,7 @@ RSpec.describe BrowseEverythingController, type: :controller do
     end
 
     it 'retrieves the authorization code from the parameters' do
-      expect(provider).to have_received(:connect).with({ 'code' => 'test-code' }, nil)
+      expect(provider).to have_received(:connect).with({ 'code' => 'test-code' }, nil, connector_response_url_options)
     end
   end
 

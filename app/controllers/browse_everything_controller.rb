@@ -36,10 +36,10 @@ class BrowseEverythingController < ActionController::Base
   end
 
   # Action for the OAuth2 callback
-  # Authenticate against the Google API and store the token in the session
+  # Authenticate against the API and store the token in the session
   def auth
     # params contains the access code with with the key :code
-    provider_session.token = provider.connect(params, provider_session.data)
+    provider_session.token = provider.connect(params, provider_session.data, connector_response_url_options)
   end
 
   def resolve
@@ -76,11 +76,15 @@ class BrowseEverythingController < ActionController::Base
       @provider_session = nil
     end
 
+    def connector_response_url_options
+      { protocol: request.protocol, host: request.host, port: request.port }
+    end
+
     # Generates the authentication link for a given provider service
     # @return [String] the authentication link
     def auth_link
       @auth_link ||= if provider.present?
-                       link, data = provider.auth_link
+                       link, data = provider.auth_link(connector_response_url_options)
                        provider_session.data = data
                        link = "#{link}&state=#{provider.key}" unless link.to_s.include?('state')
                        link
