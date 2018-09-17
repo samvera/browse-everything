@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record: :none } do
+describe BrowseEverything::Retriever do
   let(:retriever) { described_class.new }
   let(:datafile) { File.expand_path('../../fixtures/file_system/file_1.pdf', __dir__) }
   let(:datafile_with_spaces) { File.expand_path('../../fixtures/file_system/file 1.pdf', __dir__) }
@@ -30,6 +30,25 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
 
     context 'when retrieving a resource from a cloud storage provider' do
       let(:url) { URI.parse('https://drive.google.com/uc?id=id&export=download') }
+
+      before do
+        stub_request(
+          :head, "https://drive.google.com/uc?export=download&id=id"
+        ).and_return(
+          headers: {
+            'Content-Length' => '1234'
+          }
+        )
+
+        stub_request(
+          :get, "https://drive.google.com/uc?export=download&id=id"
+        ).and_return(
+          headers: {
+            'Content-Length' => '1234'
+          },
+          body: 'content'
+        )
+      end
 
       it 'calculates or retrieves the size of a file' do
         retriever.retrieve(options) do |_chunk, _retrieved, total|
@@ -80,6 +99,17 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
     end
 
     context 'when retrieving data using chunked-encoded streams' do
+      before do
+        stub_request(
+          :get, "https://retrieve.cloud.example.com/some/dir/file.pdf"
+        ).and_return(
+          headers: {
+            'Content-Type' => 'text/plain'
+          },
+          body: data
+        )
+      end
+
       it 'content' do
         content = +''
         retriever.retrieve(spec['0']) { |chunk, _retrieved, _total| content << chunk }
@@ -92,6 +122,17 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
     end
 
     context 'when downloading content' do
+      before do
+        stub_request(
+          :get, "https://retrieve.cloud.example.com/some/dir/file.pdf"
+        ).and_return(
+          headers: {
+            'Content-Type' => 'text/plain'
+          },
+          body: data
+        )
+      end
+
       it 'content' do
         file = retriever.download(spec['0'])
         expect(File.open(file, 'rb', &:read)).to eq(data)
@@ -115,6 +156,13 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
         }
       end
       let(:download_options) { spec['0'] }
+      before do
+        stub_request(
+          :get, "https://retrieve.cloud.example.com/some/dir/file_error.pdf"
+        ).and_return(
+          status: 403
+        )
+      end
 
       it 'raises an exception' do
         expect { retriever.download(download_options) }.to raise_error(BrowseEverything::DownloadError, /BrowseEverything::Retriever: Failed to download/)
@@ -184,6 +232,14 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
 
     context 'when can retrieve' do
       let(:url) { 'https://retrieve.cloud.example.com/some/dir/can_retrieve.pdf' }
+      before do
+        stub_request(
+          :get, "https://retrieve.cloud.example.com/some/dir/can_retrieve.pdf"
+        ).to_return(
+          status: 206,
+          body: '%'
+        )
+      end
 
       it 'says it can' do
         expect(described_class).to be_can_retrieve(url)
@@ -192,6 +248,13 @@ describe BrowseEverything::Retriever, vcr: { cassette_name: 'retriever', record:
 
     context 'when cannot retrieve' do
       let(:url) { 'https://retrieve.cloud.example.com/some/dir/cannot_retrieve.pdf' }
+      before do
+        stub_request(
+          :get, "https://retrieve.cloud.example.com/some/dir/cannot_retrieve.pdf"
+        ).to_return(
+          status: 403
+        )
+      end
 
       it 'says it cannot' do
         expect(described_class).not_to be_can_retrieve(url)

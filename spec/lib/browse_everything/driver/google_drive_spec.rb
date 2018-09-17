@@ -2,7 +2,7 @@
 
 include BrowserConfigHelper
 
-describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_drive', record: :none } do
+describe BrowseEverything::Driver::GoogleDrive do
   let(:browser) { BrowseEverything::Browser.new(url_options) }
   let(:provider) { browser.providers['google_drive'] }
   let(:provider_yml) do
@@ -11,9 +11,27 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
       url_options: { port: '3000', protocol: 'http://', host: 'example.com' }
     }
   end
+  let(:oauth_response_body) do
+    '{
+     "access_token": "access-token",
+     "token_type": "Bearer",
+     "expires_in": 3600,
+     "refresh_token": "refresh-token"
+    }'
+  end
 
   before do
     stub_configuration
+
+    stub_request(
+      :post, 'https://www.googleapis.com/oauth2/v4/token'
+    ).to_return(
+      body: oauth_response_body,
+      status: 200,
+      headers: {
+        'Content-Type' => 'application/json; charset=UTF-8'
+      }
+    )
   end
 
   after do
@@ -30,11 +48,11 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
   describe '#validate_config' do
     it 'raises and error with an incomplete configuration' do
-      expect { BrowseEverything::Driver::GoogleDrive.new({}) }.to raise_error(BrowseEverything::InitializationError)
+      expect { described_class.new({}) }.to raise_error(BrowseEverything::InitializationError)
     end
 
     it 'raises and error with a configuration without a client secret' do
-      expect { BrowseEverything::Driver::GoogleDrive.new(client_id: 'test-client-id') }.to raise_error(BrowseEverything::InitializationError)
+      expect { described_class.new(client_id: 'test-client-id') }.to raise_error(BrowseEverything::InitializationError)
     end
   end
 
@@ -139,6 +157,25 @@ describe BrowseEverything::Driver::GoogleDrive, vcr: { cassette_name: 'google_dr
 
     describe '#link_for' do
       subject(:link) { driver.link_for('asset-id2') }
+      let(:file_response_body) do
+        '{
+         "id": "asset-id2",
+         "name": "asset-name2.pdf",
+         "webContentLink": "https://drive.google.com/uc?id=id&export=download"
+        }'
+      end
+
+      before do
+        stub_request(
+          :get, "https://www.googleapis.com/drive/v3/files/asset-id2?fields=id,%20name,%20size"
+        ).to_return(
+          body: file_response_body,
+          status: 200,
+          headers: {
+            'Content-Type' => 'application/json'
+          }
+        )
+      end
 
       it 'generates the link for a Google Drive asset' do
         expect(link).to be_an Array
