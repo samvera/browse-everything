@@ -20,6 +20,9 @@ Metrics/ClassLength:
     - 'lib/browse_everything/driver/google_drive.rb'
 Metrics/LineLength:
   Max: 400
+  Exclude:
+    - 'spec/lib/browse_everything/driver/box_spec.rb'
+    - 'spec/lib/browse_everything/driver/dropbox_spec.rb'
 Metrics/BlockLength:
   Exclude:
     - '*.gemspec'
