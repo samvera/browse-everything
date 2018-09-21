@@ -79,7 +79,8 @@ module BrowserConfigHelper
                                's3' => {
                                  app_key: 'S3AppKey',
                                  app_secret: 'S3AppSecret',
-                                 bucket: 's3.bucket'
+                                 bucket: 's3.bucket',
+                                 region: 's3.region'
                                })
   end
 

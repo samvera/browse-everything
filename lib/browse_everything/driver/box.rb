@@ -36,13 +36,8 @@ module BrowseEverything
       # @param [String] id of the file or folder in Box
       # @return [Array<RubyBox::File>]
       def contents(id = '')
-        if id.empty?
-          folder = box_client.root_folder
-          @entries = []
-        else
-          folder = box_client.folder_by_id(id)
-          @entries = [parent_directory(folder)]
-        end
+        folder = id.empty? ? box_client.root_folder : box_client.folder_by_id(id)
+        @entries = []
 
         folder.items(ITEM_LIMIT, 0, %w[name size created_at]).collect do |f|
           @entries << directory_entry(f)
@@ -136,11 +131,6 @@ module BrowseEverything
         def expiration_time
           return unless @token
           @token.fetch('expires_at', nil).to_i
-        end
-
-        # Used to represent the ".." parent directory of the folder
-        def parent_directory(folder)
-          BrowseEverything::FileEntry.new(Pathname(folder.name).join('..'), '', '..', 0, Time.current, true)
         end
 
         def directory_entry(file)
