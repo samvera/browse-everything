@@ -24,7 +24,7 @@ describe BrowseEverything::Driver::GoogleDrive do
     stub_configuration
 
     stub_request(
-      :post, 'https://www.googleapis.com/oauth2/v4/token'
+      :post, 'https://oauth2.googleapis.com/token'
     ).to_return(
       body: oauth_response_body,
       status: 200,
