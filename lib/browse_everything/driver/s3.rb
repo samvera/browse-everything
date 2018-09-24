@@ -8,7 +8,7 @@ module BrowseEverything
     class S3 < Base
       DEFAULTS = { response_type: :signed_url, expires_in: 14400 }.freeze
       RESPONSE_TYPES = %i[signed_url public_url s3_uri].freeze
-      CONFIG_KEYS = %i[bucket].freeze
+      CONFIG_KEYS = %i[bucket region].freeze
 
       class << self
         attr_accessor :authentication_klass
@@ -45,7 +45,8 @@ module BrowseEverything
       # @return [Array<BrowseEverything::FileEntry>]
       def contents(path = '')
         path = File.join(path, '') unless path.empty?
-        init_entries(path)
+        @entries = []
+
         generate_listing(path)
         @sorter.call(@entries)
       end
@@ -111,15 +112,6 @@ module BrowseEverything
           @client ||= authenticate
         end
 
-        def init_entries(path)
-          @entries = if path.empty?
-                       []
-                     else
-                       [BrowseEverything::FileEntry.new(Pathname(path).join('..').to_s, '', '..',
-                                                        0, Time.current, true)]
-                     end
-        end
-
         def entry_for(name, size, date, dir)
           BrowseEverything::FileEntry.new(name, [key, name].join(':'), File.basename(name), size, date, dir)
         end
@@ -138,6 +130,7 @@ module BrowseEverything
         end
 
         def generate_listing(path)
+          client
           listing = client.list_objects(bucket: config[:bucket], delimiter: '/', prefix: full_path(path))
           add_directories(listing)
           add_files(listing, path)
