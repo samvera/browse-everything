@@ -24,7 +24,7 @@ describe BrowseEverything::Driver::GoogleDrive do
     stub_configuration
 
     stub_request(
-      :post, 'https://www.googleapis.com/oauth2/v4/token'
+      :post, 'https://oauth2.googleapis.com/token'
     ).to_return(
       body: oauth_response_body,
       status: 200,
@@ -231,7 +231,7 @@ describe BrowseEverything::Driver::GoogleDrive do
 
       it 'exposes the authorization endpoint URI' do
         expect(uri).to be_a Addressable::URI
-        expect(uri.to_s).to eq 'https://accounts.google.com/o/oauth2/auth?access_type=offline&approval_prompt=force&client_id=CLIENTID&include_granted_scopes=true&redirect_uri=http://example.com:3000/browse/connect&response_type=code&scope=https://www.googleapis.com/auth/drive'
+        expect(uri.to_s).to eq 'https://accounts.google.com/o/oauth2/auth?access_type=offline&approval_prompt=force&client_id=CLIENTID&include_granted_scopes=true&redirect_uri=http://example.com:3000/browse/connect&response_type=code&scope=https://www.googleapis.com/auth/drive.readonly'
       end
     end
 

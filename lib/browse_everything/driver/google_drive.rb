@@ -133,7 +133,7 @@ module BrowseEverything
         pages = pages_for_path(path)
 
         # See https://developers.google.com/drive/api/v3/folder
-        request_params.q += " and 'root' in parents" if path.empty?
+        request_params.q += " and parents = 'root'" if path.empty?
         # Ensures that the next page token is used only if the pages have been populated by an initial response
         request_params.page_token = page_token unless page_token.nil? || page_token == pagination_klass::FIRST_PAGE_TOKEN
 
@@ -247,7 +247,7 @@ module BrowseEverything
       # @param params [Hash] HTTP response passed to the OAuth callback
       # @param _data [Object,nil] an unused parameter
       # @return [String] a new access token
-      def connect(params, _data)
+      def connect(params, _data = nil, _options = nil)
         @code = params[:code]
         authorize!
       end
@@ -284,7 +284,7 @@ module BrowseEverything
         # Provide the scope for the service granted access to the Google Drive
         # @return [String]
         def scope
-          Google::Apis::DriveV3::AUTH_DRIVE
+          Google::Apis::DriveV3::AUTH_DRIVE_READONLY
         end
 
         # Provides the user ID for caching access tokens

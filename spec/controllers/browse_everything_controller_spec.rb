@@ -127,10 +127,16 @@ RSpec.describe BrowseEverythingController, type: :controller do
 
     before do
       allow(provider).to receive(:token).and_return(nil)
+
+      # Resolves a discrepency tied to support for Rails versions
+      if Rails.version =~ /^4\.2/
+        get :resolve, format: :json, selected_files: selected_files
+      else
+        get :resolve, format: :json, params: { selected_files: selected_files }
+      end
     end
 
     it 'renders the download links' do
-      get :resolve, format: :json, params: { selected_files: selected_files }
       expect(response.body).not_to be_empty
       json_response = JSON.parse(response.body)
       expect(json_response).not_to be_empty

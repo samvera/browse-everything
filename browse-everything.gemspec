@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'sass-rails'
   spec.add_dependency 'signet', '~> 0.8'
-  spec.add_dependency 'thor', '~> 0.19.4'
+  spec.add_dependency 'thor', '0.19.4'
   spec.add_dependency 'typhoeus'
 
   spec.add_development_dependency 'bixby', '>= 1.0'

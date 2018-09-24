@@ -289,7 +289,7 @@ $ ->
       indicateSelected()
     .fail (xhr,status,error) ->
       if (xhr.responseText.indexOf("Refresh token has expired") > -1)
-        $('.ev-files').html("Your sessison has expired please clear your cookies.")
+        $('.ev-files').html("Your session has expired please clear your cookies.")
       else
         $('.ev-files').html(xhr.responseText)
     .always ->
@@ -411,7 +411,7 @@ $ ->
       tableSetup($('table#file-list'))
     .fail (xhr,status,error) ->
       if (xhr.responseText.indexOf("Refresh token has expired")>-1)
-        $('.ev-files').html("Your sessison has expired please clear your cookies.")
+        $('.ev-files').html("Your session has expired please clear your cookies.")
       else
         $('.ev-files').html(xhr.responseText)
     .always ->
