@@ -22,28 +22,32 @@ describe BrowseEverything::Driver::S3 do
   end
 
   describe 'configuration' do
-    it '#validate_config' do
+    it 'rejects an empty config.' do
       expect { described_class.new({}) }.to raise_error(BrowseEverything::InitializationError)
     end
 
-    it 'rejects app_key if app_secret is missing' do
+    it 'rejects a missing region' do
       expect { described_class.new(bucket: 'bucket', app_key: 'APP_KEY') }.to raise_error(BrowseEverything::InitializationError)
     end
 
+    it 'rejects app_key if app_secret is missing' do
+      expect { described_class.new(bucket: 'bucket', region: 'us-east-1', app_key: 'APP_KEY') }.to raise_error(BrowseEverything::InitializationError)
+    end
+
     it 'rejects app_secret if app_key is missing' do
-      expect { described_class.new(bucket: 'bucket', app_secret: 'APP_SECRET') }.to raise_error(BrowseEverything::InitializationError)
+      expect { described_class.new(bucket: 'bucket', region: 'us-east-1', app_secret: 'APP_SECRET') }.to raise_error(BrowseEverything::InitializationError)
     end
 
     it 'accepts app_key and app_secret together' do
-      expect { described_class.new(bucket: 'bucket', app_key: 'APP_KEY', app_secret: 'APP_SECRET') }.not_to raise_error
+      expect { described_class.new(bucket: 'bucket', region: 'us-east-1', app_key: 'APP_KEY', app_secret: 'APP_SECRET') }.not_to raise_error
     end
 
     it 'rejects an invalid response type' do
-      expect { described_class.new(bucket: 'bucket', response_type: :foo) }.to raise_error(BrowseEverything::InitializationError)
+      expect { described_class.new(bucket: 'bucket', region: 'us-east-1', response_type: :foo) }.to raise_error(BrowseEverything::InitializationError)
     end
 
     it 'deprecates :signed_url' do
-      driver = described_class.new(bucket: 'bucket', signed_url: false)
+      driver = described_class.new(bucket: 'bucket', region: 'us-east-1', signed_url: false)
       expect(driver.config).not_to have_key(:signed_url)
       expect(driver.config[:response_type]).to eq(:public_url)
     end
@@ -95,15 +99,8 @@ describe BrowseEverything::Driver::S3 do
 
       let(:contents) { provider.contents('foo/') }
 
-      context 'with a single directory' do
-        subject { contents[0] }
-
-        its(:name) { is_expected.to eq('..') }
-        specify    { is_expected.to be_container }
-      end
-
       context 'with a JPEG asset' do
-        subject { contents[1] }
+        subject { contents[0] }
 
         its(:name)     { is_expected.to eq('baz.jpg') }
         its(:location) { is_expected.to eq('s3:foo/baz.jpg')  }
@@ -113,7 +110,7 @@ describe BrowseEverything::Driver::S3 do
       end
 
       context 'with a PNG asset' do
-        subject { contents[2] }
+        subject { contents[1] }
 
         its(:name)     { is_expected.to eq('quux.png') }
         its(:location) { is_expected.to eq('s3:foo/quux.png') }
