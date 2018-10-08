@@ -39,6 +39,7 @@ else
   when /^4\.2/
     gem 'coffee-rails', '~> 4.1.0'
     gem 'json', '~> 1.8'
+    gem 'railties', '~> 4.2'
     gem 'responders', '~> 2.0'
     gem 'sass-rails', '>= 5.0'
   end
