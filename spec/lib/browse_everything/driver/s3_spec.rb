@@ -46,10 +46,22 @@ describe BrowseEverything::Driver::S3 do
       expect { described_class.new(bucket: 'bucket', region: 'us-east-1', response_type: :foo) }.to raise_error(BrowseEverything::InitializationError)
     end
 
-    it 'deprecates :signed_url' do
-      driver = described_class.new(bucket: 'bucket', region: 'us-east-1', signed_url: false)
-      expect(driver.config).not_to have_key(:signed_url)
-      expect(driver.config[:response_type]).to eq(:public_url)
+    context 'deprecating :signed_url' do
+      it 'sets the value of :signed_url to :response_type' do
+        driver = described_class.new(bucket: 'bucket', region: 'us-east-1', signed_url: false)
+        expect(driver.config).not_to have_key(:signed_url)
+        expect(driver.config[:response_type]).to eq(:public_url)
+
+        signed_driver = described_class.new(bucket: 'bucket', region: 'us-east-1', signed_url: true)
+        expect(signed_driver.config).not_to have_key(:signed_url)
+        expect(signed_driver.config[:response_type]).to eq(:signed_url)
+      end
+
+      it 'sets the default value of :response_type to :signed_url' do
+        driver = described_class.new(bucket: 'bucket', region: 'us-east-1')
+        expect(driver.config).not_to have_key(:signed_url)
+        expect(driver.config[:response_type]).to eq(:signed_url)
+      end
     end
   end
 
