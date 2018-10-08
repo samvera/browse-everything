@@ -21,9 +21,10 @@ module BrowseEverything
       attr_reader :entries
 
       def initialize(config, *args)
-        if config.key?(:signed_url) && config.delete(:signed_url) == false
-          warn '[DEPRECATION] Amazon S3 driver: `:signed_url` is deprecated.  Please use `:response_type` instead.'
-          config[:response_type] = :public_url
+        if config.key?(:signed_url)
+          warn '[DEPRECATION] Amazon S3 driver: `:signed_url` is deprecated.  Please use `response_type :signed_url` instead.'
+          response_type = config.delete(:signed_url) ? :signed_url : :public_url
+          config[:response_type] = response_type
         end
         merged_config = DEFAULTS.merge(config)
         self.class.authentication_klass ||= self.class.default_authentication_klass
