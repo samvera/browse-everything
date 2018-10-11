@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'tmpdir'
 require 'dropbox_api'
 require_relative 'authentication_factory'
 
@@ -66,6 +67,7 @@ module BrowseEverything
       # @param config_values [Hash] configuration for the driver
       def initialize(config_values)
         self.class.authentication_klass ||= self.class.default_authentication_klass
+        @downloaded_files = {}
         super(config_values)
       end
 
@@ -85,23 +87,39 @@ module BrowseEverything
         @sorter.call(@entries)
       end
 
-      def download(path)
-        temp_file = Tempfile.open(File.basename(path), encoding: 'ascii-8bit')
+      def downloaded_file_for(path)
+        return @downloaded_files[path] if @downloaded_files.key?(path)
+
+        # This ensures that the name of the file its extension are preserved for user downloads
+        temp_file_path = File.join(Dir.mktmpdir, File.basename(path))
+        temp_file = File.open(temp_file_path, mode: 'w+', encoding: 'ascii-8bit')
         client.download(path) do |chunk|
           temp_file.write chunk
         end
         temp_file.close
-        temp_file
+        @downloaded_files[path] = temp_file
       end
 
       def uri_for(path)
-        temp_file = download(path)
-        uri = ::Addressable::URI.new(scheme: 'file', path: temp_file.path)
-        uri.to_s
+        temp_file = downloaded_file_for(path)
+        "file://#{temp_file.path}"
+      end
+
+      def file_size_for(path)
+        downloaded_file = downloaded_file_for(path)
+        size = File.size(downloaded_file.path)
+        size.to_i
+      rescue StandardError => error
+        Rails.logger.error "Failed to find the file size for #{path}: #{error}"
+        0
       end
 
       def link_for(path)
-        [uri_for(path), {}]
+        uri = uri_for(path)
+        file_name = File.basename(path)
+        file_size = file_size_for(path)
+
+        [uri, { file_name: file_name, file_size: file_size }]
       end
 
       def auth_link(url_options)
