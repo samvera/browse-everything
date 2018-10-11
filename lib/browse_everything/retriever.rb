@@ -70,7 +70,7 @@ module BrowseEverything
       end
 
       download_options = extract_download_options(options)
-      url = download_options.fetch(:url)
+      url = download_options[:url]
 
       case url.scheme
       when 'file'
@@ -91,8 +91,7 @@ module BrowseEverything
         url = options.fetch('url')
 
         # This avoids the potential for a KeyError
-        headers = options.fetch('auth_header', {}) || {}
-        headers.each_pair { |k, v| headers[k] = v.tr('+', ' ') }
+        headers = options.fetch('headers', {}) || {}
 
         file_size_value = options.fetch('file_size', 0)
         file_size = file_size_value.to_i
@@ -131,9 +130,9 @@ module BrowseEverything
         url = options.fetch(:url)
         retrieved = 0
 
-        request = Typhoeus::Request.new(url.to_s, headers: headers)
+        request = Typhoeus::Request.new(url.to_s, method: :get, headers: headers)
         request.on_headers do |response|
-          raise DownloadError.new("#{self.class}: Failed to download #{url}", response) unless response.code == 200
+          raise DownloadError.new("#{self.class}: Failed to download #{url}: Status Code: #{response.code}", response) unless response.code == 200
         end
         request.on_body do |chunk|
           retrieved += chunk.bytesize

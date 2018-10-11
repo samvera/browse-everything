@@ -90,7 +90,7 @@ describe BrowseEverything::Driver::Box do
     end
 
     it 'registers new tokens' do
-      provider.connect(auth_params, 'data')
+      provider.connect(auth_params, 'data', nil)
       expect(provider).to have_received(:register_access_token).with(kind_of(OAuth2::AccessToken))
     end
   end
