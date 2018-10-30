@@ -12,7 +12,7 @@ describe BrowseEverything::Retriever do
     subject(:computed_file_size) { retriever.file_size(options) }
 
     let(:url) { URI.parse("file://#{datafile}") }
-    let(:headers) { [] }
+    let(:headers) { {} }
     let(:file_size) { 0 }
     let(:options) do
       {

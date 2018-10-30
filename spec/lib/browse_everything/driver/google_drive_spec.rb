@@ -87,7 +87,7 @@ describe BrowseEverything::Driver::GoogleDrive do
     let(:driver) { described_class.new(provider_yml) }
 
     before do
-      driver.connect({ code: 'code' }, {})
+      driver.connect({ code: 'code' }, {}, nil)
     end
 
     describe '#authorized?' do

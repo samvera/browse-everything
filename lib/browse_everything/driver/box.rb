@@ -68,7 +68,7 @@ module BrowseEverything
 
       # @return [Hash]
       # Gets the appropriate tokens from Box using the access code returned from :auth_link:
-      def connect(params, _data)
+      def connect(params, _data, _url_options)
         register_access_token(box_session.get_access_token(params[:code]))
       end
 
