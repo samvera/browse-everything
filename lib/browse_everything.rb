@@ -40,6 +40,7 @@ module BrowseEverything
   end
 
   class InitializationError < RuntimeError; end
+  class ConfigurationError < StandardError; end
   class NotImplementedError < StandardError; end
   class NotAuthorizedError < StandardError; end
 
@@ -51,11 +52,15 @@ module BrowseEverything
       if value.is_a?(Hash)
         @config = ActiveSupport::HashWithIndifferentAccess.new value
       elsif value.is_a?(String)
-        config_file_content = File.read(value)
-        config_file_template = ERB.new(config_file_content)
-        config_values = YAML.safe_load(config_file_template.result, [Symbol])
-        @config = ActiveSupport::HashWithIndifferentAccess.new config_values
-        @config.deep_symbolize_keys
+        begin
+          config_file_content = File.read(value)
+          config_file_template = ERB.new(config_file_content)
+          config_values = YAML.safe_load(config_file_template.result, [Symbol])
+          @config = ActiveSupport::HashWithIndifferentAccess.new config_values
+          @config.deep_symbolize_keys
+        rescue Errno::ENOENT
+          raise ConfigurationError, 'Missing browse_everything_providers.yml configuration file'
+        end
       else
         raise InitializationError, "Unrecognized configuration: #{value.inspect}"
       end

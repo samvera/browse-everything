@@ -72,6 +72,13 @@ describe BrowseEverything do
 
       it_behaves_like 'a configured BrowseEverything module'
     end
+
+    context 'without a YAML file' do
+      let(:config) { '' }
+      it 'raises a configuration error' do
+        expect { described_class.configure(:config).to raise_error(BrowseEverything::ConfigurationError, 'Missing browse_everything_providers.yml configuration file') }
+      end
+    end
   end
 
   context 'with an unsupported or invalid configuration' do
