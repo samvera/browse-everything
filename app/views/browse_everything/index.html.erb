@@ -11,7 +11,7 @@
         <span class="loading-text">Loading...</span>
       </div>
       <div class="ev-browser row" aria-live="polite">
-        <div class="<%=fa3or4('fa3','fa4')%> col-xs-12 ev-files list">
+        <div class="col-xs-12 ev-files list">
           <% if provider.present? %>
             <% if provider.authorized? %>
               <%= render :partial => 'files' %>
