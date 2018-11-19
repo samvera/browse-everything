@@ -28,7 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'googleauth', '0.6.6'
   spec.add_dependency 'rails', '>= 4.2'
   spec.add_dependency 'ruby-box'
-  spec.add_dependency 'sass-rails'
   spec.add_dependency 'signet', '~> 0.8'
   spec.add_dependency 'thor', '~> 0.19'
   spec.add_dependency 'typhoeus'
