@@ -31,6 +31,10 @@ Metrics/BlockLength:
 RSpec/NestedGroups:
   Enabled: false
 
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/javascripts/**/*'
+    
 RSpec/LeadingSubject:
   Enabled: false
 
