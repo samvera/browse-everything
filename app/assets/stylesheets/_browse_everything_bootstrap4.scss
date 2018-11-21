@@ -1,5 +1,11 @@
 // It is important this file starts with underscore, so sprockets-sass won't try to compile
 // it independently, even though nothing explicit is directing it to.
+//
+// CSS for bootstrap 3, intended to be sass @import'ed into a context that has access to
+// bootstrap 3 mixins and variables.
+//
+// This updates the original bootstrap3 SCSS to work with bootstrap 4, but also improves/fixes
+// some display while we're at it.
 
 @import "jquery.treetable";
 @import "jquery.treetable.theme.browse";
@@ -14,32 +20,21 @@
 }
 
 #browse-everything {
-  overflow-y: hidden;
-  position: fixed !important;
-  margin: 0 0 0 -37.5%;
-  left: 50%;
-  top: 10%;
-  background-color: initial;
-  width: 75%;
-
   div {
     background-color: white;
+  }
+
+  .modal-dialog {
+    // possibly this is fixing a bootstrap bug?
+    border-radius: $modal-content-border-radius;
   }
 
   .modal-header {
     padding: 8px;
   }
 
-  .modal-body {
-    overflow: hidden;
-  }
-
   .modal-footer {
-    margin: 0px;
-  }
-
-  .row {
-    margin: inherit;
+    justify-content: space-between;
   }
 
   .ev-files {
@@ -55,13 +50,6 @@
       }
       border-top: none;
     }
-
-    &.detail {
-    }
-
-    &.list ul {
-      @include content-columns(3);
-    }
   }
 
   .ev-container li {
@@ -72,17 +60,33 @@
     padding: 0;
   }
 
+  .row {
+    margin: inherit;
+  }
+
   .ev-providers {
-    padding: 4px;
+    label {
+      font-size: $h5-font-size;
+      font-weight: $headings-font-weight;
+      line-height: $headings-line-height;
+      margin-bottom: 0;
+      @extend .mr-2;
+    }
   }
 
   .ev-files {
+    height: calc(90vh - 150px);
+    padding: 0;
+
+    li { @include ev-link; }
+
     table {
-      width: 100%;
-      max-width: 100%;
+      margin: 0;
       tr {
-        width: 100%;
-        max-width: 100%;
+        th {
+          padding-top: 0.5em;
+          padding-bottom: 0.5em;
+        }
         td {
           white-space: nowrap;
           overflow: hidden;
@@ -90,15 +94,6 @@
         }
       }
     }
-  }
-
-  .ev-files {
-    height: 50vh;
-    li { @include ev-link; }
-  }
-
-  .ev-providers {
-    select { width: 30% }
   }
 
   .loading {
@@ -110,6 +105,9 @@
     position: absolute;
     top: 8em;
     left: 4em;
+    &.hidden {
+      display: none;
+    }
   }
 
   // Massively large text instead of something more artistic

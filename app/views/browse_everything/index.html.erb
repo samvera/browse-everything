@@ -1,4 +1,4 @@
-<div class="modal-dialog">
+<div class="modal-dialog modal-lg">
   <div class="modal-content">
     <div class="modal-header">
       <h4 class="sr-only" id="beModalLabel">Select a provider in the list to browse your files.</h4>
@@ -11,7 +11,8 @@
         <span class="loading-text">Loading...</span>
       </div>
       <div class="ev-browser row" aria-live="polite">
-        <div class="col-xs-12 ev-files list">
+        <%# col-xs-12 is bootstrap3, col-12 is bootstrap4 %>
+        <div class="col-xs-12 col-12 ev-files list">
           <% if provider.present? %>
             <% if provider.authorized? %>
               <%= render :partial => 'files' %>

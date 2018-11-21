@@ -17,8 +17,13 @@ class TestAppGenerator < Rails::Generators::Base
     copy_file File.expand_path('app/assets/stylesheets/application.css', ENV['RAILS_ROOT']), 'app/assets/stylesheets/application.css.scss'
     remove_file 'app/assets/stylesheets/application.css'
     insert_into_file 'app/assets/stylesheets/application.css.scss', after: '*/' do
-      # bootstrap 3
-      %(\n\n@import "bootstrap-sprockets";\n@import "bootstrap";\n@import "browse_everything";)
+      if ENV['TEST_BOOTSTRAP'] == "3"
+        # bootstrap 3 from bootstrap-sass gem
+        %(\n\n@import "bootstrap-sprockets";\n@import "bootstrap";\n@import "browse_everything_bootstrap3";)
+      else
+        # bootstrap4 from bootstrap gem
+        %(\n\n@import "bootstrap";\n@import "browse_everything_bootstrap4";)
+      end
     end
   end
 
