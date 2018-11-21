@@ -78,7 +78,7 @@ If you prefer not to use the generator, or need info on how to set up providers 
 
 ### Include the CSS and JavaScript
 
-Add `@import "browse_everything";` to your application.css.scss
+If you don't already have `@import 'bootstrap-sprockets'` and `@import 'bootstrap'` in your `application.scss`, add them. Somewhere after those lines, add  `@import "browse_everything";` to your application.scss.
 
 In `app/assets/javascripts/application.js` include jquery and the BrowseEverything
 

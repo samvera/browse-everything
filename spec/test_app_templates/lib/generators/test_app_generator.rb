@@ -17,7 +17,8 @@ class TestAppGenerator < Rails::Generators::Base
     copy_file File.expand_path('app/assets/stylesheets/application.css', ENV['RAILS_ROOT']), 'app/assets/stylesheets/application.css.scss'
     remove_file 'app/assets/stylesheets/application.css'
     insert_into_file 'app/assets/stylesheets/application.css.scss', after: '*/' do
-      %(\n\n@import "browse_everything")
+      # bootstrap 3
+      %(\n\n@import "bootstrap-sprockets";\n@import "bootstrap";\n@import "browse_everything";)
     end
   end
 

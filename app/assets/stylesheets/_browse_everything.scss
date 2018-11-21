@@ -1,3 +1,6 @@
+// It is important this file starts with underscore, so sprockets-sass won't try to compile
+// it independently, even though nothing explicit is directing it to.
+
 @import "jquery.treetable";
 @import "jquery.treetable.theme.browse";
 
