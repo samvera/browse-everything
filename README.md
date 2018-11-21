@@ -88,7 +88,11 @@ In `app/assets/javascripts/application.js` include jquery and the BrowseEverythi
 ```
 
 ## Testing
-This is a Rails Engine which is tested using the [engine_cart](https://github.com/cbeer/engine_cart) Gem.  Test suites may be executed with the following invocation:
+This is a Rails Engine which is tested using the [engine_cart](https://github.com/cbeer/engine_cart) Gem and rspec.
+
+One rspec test invokes [karma](https://karma-runner.github.io/latest/index.html) to run Javascript tests. For this test to succeed, you need to install karma on your system, first by making sure `npm` is installed, and then run `npm install -g karma karma-jasmine karma-chrome-launcher`.
+
+Test suites may be executed with the following invocation:
 
 ```bash
 bundle exec rake
