@@ -78,7 +78,9 @@ If you prefer not to use the generator, or need info on how to set up providers 
 
 ### Include the CSS and JavaScript
 
-If you don't already have `@import 'bootstrap-sprockets'` and `@import 'bootstrap'` in your `application.scss`, add them. Somewhere after those lines, add  `@import "browse_everything";` to your application.scss.
+Browse-everything depends on bootstrap. If your app does not already have (Bootstrap3) [bootstrap-sass](https://github.com/twbs/bootstrap-sass) in it's dependencies, you should add it to your Gemfile.
+
+If you don't already have `@import 'bootstrap-sprockets'` and `@import 'bootstrap'` in your `application.scss` (per bootstrap-sass installation instructions), add them. Somewhere after those lines, add  `@import "browse_everything";` to your application.scss.
 
 In `app/assets/javascripts/application.js` include jquery and the BrowseEverything
 

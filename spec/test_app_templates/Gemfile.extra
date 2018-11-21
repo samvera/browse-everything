@@ -1,2 +1,4 @@
 gem 'jquery-rails'
 gem 'puma-rails'
+# bootstrap3
+gem "bootstrap-sass"
