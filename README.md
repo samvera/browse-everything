@@ -97,7 +97,7 @@ In `app/assets/javascripts/application.js` include jquery and the BrowseEverythi
 
 ### Migration CSS inclusion from pre-1.0 (TODO: Is that the version this will be released with?)
 
-If your app has installed a previous version of browse-everything, you may have a generated file at `./app/assets/stylesheets/browse_everything.scss`, which has a line in it `@import "browse_everything/browse_everything";`.  That file no longer exists in browse-everything; it can be changed to `@import "browse_everything_bootstrap3"` instead.
+If your app has installed a previous version of browse-everything, you may have a generated file at `./app/assets/stylesheets/browse_everything.scss`, which has a line in it `@import "browse_everything/browse_everything";`.  That import should no longer be used; it can be changed to `@import "browse_everything_bootstrap3"` instead.
 
 However, we also recommend merging the contents of this file into your main `application.scss` file, as documented in the current install instructions. With the separate generated file with bootstrap imports, you may likely be including bootstrap CSS in your generated CSS bundle twice, if you also have that import in your main application.scss already.
 
