@@ -31,8 +31,13 @@ module BrowseEverything
     attr_accessor :chunk_size
 
     class << self
-      def can_retrieve?(uri)
-        Typhoeus.get(uri, headers: { Range: 'bytes=0-0' }).success?
+      # Determines whether or not a remote resource can be retrieved
+      # @param uri [String] URI for the remote resource (usually a URL)
+      # @param headers [Hash] any custom headers required to transit the request
+      def can_retrieve?(uri, headers = {})
+        request_headers = headers.merge(Range: 'bytes=0-0')
+        response = Typhoeus.get(uri, headers: request_headers)
+        response.success?
       end
     end
 

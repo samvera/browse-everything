@@ -70,7 +70,8 @@ module BrowserConfigHelper
                                },
                                'dropbox' => {
                                  client_id: 'DropboxId',
-                                 client_secret: 'DropboxClientSecret'
+                                 client_secret: 'DropboxClientSecret',
+                                 download_directory: 'tmp/'
                                },
                                'google_drive' => {
                                  client_id: 'GoogleClientId',
