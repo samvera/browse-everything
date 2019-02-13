@@ -91,7 +91,7 @@ module BrowseEverything
         return @downloaded_files[path] if @downloaded_files.key?(path)
 
         # This ensures that the name of the file its extension are preserved for user downloads
-        temp_file_path = File.join(Dir.mktmpdir, File.basename(path))
+        temp_file_path = File.join(download_directory_path, File.basename(path))
         temp_file = File.open(temp_file_path, mode: 'w+', encoding: 'ascii-8bit')
         client.download(path) do |chunk|
           temp_file.write chunk
@@ -159,6 +159,21 @@ module BrowseEverything
 
         def redirect_uri(url_options)
           connector_response_url(**url_options)
+        end
+
+        # Ensures that the "tmp" directory is used if there is no default download
+        # directory specified in the configuration
+        # @return [String]
+        def default_download_directory
+          Rails.root.join('tmp')
+        end
+
+        # Retrieves the directory path for downloads used when retrieving the
+        # resource from Dropbox
+        # @return [String]
+        def download_directory_path
+          dir_path = config[:download_directory] || default_download_directory
+          File.expand_path(dir_path)
         end
     end
   end

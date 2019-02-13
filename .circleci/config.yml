@@ -75,7 +75,7 @@ jobs:
         command: bundle check || bundle install
     - run:
         name: Generate test app
-        command: (git diff --name-only master | grep -qG 'generators\/browse_everything') || bundle exec rake engine_cart:generate
+        command: bundle exec rake engine_cart:generate
     - run:
         name: Ensure test app dependencies are installed
         command: |
