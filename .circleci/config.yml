@@ -1,0 +1,148 @@
+
+version: 2.1
+executors:
+  ruby:
+    docker:
+      - image: circleci/ruby:2.6
+    working_directory: ~/browse-everything
+    environment:
+      BUNDLE_PATH: vendor/bundle
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+
+jobs:
+  bundle:
+    executor: ruby
+    steps:
+    - restore_cache: # Restore the cached source code base (for repeated jobs)
+        keys:
+        - v1-source-{{ .Branch }}-{{ .Revision }}
+        - v1-source-{{ .Branch }}-
+        - v1-source-
+    - checkout
+    - save_cache: # Save the cache for the source code base
+        key: v1-source-{{ .Branch }}-{{ .Revision }}
+        paths:
+        - ".git"
+    - restore_cache:
+        keys:
+        - v1-bundle-{{ checksum "Gemfile" }}--{{ checksum "browse-everything.gemspec" }}
+        - v1-bundle
+    - run:
+        name: Install dependencies
+        command: bundle check || bundle install
+    - save_cache:
+        key: v1-bundle-{{ checksum "Gemfile.lock" }}--{{ checksum "browse-everything.gemspec" }}
+        paths:
+        - ~/browse-everything/vendor/bundle
+    - persist_to_workspace:
+        root: ~/
+        paths:
+        - browse-everything/*
+        - browse-everything/**/*
+  rubocop:
+    executor: ruby
+    steps:
+    - attach_workspace:
+        at: ~/
+    - run:
+        name: Call Rubocop
+        command: bundle exec rubocop
+  engine_cart:
+    docker:
+    - image: circleci/ruby:2.6-node
+
+    working_directory: ~/browse-everything
+
+    environment:
+      BUNDLE_PATH: vendor/bundle
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+      RAILS_ENV: test
+      RACK_ENV: test
+      NOKOGIRI_USE_SYSTEM_LIBRARIES: true
+      ENGINE_CART_RAILS_OPTIONS: --skip-git --skip-bundle --skip-listen --skip-spring --skip-yarn --skip-keeps --skip-action-cable --skip-coffee --skip-puma --skip-test
+      SPEC_OPTS: --profile 10 --format RspecJunitFormatter --out /tmp/test-results/rspec.xml --format progress
+      COVERALLS_PARALLEL: true
+    steps:
+    - attach_workspace:
+        at: ~/
+    - restore_cache:
+        keys:
+        - v1-test-app-{{ checksum "Gemfile.lock" }}
+    - run:
+        name: Check dependencies
+        command: bundle check || bundle install
+    - run:
+        name: Generate test app
+        command: (git diff --name-only master | grep -qG 'generators\/browse_everything') || bundle exec rake engine_cart:generate
+    - run:
+        name: Ensure test app dependencies are installed
+        command: |
+          cd .internal_test_app
+          bundle check || bundle install
+
+    - save_cache:
+        key: v1-test-app-{{ checksum "Gemfile.lock" }}
+        paths:
+        - ".internal_test_app"
+    - persist_to_workspace:
+        root: ~/
+        paths:
+        - browse-everything/*
+        - browse-everything/**/*
+  rspec:
+    docker:
+    - image: circleci/ruby:2.6-node-browsers-legacy
+
+    working_directory: ~/browse-everything
+    parallelism: 4
+
+    environment:
+      BUNDLE_PATH: vendor/bundle
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+      RAILS_ENV: test
+      RACK_ENV: test
+      NOKOGIRI_USE_SYSTEM_LIBRARIES: true
+      ENGINE_CART_RAILS_OPTIONS: --skip-git --skip-bundle --skip-listen --skip-spring --skip-yarn --skip-keeps --skip-action-cable --skip-coffee --skip-puma --skip-test
+      SPEC_OPTS: --profile 10 --format RspecJunitFormatter --out /tmp/test-results/rspec.xml --format progress
+      COVERALLS_PARALLEL: true
+    steps:
+    - attach_workspace:
+        at: ~/
+    - run:
+        name: Ensure top-level Gemfile.lock is valid
+        command: bundle check || bundle install
+    - run:
+        name: Install Karma for JavaScript and functional tests
+        command: sudo npm install -g karma karma-jasmine karma-chrome-launcher
+    - run:
+        name: Run RSpec in parallel
+        command: |
+          mkdir /tmp/test-results
+          bundle exec rspec $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+    # collect reports
+    - store_test_results:
+        path: /tmp/test-results
+    - store_artifacts:
+        path: /tmp/test-results
+        destination: test-results
+
+workflows:
+  version: 2.1
+  ci:
+    jobs:
+      - bundle
+      - rubocop:
+          requires:
+            - bundle
+      - engine_cart:
+          requires:
+            - bundle
+      - rspec:
+          requires:
+            - rubocop
+            - engine_cart
+
+
