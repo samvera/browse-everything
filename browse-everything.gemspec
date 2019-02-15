@@ -21,7 +21,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'addressable', '~> 2.5'
   spec.add_dependency 'aws-sdk-s3'
-  spec.add_dependency 'bootstrap-sass', '~> 3.2'
   spec.add_dependency 'dropbox_api', '>= 0.1.10'
   spec.add_dependency 'google-api-client', '~> 0.23'
   spec.add_dependency 'google_drive', '~> 2.1'
@@ -46,6 +45,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec-its'
   spec.add_development_dependency 'rspec-rails'
+  spec.add_development_dependency 'rspec_junit_formatter'
   spec.add_development_dependency 'rubocop-rspec'
   spec.add_development_dependency 'selenium-webdriver'
   spec.add_development_dependency 'simplecov'

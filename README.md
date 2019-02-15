@@ -66,7 +66,7 @@ Or install it yourself as:
 
     $ gem install browse-everything
 
-### Configuring the gem
+## Configuring the gem in your host app
 
 After installing the gem, run the generator
 
@@ -76,9 +76,15 @@ This generator will set up the _config/browse_everything_providers.yml_ file and
 
 If you prefer not to use the generator, or need info on how to set up providers in the browse_everything_providers.yml, use the info on [Configuring browse-everything](https://github.com/samvera/browse-everything/wiki/Configuring-browse-everything).
 
-### Include the CSS and JavaScript
+Browse-everything depends on bootstrap, it can work with bootstrap 3 or bootstrap 4.
 
-Add `@import "browse_everything";` to your application.css.scss
+### CSS
+
+**For bootstrap3 support**, your app should include the [bootstrap-sass](https://github.com/twbs/bootstrap-sass) gem in it's Gemfile, and following the install directions for bootstrap-sass, should have `@import 'bootstrap-sprockets'` and `@import 'bootstrap'` in it's application.scss. After those lines, add `@import "browse_everything_bootstrap3";` to your application.scss.
+
+**For bootstrap4 support**, your app should include the [bootstrap](https://github.com/twbs/bootstrap-rubygem) gem in it's Gemfile, and following the install directions for that gem should have `@import "bootstrap";` in it's application.scss. After that line, add `@import 'browse_everything_bootstrap4'` to your application.scss.
+
+### Javascript
 
 In `app/assets/javascripts/application.js` include jquery and the BrowseEverything
 
@@ -86,6 +92,14 @@ In `app/assets/javascripts/application.js` include jquery and the BrowseEverythi
 //= require jquery
 //= require browse_everything
 ```
+
+(Same for bootstrap3 or bootstrap 4)
+
+### Migration CSS inclusion from pre-1.0 (TODO: Is that the version this will be released with?)
+
+If your app has installed a previous version of browse-everything, you may have a generated file at `./app/assets/stylesheets/browse_everything.scss`, which has a line in it `@import "browse_everything/browse_everything";`.  That import should no longer be used; it can be changed to `@import "browse_everything_bootstrap3"` instead.
+
+However, we also recommend merging the contents of this file into your main `application.scss` file, as documented in the current install instructions. With the separate generated file with bootstrap imports, you may likely be including bootstrap CSS in your generated CSS bundle twice, if you also have that import in your main application.scss already.
 
 ## Testing
 This is a Rails Engine which is tested using the [engine_cart](https://github.com/cbeer/engine_cart) Gem and rspec.
@@ -97,6 +111,8 @@ Test suites may be executed with the following invocation:
 ```bash
 bundle exec rake
 ```
+
+Tests by default will be run with bootstrap-4 integration. To test bootstrap-3 integration: `TEST_BOOTSTRAP=3 bundle exec rake`.
 
 ### Testing Problems
 Should you attempt to execute the test suite and encounter the following error:

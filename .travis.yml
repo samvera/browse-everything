@@ -9,14 +9,16 @@ cache:
 
 before_install:
   - gem update --system # https://docs.travis-ci.com/user/languages/ruby/#Upgrading-RubyGems
-  - gem install bundler
+  - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true
+  - gem install bundler -v '< 2'
   - npm install -g karma karma-jasmine karma-chrome-launcher
   - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
 
 rvm:
-  - 2.5.1
-  - 2.4.4
-  - 2.3.7
+  - 2.6.1
+  - 2.5.3
+  - 2.4.5
+  - 2.3.8
 
 env:
   global:
@@ -24,6 +26,10 @@ env:
     - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
   matrix:
     - "RAILS_VERSION=5.2.0"
+    - "RAILS_VERSION=5.2.0 TEST_BOOTSTRAP=3"
     - "RAILS_VERSION=5.1.6"
+    - "RAILS_VERSION=5.1.6 TEST_BOOTSTRAP=3"
     - "RAILS_VERSION=5.0.7"
+    - "RAILS_VERSION=5.0.7 TEST_BOOTSTRAP=3"
     - "RAILS_VERSION=4.2.10"
+    - "RAILS_VERSION=4.2.10 TEST_BOOTSTRAP=3"
