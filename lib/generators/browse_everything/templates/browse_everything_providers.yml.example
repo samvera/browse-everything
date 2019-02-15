@@ -5,6 +5,7 @@
 # dropbox:
 #   client_id: YOUR_DROPBOX_APP_KEY
 #   client_secret: YOUR_DROPBOX_APP_SECRET
+#   download_directory: tmp/
 # box:
 #   client_id: YOUR_BOX_CLIENT_ID
 #   client_secret: YOUR_BOX_CLIENT_SECRET
