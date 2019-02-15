@@ -102,7 +102,11 @@ If your app has installed a previous version of browse-everything, you may have 
 However, we also recommend merging the contents of this file into your main `application.scss` file, as documented in the current install instructions. With the separate generated file with bootstrap imports, you may likely be including bootstrap CSS in your generated CSS bundle twice, if you also have that import in your main application.scss already.
 
 ## Testing
-This is a Rails Engine which is tested using the [engine_cart](https://github.com/cbeer/engine_cart) Gem.  Test suites may be executed with the following invocation:
+This is a Rails Engine which is tested using the [engine_cart](https://github.com/cbeer/engine_cart) Gem and rspec.
+
+One rspec test invokes [karma](https://karma-runner.github.io/latest/index.html) to run Javascript tests. For this test to succeed, you need to install karma on your system, first by making sure `npm` is installed, and then run `npm install -g karma karma-jasmine karma-chrome-launcher`.
+
+Test suites may be executed with the following invocation:
 
 ```bash
 bundle exec rake
