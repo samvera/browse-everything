@@ -39,17 +39,14 @@ what this means can be found
 
 ## Supported Ruby Releases
 Currently, the following releases of Ruby are supported:
-- 2.5.1
-- 2.4.4
-- 2.3.7
-  - Please note that this is the last release in the 2.3.x series, and support is [scheduled to be withdrawn](https://www.ruby-lang.org/en/news/2018/03/28/ruby-2-3-7-released/).  We would strongly recommend that one upgrades from 2.3.7 in response to this.
+- 2.6.1
+- 2.5.3
+- 2.4.5
 
 ## Supported Rails Releases
-- 5.2.0
-- 5.1.6
-- 5.0.7
-- 4.2.10
-  - The supported Rail releases follow those specified by [the security policy of the Rails Community](https://rubyonrails.org/security/).  As is the case with the supported Ruby releases, it is recommended that one upgrades from any Rails release no longer receiving security updates.
+The supported Rail releases follow those specified by [the security policy of the Rails Community](https://rubyonrails.org/security/).  As is the case with the supported Ruby releases, it is recommended that one upgrades from any Rails release no longer receiving security updates.
+- 5.2.2
+- 5.1.6.1
 
 ## Installation
 
@@ -80,9 +77,9 @@ Browse-everything depends on bootstrap, it can work with bootstrap 3 or bootstra
 
 ### CSS
 
-**For bootstrap3 support**, your app should include the [bootstrap-sass](https://github.com/twbs/bootstrap-sass) gem in it's Gemfile, and following the install directions for bootstrap-sass, should have `@import 'bootstrap-sprockets'` and `@import 'bootstrap'` in it's application.scss. After those lines, add `@import "browse_everything_bootstrap3";` to your application.scss.
+**For bootstrap3 support**, your app should include the [bootstrap-sass](https://github.com/twbs/bootstrap-sass) gem in it's Gemfile, and following the install directions for bootstrap-sass, should have `@import 'bootstrap-sprockets'` and `@import 'bootstrap'` in it's application.scss. After those lines, add `@import "browse_everything/browse_everything_bootstrap3";` to your application.scss.
 
-**For bootstrap4 support**, your app should include the [bootstrap](https://github.com/twbs/bootstrap-rubygem) gem in it's Gemfile, and following the install directions for that gem should have `@import "bootstrap";` in it's application.scss. After that line, add `@import 'browse_everything_bootstrap4'` to your application.scss.
+**For bootstrap4 support**, your app should include the [bootstrap](https://github.com/twbs/bootstrap-rubygem) gem in it's Gemfile, and following the install directions for that gem should have `@import "bootstrap";` in it's application.scss. After that line, add `@import 'browse_everything/browse_everything_bootstrap4'` to your application.scss.
 
 ### Javascript
 
@@ -95,9 +92,9 @@ In `app/assets/javascripts/application.js` include jquery and the BrowseEverythi
 
 (Same for bootstrap3 or bootstrap 4)
 
-### Migration CSS inclusion from pre-1.0 (TODO: Is that the version this will be released with?)
+### Migration CSS inclusion from pre-1.0
 
-If your app has installed a previous version of browse-everything, you may have a generated file at `./app/assets/stylesheets/browse_everything.scss`, which has a line in it `@import "browse_everything/browse_everything";`.  That import should no longer be used; it can be changed to `@import "browse_everything_bootstrap3"` instead.
+If your app has installed a previous version of browse-everything, you may have a generated file at `./app/assets/stylesheets/browse_everything.scss`, which has a line in it `@import "browse_everything/browse_everything";`.  That import should no longer be used; it can be changed to `@import "browse_everything/browse_everything_bootstrap3"` instead.
 
 However, we also recommend merging the contents of this file into your main `application.scss` file, as documented in the current install instructions. With the separate generated file with bootstrap imports, you may likely be including bootstrap CSS in your generated CSS bundle twice, if you also have that import in your main application.scss already.
 
