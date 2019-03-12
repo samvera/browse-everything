@@ -59,9 +59,6 @@
       border-top: none;
     }
 
-    &.detail {
-    }
-
     &.list ul {
       @include content-columns(3);
     }
@@ -97,11 +94,15 @@
 
   .ev-files {
     height: 50vh;
-    li { @include ev-link; }
+    li {
+      @include ev-link;
+    }
   }
 
   .ev-providers {
-    select { width: 30% }
+    select {
+      width: 30%
+    }
   }
 
   .loading {

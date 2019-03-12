@@ -19,10 +19,10 @@ class TestAppGenerator < Rails::Generators::Base
     insert_into_file 'app/assets/stylesheets/application.css.scss', after: '*/' do
       if ENV['TEST_BOOTSTRAP'] == "3"
         # bootstrap 3 from bootstrap-sass gem
-        %(\n\n@import "bootstrap-sprockets";\n@import "bootstrap";\n@import "browse_everything_bootstrap3";)
+        %(\n\n@import "bootstrap-sprockets";\n@import "bootstrap";\n@import "browse_everything/browse_everything_bootstrap3";)
       else
         # bootstrap4 from bootstrap gem
-        %(\n\n@import "bootstrap";\n@import "browse_everything_bootstrap4";)
+        %(\n\n@import "bootstrap";\n@import "browse_everything/browse_everything_bootstrap4";)
       end
     end
   end
