@@ -36,6 +36,7 @@ require 'capybara/rspec'
 require 'rspec'
 require 'rspec/rails'
 require 'rspec/its'
+require 'chromedriver-helper'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
