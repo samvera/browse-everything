@@ -8,7 +8,8 @@ describe BrowseEverything::Driver::Dropbox do
   let(:provider_yml) do
     {
       client_id: 'client-id',
-      client_secret: 'client-secret'
+      client_secret: 'client-secret',
+      download_directory: 'spec/fixtures/'
     }
   end
   let(:oauth_response_body) do
@@ -62,6 +63,10 @@ describe BrowseEverything::Driver::Dropbox do
     end
 
     before { driver.connect({ code: 'code' }, {}, connector_response_url_options) }
+
+    it 'accesses the download directory' do
+      expect(driver.config).to include('download_directory' => 'spec/fixtures/')
+    end
 
     describe '#auth_link' do
       subject { driver.auth_link(connector_response_url_options) }
@@ -131,6 +136,20 @@ describe BrowseEverything::Driver::Dropbox do
 
         File.open(link_args.first.gsub('file:', '')) do |downloaded_file|
           expect(downloaded_file.read).not_to be_empty
+        end
+      end
+
+      context 'when the configuration does not specify a download directory' do
+        let(:provider_yml) do
+          {
+            client_id: 'client-id',
+            client_secret: 'client-secret'
+          }
+        end
+        let(:downloaded_file_path) { link_args.first }
+
+        it 'uses the "tmp" directory as the default path' do
+          expect(downloaded_file_path).to include '/tmp/Getting Started.pdf'
         end
       end
     end

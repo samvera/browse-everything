@@ -4,7 +4,7 @@ include BrowserConfigHelper
 
 describe BrowseEverything::Browser do
   let(:file_config) do
-    "file_system:\n  home: '/file/config/home'\ndropbox:\n  client_id: 'DropboxId'\n  client_secret: 'DropboxClientSecret'"
+    "file_system:\n  home: '/file/config/home'\ndropbox:\n  client_id: 'DropboxId'\n  client_secret: 'DropboxClientSecret'\n  download_directory: 'tmp/'"
   end
 
   let(:global_config) do
@@ -14,7 +14,8 @@ describe BrowseEverything::Browser do
       },
       dropbox: {
         client_id: 'DropboxId',
-        client_secret: 'DropboxClientSecret'
+        client_secret: 'DropboxClientSecret',
+        download_directory: 'tmp/'
       }
     }
   end
@@ -26,7 +27,8 @@ describe BrowseEverything::Browser do
       },
       dropbox: {
         client_id: 'DropboxId',
-        client_secret: 'DropboxClientSecret'
+        client_secret: 'DropboxClientSecret',
+        download_directory: 'tmp/'
       },
       url_options: url_options
     }
