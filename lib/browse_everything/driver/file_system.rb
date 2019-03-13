@@ -11,6 +11,9 @@ module BrowseEverything
         raise BrowseEverything::InitializationError, 'FileSystem driver requires a :home argument' if config[:home].blank?
       end
 
+      # Retrieve the contents of a directory
+      # @param path [String] the path to a file system resource
+      # @return [Array<BrowseEverything::FileEntry>]
       def contents(path = '')
         real_path = File.join(config[:home], path)
         @entries = if File.directory?(real_path)
