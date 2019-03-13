@@ -113,23 +113,39 @@ module BrowseEverything
           @client ||= authenticate
         end
 
+        # Construct a BrowseEverything::FileEntry object
+        # @param name [String]
+        # @param size [String]
+        # @param date [DateTime]
+        # @param dir [String]
+        # @return [BrowseEverything::FileEntry]
         def entry_for(name, size, date, dir)
           BrowseEverything::FileEntry.new(name, [key, name].join(':'), File.basename(name), size, date, dir)
         end
 
+        # Populate the entries with FileEntry objects from an S3 listing
+        # @param listing [Seahorse::Client::Response]
         def add_directories(listing)
           listing.common_prefixes.each do |prefix|
-            @entries << entry_for(from_base(prefix.prefix), 0, Time.current, true)
+            new_entry = entry_for(from_base(prefix.prefix), 0, Time.current, true)
+            @entries << new_entry unless new_entry.nil?
           end
         end
 
+        # Given a listing and a S3 listing and path, populate the entries
+        # @param listing [Seahorse::Client::Response]
+        # @param path [String]
         def add_files(listing, path)
           listing.contents.each do |entry|
             key = from_base(entry.key)
-            @entries << entry_for(key, entry.size, entry.last_modified, false) unless strip(key) == strip(path)
+            new_entry = entry_for(key, entry.size, entry.last_modified, false)
+            @entries << new_entry unless strip(key) == strip(path) || new_entry.nil?
           end
         end
 
+        # For a given path to a S3 resource, retrieve the listing object and
+        # construct the file entries
+        # @param path [String]
         def generate_listing(path)
           client
           listing = client.list_objects(bucket: config[:bucket], delimiter: '/', prefix: full_path(path))

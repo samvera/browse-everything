@@ -83,7 +83,8 @@ module BrowseEverything
       def contents(path = '')
         path = '/' + path unless path == ''
         response = client.list_folder(path)
-        @entries = response.entries.map { |entry| FileEntryFactory.build(metadata: entry, key: key) }
+        values = response.entries.map { |entry| FileEntryFactory.build(metadata: entry, key: key) }
+        @entries = values.compact
         @sorter.call(@entries)
       end
 
