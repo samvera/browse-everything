@@ -33,15 +33,18 @@ module BrowseEverything
         raise InitializationError, 'Box driver requires both :client_id and :client_secret argument'
       end
 
+      # Retrieves the file entry objects for a given path to Box resource
       # @param [String] id of the file or folder in Box
-      # @return [Array<RubyBox::File>]
+      # @return [Array<BrowseEverything::FileEntry>]
       def contents(id = '')
         folder = id.empty? ? box_client.root_folder : box_client.folder_by_id(id)
-        @entries = []
+        values = []
 
         folder.items(ITEM_LIMIT, 0, %w[name size created_at]).collect do |f|
-          @entries << directory_entry(f)
+          values << directory_entry(f)
         end
+        @entries = values.compact
+
         @sorter.call(@entries)
       end
 
@@ -133,6 +136,10 @@ module BrowseEverything
           @token.fetch('expires_at', nil).to_i
         end
 
+        # Constructs a BrowseEverything::FileEntry object for a Box file
+        # resource
+        # @param file [String] ID to the file resource
+        # @return [BrowseEverything::File]
         def directory_entry(file)
           BrowseEverything::FileEntry.new(file.id, "#{key}:#{file.id}", file.name, file.size, file.created_at, file.type == 'folder')
         end

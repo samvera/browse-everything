@@ -79,9 +79,10 @@ module BrowseEverything
             raise error
           end
 
-          @entries += file_list.files.map do |gdrive_file|
+          values = file_list.files.map do |gdrive_file|
             details(gdrive_file, path)
           end
+          @entries += values.compact
 
           request_params.page_token = file_list.next_page_token
         end

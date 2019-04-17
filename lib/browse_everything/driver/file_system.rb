@@ -11,13 +11,17 @@ module BrowseEverything
         raise BrowseEverything::InitializationError, 'FileSystem driver requires a :home argument' if config[:home].blank?
       end
 
+      # Retrieve the contents of a directory
+      # @param path [String] the path to a file system resource
+      # @return [Array<BrowseEverything::FileEntry>]
       def contents(path = '')
         real_path = File.join(config[:home], path)
-        @entries = if File.directory?(real_path)
-                     make_directory_entry real_path
-                   else
-                     [details(real_path)]
-                   end
+        values = if File.directory?(real_path)
+                   make_directory_entry real_path
+                 else
+                   [details(real_path)]
+                 end
+        @entries = values.compact
 
         @sorter.call(@entries)
       end
@@ -32,6 +36,10 @@ module BrowseEverything
         true
       end
 
+      # Construct a FileEntry objects for a file-system resource
+      # @param path [String] path to the file
+      # @param display [String] display label for the resource
+      # @return [BrowseEverything::FileEntry]
       def details(path, display = File.basename(path))
         return nil unless File.exist? path
         info = File::Stat.new(path)
@@ -47,6 +55,10 @@ module BrowseEverything
 
       private
 
+        # Construct an array of FileEntry objects for the contents of a
+        # directory
+        # @param real_path [String] path to the file system directory
+        # @return [Array<BrowseEverything::FileEntry>]
         def make_directory_entry(real_path)
           entries = []
           entries + Dir[File.join(real_path, '*')].collect { |f| details(f) }
