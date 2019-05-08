@@ -127,12 +127,12 @@ You should also add yourself to the `CONTRIBUTORS.md` file in the root of the pr
 We adopted [Github's Pull Request Review](https://help.github.com/articles/about-pull-request-reviews/) for our repositories.
 Common checks that may occur in our repositories:
 
-1. Travis CI - where our automated tests are running
+1. CircleCI - where our automated tests are running
 2. Approval Required - Github enforces at least one person approve a pull request. Also, all reviewers that have chimed in must approve.
 
 If one or more of the required checks failed (or are incomplete), the code should not be merged (and the UI will not allow it). If all of the checks have passed, then anyone on the project (including the pull request submitter) may merge the code.
 
-*Example: Carolyn submits a pull request, Justin reviews the pull request and approves. However, Justin is still waiting on other checks (Travis CI is usually the culprit), so he does not merge the pull request. Eventually, all of the checks pass. At this point, Carolyn or anyone else may merge the pull request.*
+*Example: Carolyn submits a pull request, Justin reviews the pull request and approves. However, Justin is still waiting on other checks, so he does not merge the pull request. Eventually, all of the checks pass. At this point, Carolyn or anyone else may merge the pull request.*
 
 #### Things to Consider When Reviewing
 
@@ -149,7 +149,7 @@ This is your chance for a mentoring moment of another developer. Take time to gi
   * Do new or changed methods, modules, and classes have documentation?
   * Does the commit contain more than it should? Are two separate concerns being addressed in one commit?
   * Does the description of the new/changed specs match your understanding of what the spec is doing?
-  * Did the Travis tests complete successfully?
+  * Did the CircleCI tests complete successfully?
 
 If you are uncertain, bring other contributors into the conversation by assigning them as a reviewer.
 
