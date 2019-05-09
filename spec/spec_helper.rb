@@ -4,7 +4,7 @@ ENV['RAILS_ENV'] ||= 'test'
 require 'bundler/setup'
 
 def coverage_needed?
-  ENV['COVERAGE'] || ENV['TRAVIS']
+  ENV['COVERAGE'] || ENV['CI']
 end
 
 if coverage_needed?
