@@ -1,5 +1,7 @@
-
+---
 version: 2.1
+orbs:
+  samvera: samvera/circleci-orb@0
 executors:
   ruby:
     docker:
@@ -11,138 +13,62 @@ executors:
       BUNDLE_RETRY: 3
 
 jobs:
-  bundle:
-    executor: ruby
-    steps:
-    - restore_cache: # Restore the cached source code base (for repeated jobs)
-        keys:
-        - v1-source-{{ .Branch }}-{{ .Revision }}
-        - v1-source-{{ .Branch }}-
-        - v1-source-
-    - checkout
-    - save_cache: # Save the cache for the source code base
-        key: v1-source-{{ .Branch }}-{{ .Revision }}
-        paths:
-        - ".git"
-    - restore_cache:
-        keys:
-        - v1-bundle-{{ checksum "Gemfile" }}--{{ checksum "browse-everything.gemspec" }}
-        - v1-bundle
-    - run:
-        name: Install dependencies
-        command: bundle check || bundle install
-    - save_cache:
-        key: v1-bundle-{{ checksum "Gemfile.lock" }}--{{ checksum "browse-everything.gemspec" }}
-        paths:
-        - ~/browse-everything/vendor/bundle
-    - persist_to_workspace:
-        root: ~/
-        paths:
-        - browse-everything/*
-        - browse-everything/**/*
-  rubocop:
-    executor: ruby
-    steps:
-    - attach_workspace:
-        at: ~/
-    - run:
-        name: Call Rubocop
-        command: bundle exec rubocop
-  engine_cart:
-    docker:
-    - image: circleci/ruby:2.6-node
-
-    working_directory: ~/browse-everything
-
+  build:
+    parameters:
+      ruby_version:
+        type: string
+        default: 2.6.3
+      rails_version:
+        type: string
+        default: '5.2.3'
+      bundler_version:
+        type: string
+        default: '2.0.1'
+    executor:
+      name: 'samvera/ruby'
+      ruby_version: << parameters.ruby_version >>
     environment:
-      BUNDLE_PATH: vendor/bundle
-      BUNDLE_JOBS: 4
-      BUNDLE_RETRY: 3
-      RAILS_ENV: test
-      RACK_ENV: test
-      NOKOGIRI_USE_SYSTEM_LIBRARIES: true
-      ENGINE_CART_RAILS_OPTIONS: --skip-git --skip-bundle --skip-listen --skip-spring --skip-yarn --skip-keeps --skip-action-cable --skip-coffee --skip-puma --skip-test
-      SPEC_OPTS: --profile 10 --format RspecJunitFormatter --out /tmp/test-results/rspec.xml --format progress
-      COVERALLS_PARALLEL: true
+      RAILS_VERSION: << parameters.rails_version >>
     steps:
-    - attach_workspace:
-        at: ~/
-    - restore_cache:
-        keys:
-        - v1-test-app-{{ checksum "Gemfile.lock" }}
-    - run:
-        name: Check dependencies
-        command: bundle check || bundle install
-    - run:
-        name: Generate test app
-        command: bundle exec rake engine_cart:generate
-    - run:
-        name: Ensure test app dependencies are installed
-        command: |
-          cd .internal_test_app
-          bundle check || bundle install
+      - samvera/cached_checkout
 
-    - save_cache:
-        key: v1-test-app-{{ checksum "Gemfile.lock" }}
-        paths:
-        - ".internal_test_app"
-    - persist_to_workspace:
-        root: ~/
-        paths:
-        - browse-everything/*
-        - browse-everything/**/*
-  rspec:
-    docker:
-    - image: circleci/ruby:2.6-node-browsers-legacy
+      - samvera/engine_cart_generate:
+          cache_key: v1-internal-test-app-{{ checksum "browse-everything.gemspec" }}-{{ checksum "spec/test_app_templates/lib/generators/test_app_generator.rb" }}-{{ checksum "lib/generators/browse_everything/install_generator.rb" }}-{{ checksum "lib/generators/browse_everything/config_generator.rb" }}--<< parameters.rails_version >>-<< parameters.ruby_version >>
 
-    working_directory: ~/browse-everything
-    parallelism: 4
+      - samvera/bundle_for_gem:
+          ruby_version: << parameters.ruby_version >>
+          bundler_version: << parameters.bundler_version >>
+          project: 'browse-everything'
 
-    environment:
-      BUNDLE_PATH: vendor/bundle
-      BUNDLE_JOBS: 4
-      BUNDLE_RETRY: 3
-      RAILS_ENV: test
-      RACK_ENV: test
-      NOKOGIRI_USE_SYSTEM_LIBRARIES: true
-      ENGINE_CART_RAILS_OPTIONS: --skip-git --skip-bundle --skip-listen --skip-spring --skip-yarn --skip-keeps --skip-action-cable --skip-coffee --skip-puma --skip-test
-      SPEC_OPTS: --profile 10 --format RspecJunitFormatter --out /tmp/test-results/rspec.xml --format progress
-      COVERALLS_PARALLEL: true
-    steps:
-    - attach_workspace:
-        at: ~/
-    - run:
-        name: Ensure top-level Gemfile.lock is valid
-        command: bundle check || bundle install
-    - run:
-        name: Install Karma for JavaScript and functional tests
-        command: sudo npm install -g karma karma-jasmine karma-chrome-launcher
-    - run:
-        name: Run RSpec in parallel
-        command: |
-          mkdir /tmp/test-results
-          bundle exec rspec $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
-    # collect reports
-    - store_test_results:
-        path: /tmp/test-results
-    - store_artifacts:
-        path: /tmp/test-results
-        destination: test-results
+      - samvera/rubocop
+
+      - run:
+          name: Install Karma for JavaScript and functional tests
+          command: sudo npm install -g karma karma-jasmine karma-chrome-launcher
+
+      - samvera/parallel_rspec
 
 workflows:
-  version: 2.1
   ci:
     jobs:
-      - bundle
-      - rubocop:
-          requires:
-            - bundle
-      - engine_cart:
-          requires:
-            - bundle
-      - rspec:
-          requires:
-            - rubocop
-            - engine_cart
-
-
+      - build:
+          name: "ruby2-6_rails5-2"
+          ruby_version: 2.6.3
+      - build:
+          name: "ruby2-6_rails5-1"
+          ruby_version: 2.6.3
+          rails_version: 5.1.7
+      - build:
+          name: "ruby2-5_rails5-2"
+          ruby_version: 2.5.5
+      - build:
+          name: "ruby2-5_rails5-1"
+          ruby_version: 2.5.5
+          rails_version: 5.1.7
+      - build:
+          name: "ruby2-4_rails5-2"
+          ruby_version: 2.4.6
+      - build:
+          name: "ruby2-4_rails5-1"
+          ruby_version: 2.4.6
+          rails_version: 5.1.7
