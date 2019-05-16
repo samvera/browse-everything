@@ -2,15 +2,6 @@
 version: 2.1
 orbs:
   samvera: samvera/circleci-orb@0
-executors:
-  ruby:
-    docker:
-      - image: circleci/ruby:2.6
-    working_directory: ~/browse-everything
-    environment:
-      BUNDLE_PATH: vendor/bundle
-      BUNDLE_JOBS: 4
-      BUNDLE_RETRY: 3
 
 jobs:
   build:
