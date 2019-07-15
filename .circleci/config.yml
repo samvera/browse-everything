@@ -23,6 +23,11 @@ jobs:
     steps:
       - samvera/cached_checkout
 
+      - samvera/bundle_for_gem:
+          bundler_version: << parameters.bundler_version >>
+          ruby_version: << parameters.ruby_version >>
+          project: 'browse-everything'
+
       - samvera/engine_cart_generate:
           cache_key: v1-internal-test-app-{{ checksum "browse-everything.gemspec" }}-{{ checksum "spec/test_app_templates/lib/generators/test_app_generator.rb" }}-{{ checksum "lib/generators/browse_everything/install_generator.rb" }}-{{ checksum "lib/generators/browse_everything/config_generator.rb" }}--<< parameters.rails_version >>-<< parameters.ruby_version >>
 
