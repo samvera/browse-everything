@@ -13,6 +13,10 @@ end
 # engine_cart: 0.10.0
 # engine_cart stanza: 0.10.0
 # the below comes from engine_cart, a gem used to test this Rails engine gem in the context of a Rails app.
+
+# This ensures that turbolinks should be disabled by default
+ENV['ENGINE_CART_RAILS_OPTIONS'] = '--skip-turbolinks'
+
 file = File.expand_path('Gemfile', ENV['ENGINE_CART_DESTINATION'] || ENV['RAILS_ROOT'] || File.expand_path('.internal_test_app', File.dirname(__FILE__)))
 if File.exist?(file)
   begin
