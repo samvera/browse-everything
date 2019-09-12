@@ -10,4 +10,8 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   def inject_config
     generate 'browse_everything:config'
   end
+
+  def copy_migrations
+    rake "browse_everything:install:migrations"
+  end
 end
