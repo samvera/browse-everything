@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'signet/errors'
+
 module BrowseEverything
   class ContainersController < ActionController::Base
     skip_before_action :verify_authenticity_token
@@ -24,6 +26,10 @@ module BrowseEverything
       # Update the Session
       session.save
       head(:forbidden, body: authorization_error.message)
+    rescue Google::Apis::ClientError => client_error
+      head(:unauthorized, body: client_error.message)
+    rescue StandardError => error
+      head(:unauthorized, body: error.message)
     end
 
     def show

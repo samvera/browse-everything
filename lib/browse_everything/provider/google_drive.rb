@@ -9,8 +9,8 @@ module BrowseEverything
     class GoogleDrive < BrowseEverything::Provider
       # Determine whether or not a Google Drive resource is a Folder
       # @return [Boolean]
-      def self.folder?(_gdrive_file)
-        file.mime_type == 'application/vnd.google-apps.folder'
+      def self.folder?(gdrive_file)
+        gdrive_file.mime_type == 'application/vnd.google-apps.folder'
       end
 
       def find_bytestream(id:)
@@ -41,8 +41,8 @@ module BrowseEverything
       private
 
         def build_resource(gdrive_file, bytestream_tree, container_tree)
-          location = "key:#{file.id}"
-          modified_time = file.modified_time || Time.new.utc
+          location = "key:#{gdrive_file.id}"
+          modified_time = gdrive_file.modified_time || Time.new.utc
 
           if self.class.folder?(file)
             bytestream_ids = []
@@ -52,21 +52,21 @@ module BrowseEverything
             container_ids = container_tree[gdrive_file.id] if container_tree.key?(gdrive_file.id)
 
             BrowseEverything::Container.new(
-              id: file.id,
+              id: gdrive_file.id,
               bytestream_ids: bytestream_ids,
               container_ids: container_ids,
               location: location,
-              name: file.name,
+              name: gdrive_file.name,
               mtime: modified_time
             )
           else
             BrowseEverything::Bytestream.new(
-              id: file.id,
+              id: gdrive_file.id,
               location: location,
-              name: file.name,
-              size: file.size.to_i,
+              name: gdrive_file.name,
+              size: gdrive_file.size.to_i,
               mtime: modified_time,
-              media_type: file.mime_type
+              media_type: gdrive_file.mime_type
             )
           end
         end
@@ -87,14 +87,20 @@ module BrowseEverything
                 container_tree[gdrive_file.id] = []
                 bytestream_tree[gdrive_file.id] = []
               end
+              resources << gdrive_file.id
 
-              if resource_tree.key?(gdrive_file.parents)
-                if self.class.folder?(gdrive_file)
-                  container_tree[gdrive_file.parents] << gdrive_file.id
-                else
-                  bytestream_tree[gdrive_file.parents] << gdrive_file.id
+              # A GDrive file may have multiple parents
+              gdrive_file.parents do |parent|
+
+                if resources.include?(parent)
+                  if self.class.folder?(gdrive_file)
+                    container_tree[parent] << gdrive_file.id
+                  else
+                    bytestream_tree[parent] << gdrive_file.id
+                  end
                 end
               end
+
             end
 
             # This ensures that the entire tree is build for the objects
@@ -116,7 +122,7 @@ module BrowseEverything
           drive_service.batch do |drive|
             request_params = Auth::Google::RequestParameters.new
             request_params.q += " and '#{path}' in parents " if path.present?
-            resources = request_path(drive, request_params, path: path)
+            resources = request_path(drive: drive, request_params: request_params, path: path)
           end
           resources
         end
@@ -153,7 +159,7 @@ module BrowseEverything
         # @see http://www.rubydoc.info/gems/googleauth/Google/Auth/Stores/FileTokenStore FileTokenStore for googleauth
         # @return [Tempfile] temporary file within which to cache credentials
         def file_token_store_path
-          Tempfile.new('gdrive.yaml')
+          Rails.root.join('gdrive.yml')
         end
 
         # Token store file used for authorizing against the Google API's
@@ -188,7 +194,10 @@ module BrowseEverything
         # The authorization code is retrieved from the session
         # @raise [Signet::AuthorizationError] this error is raised if the authorization is invalid
         def credentials
-          authorizer.get_credentials_from_code(user_id: user_id, code: @auth_code)
+          @credentials = authorizer.get_credentials(user_id)
+          return unless @credentials.nil?
+
+          @credentials = authorizer.get_and_store_credentials_from_code(user_id: user_id, code: @auth_code)
         end
 
         # Construct a new object for interfacing with the Google Drive API
