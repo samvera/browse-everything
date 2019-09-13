@@ -14,4 +14,13 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   def copy_migrations
     rake "browse_everything:install:migrations"
   end
+
+  # This should be removed with --skip-turbolinks, and that is passed in
+  # .engine_cart.yml
+  def remove_turbolinks
+
+    gsub_file('Gemfile', /gem 'turbolinks'.*$/, '')
+    # This is specific to Rails 5.2.x releases
+    gsub_file('app/assets/javascripts/application.js', /\/\/= require turbolinks.*$/, '')
+  end
 end
