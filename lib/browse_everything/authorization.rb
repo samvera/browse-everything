@@ -1,5 +1,5 @@
+# frozen_string_literal: true
 module BrowseEverything
-
   class Authorization
     attr_accessor :code
     include ActiveModel::Serialization
@@ -25,7 +25,6 @@ module BrowseEverything
     end
 
     class << self
-
       # Query service methods
       #
       # @see ActiveRecord::Base.where
@@ -34,7 +33,7 @@ module BrowseEverything
         authorization_models = orm_class.where(**arguments)
         authorization_models.map(&:authorization)
       end
-      alias :find_by :where
+      alias find_by where
     end
 
     # Generate the attributes used for serialization

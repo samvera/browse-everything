@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module BrowseEverything
   class Upload
     class_attribute :job_class
@@ -25,7 +26,7 @@ module BrowseEverything
 
       def job_args
         {
-          upload_id: self.id.to_s
+          upload_id: id.to_s
         }
       end
   end

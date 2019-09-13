@@ -16,6 +16,8 @@ Lint/Loop:
 # Offense count: 6
 Metrics/AbcSize:
   Max: 31
+  Exclude:
+    - 'lib/browse_everything/provider/google_drive.rb'
 
 # Offense count: 2
 Metrics/CyclomaticComplexity:

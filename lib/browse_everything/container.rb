@@ -1,4 +1,5 @@
 
+# frozen_string_literal: true
 module BrowseEverything
   class Container
     attr_accessor :id, :bytestream_ids, :container_ids, :location, :name, :mtime

@@ -1,6 +1,7 @@
 
+# frozen_string_literal: true
 class UploadJob < ApplicationJob
-  attr_reader: :upload_id
+  attr_reader :upload_id
   queue_as :default
 
   after_perform :destroy_sessions, :destroy_upload
@@ -28,9 +29,7 @@ class UploadJob < ApplicationJob
     end
 
     def destroy_sessions
-      if upload.session.pending_upload_jobs.empty?
-        upload.session.destroy
-      end
+      upload.session.destroy if upload.session.pending_upload_jobs.empty?
     end
 
     def destroy_upload

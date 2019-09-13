@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module BrowseEverything
   class ContainersController < ActionController::Base
     skip_before_action :verify_authenticity_token
@@ -15,7 +16,7 @@ module BrowseEverything
 
       # This should follow the query_service#find_by pattern
       authorizations = Authorization.find_by(id: last_authorization_id)
-      if !authorizations.empty?
+      unless authorizations.empty?
         authorization = authorizations.first
         authorization.destroy
       end
@@ -56,4 +57,3 @@ module BrowseEverything
       delegate :find_container, :root_container, to: :provider
   end
 end
-

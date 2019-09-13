@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 BrowseEverything::Engine.routes.draw do
-
   # Supporting other RESTful operations should be done for sessions
   resources :sessions, controller: 'browse_everything/sessions', only: [:create, :update] do
     # I'm not certain what :index would imply here - but it might be useful to

@@ -1,10 +1,10 @@
+# frozen_string_literal: true
 require 'google/apis/drive_v3'
 require 'googleauth'
 require 'googleauth/stores/file_token_store'
 require_relative 'provider/google_drive'
 
 module BrowseEverything
-
   class Provider
     include BrowseEverything::Engine.routes.url_helpers
 

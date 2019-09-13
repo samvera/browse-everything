@@ -1,5 +1,5 @@
+# frozen_string_literal: true
 module BrowseEverything
-
   class Session
     attr_accessor :provider_id, :host, :port, :authorization_ids
     include ActiveModel::Serialization
@@ -33,7 +33,6 @@ module BrowseEverything
     end
 
     class << self
-
       # Query service methods
       #
       # @see ActiveRecord::Base.find_by
@@ -42,7 +41,7 @@ module BrowseEverything
         session_models = orm_class.where(**arguments)
         session_models.map(&:session)
       end
-      alias :find_by :where
+      alias find_by where
     end
 
     # Generate the attributes used for serialization
@@ -92,13 +91,9 @@ module BrowseEverything
       @provider ||= Provider.build(id: provider_id, auth_code: auth_code, host: host, port: port)
     end
 
-    def root_container
-      provider.root_container
-    end
+    delegate :root_container, to: :provider
 
-    def authorization_url
-      provider.authorization_url
-    end
+    delegate :authorization_url, to: :provider
 
     private
 

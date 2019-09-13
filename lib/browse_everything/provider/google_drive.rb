@@ -1,16 +1,15 @@
+# frozen_string_literal: true
 require 'google/apis/drive_v3'
 require 'googleauth'
 require 'googleauth/stores/file_token_store'
 
 module BrowseEverything
   class Provider
-
     # The Providers class for interfacing with Google Drive as a storage provider
     class GoogleDrive < BrowseEverything::Provider
-
       # Determine whether or not a Google Drive resource is a Folder
       # @return [Boolean]
-      def self.folder?(gdrive_file)
+      def self.folder?(_gdrive_file)
         file.mime_type == 'application/vnd.google-apps.folder'
       end
 
@@ -43,18 +42,14 @@ module BrowseEverything
 
         def build_resource(gdrive_file, bytestream_tree, container_tree)
           location = "key:#{file.id}"
-          modified_time = file.modified_time || Time.new
+          modified_time = file.modified_time || Time.new.utc
 
           if self.class.folder?(file)
             bytestream_ids = []
             container_ids = []
 
-            if bytestream_tree.key?(gdrive_file.id)
-              bytestream_ids = bytestream_tree[gdrive_file.id]
-            end
-            if container_tree.key?(gdrive_file.id)
-              container_ids = container_tree[gdrive_file.id]
-            end
+            bytestream_ids = bytestream_tree[gdrive_file.id] if bytestream_tree.key?(gdrive_file.id)
+            container_ids = container_tree[gdrive_file.id] if container_tree.key?(gdrive_file.id)
 
             BrowseEverything::Container.new(
               id: file.id,
@@ -83,9 +78,7 @@ module BrowseEverything
 
           drive.list_files(request_params.to_h) do |file_list, error|
             # Raise an exception if there was an error Google API's
-            if error.present?
-              raise error
-            end
+            raise error if error.present?
 
             members = file_list.files
             members.map do |gdrive_file|

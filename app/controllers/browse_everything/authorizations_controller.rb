@@ -2,7 +2,6 @@
 
 module BrowseEverything
   class AuthorizationsController < ActionController::Base
-
     # This should be the action which handles OAuth2 callbacks
     # OAuth2 cannot transmit a POST request in response to a successful
     # authorization
@@ -10,9 +9,7 @@ module BrowseEverything
     #
     # For consistency, clients should still be able to create authorizations
     # manually
-    def create
-
-    end
+    def create; end
 
     def show
       @authorization = Authorization.new(**authorization_attributes)

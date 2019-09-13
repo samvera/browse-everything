@@ -10,8 +10,8 @@ module BrowseEverything
   autoload :Browser,   'browse_everything/browser'
   autoload :FileEntry, 'browse_everything/file_entry'
 
-  autoload :Bytestream,   'browse_everything/bytestream'
-  autoload :Container,   'browse_everything/container'
+  autoload :Bytestream, 'browse_everything/bytestream'
+  autoload :Container, 'browse_everything/container'
   autoload :Authorization, 'browse_everything/authorization'
   autoload :Session, 'browse_everything/session'
   autoload :Provider, 'browse_everything/provider'
