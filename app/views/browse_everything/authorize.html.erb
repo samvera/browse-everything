@@ -1,0 +1,4 @@
+<script>
+  window.opener.jQuery(window.opener.document).trigger('browseEverything.authorize', <%= @json_web_token %>)
+  window.close()
+</script>

@@ -34,20 +34,41 @@ module BrowseEverything
         params[:token]
       end
 
-      def json_web_token
+      # Decode the JSON Web Tokens transmitted in the request
+      # @return [Array<String>] the set of JWTs
+      def json_web_tokens
         return [] unless token_param
 
-        @json_web_token ||= JWT.decode(token_param, nil, false)
+        @json_web_tokens ||= JWT.decode(token_param, nil, false)
       end
 
-      # This method should be renamed
-      def authorizations
-        values = json_web_token.map { |payload| payload["data"] }
-        values.compact
+      # @return [Array<Hash>] the set of serialized Authorizations transmitted
+      # in the JWT
+      def authorization_data
+        return @authorization_data unless @authorization_data.nil?
+
+        values = json_web_tokens.map { |payload| payload["data"] }
+        @authorization_data = values.compact
       end
 
       def authorization_ids
-        authorizations.map { |authorization| authorization["id"] }
+        @authorization_ids ||= authorization_data.map { |authorization| authorization["id"] }
+      end
+
+      # Validate that each JSON Web Token references an Authorization which
+      # has been serialized in the database
+      # @return [Boolean]
+      # @todo This needs to be refactored into a Concern for usage in other
+      # Controllers
+      def validate_authorization_ids
+        validations = authorization_data.map do |data|
+          authorization_id = data["id"]
+          request_code = data["code"]
+
+          authorization = Authorization.find(id: authorization_id)
+          !authorization.nil? && request_code == authorization.code
+        end
+        validations.reduce(:|)
       end
 
       def session_attributes
