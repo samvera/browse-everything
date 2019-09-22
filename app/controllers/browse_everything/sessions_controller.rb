@@ -66,11 +66,12 @@ module BrowseEverything
           authorization_id = data["id"]
           request_code = data["code"]
 
-          authorization = Authorization.find(id: authorization_id)
+          authorizations = Authorization.where(id: authorization_id)
+          authorization = authorizations.first
           !authorization.nil? && request_code == authorization.code
         end
 
-        unless token_param && validations.reduce(:|) do
+        unless token_param && validations.reduce(:|)
           provider_id = session_params[:provider_id]
           message = "Failed to validate the authorization token.  Please request the authorization using #{provider_authorize_url(provider_id)}"
           return head(:unauthorized, body: message)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module BrowseEverything
   class Session
-    attr_accessor :provider_id, :host, :port, :authorization_ids
+    attr_accessor :id, :provider_id, :host, :port, :authorization_ids
     include ActiveModel::Serialization
 
     # Define the ORM persister Class
@@ -23,8 +23,9 @@ module BrowseEverything
     # @param host
     # @param port
     # @return [Session]
-    def self.build(provider_id:, authorization_ids: [], host: nil, port: nil)
+    def self.build(id: nil, provider_id: nil, authorization_ids: [], host: nil, port: nil)
       browse_everything_session = Session.new
+      browse_everything_session.id = id
       browse_everything_session.provider_id = provider_id
       browse_everything_session.authorization_ids = authorization_ids
       browse_everything_session.host = host
@@ -41,8 +42,8 @@ module BrowseEverything
         session_models = orm_class.where(**arguments)
         models = session_models
         models.map do |model|
-          new_attributes = model.session
-          new(**new_attributes.symbolize_keys)
+          new_attributes = JSON.parse(model.authorization)
+          build(**new_attributes.symbolize_keys)
         end
       end
       alias find_by where
@@ -106,7 +107,8 @@ module BrowseEverything
         return @orm unless @orm.nil?
 
         # This ensures that the ID is persisted
-        orm_model = self.class.orm_class.new(session: attributes)
+        json_attributes = JSON.generate(attributes)
+        orm_model = self.class.orm_class.new(session: json_attributes)
         orm_model.save
         @orm = orm_model.reload
       end

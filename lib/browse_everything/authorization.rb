@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 module BrowseEverything
   class Authorization
-    attr_accessor :code
     include ActiveModel::Serialization
+    attr_accessor :id, :code
 
     # Define the ORM persister Class
     # @return [Class]
@@ -18,8 +18,9 @@ module BrowseEverything
 
     # For Session Objects to be serializable, they must have a 0-argument
     # constructor
-    def self.build(code: nil)
+    def self.build(id: nil, code: nil)
       authorization = Authorization.new
+      authorization.id = id
       authorization.code = code
       authorization
     end
@@ -33,8 +34,8 @@ module BrowseEverything
         authorization_models = orm_class.where(**arguments)
         models = authorization_models
         models.map do |model|
-          new_attributes = model.authorization
-          new(**new_attributes.symbolize_keys)
+          new_attributes = JSON.parse(model.authorization)
+          build(**new_attributes.symbolize_keys)
         end
       end
       alias find_by where
@@ -70,7 +71,8 @@ module BrowseEverything
         return @orm unless @orm.nil?
 
         # This ensures that the ID is persisted
-        orm_model = self.class.orm_class.new(authorization: self.attributes)
+        json_attributes = JSON.generate(attributes)
+        orm_model = self.class.orm_class.new(authorization: json_attributes)
         orm_model.save
         @orm = orm_model.reload
       end
