@@ -44,7 +44,7 @@ module BrowseEverything
           location = "key:#{gdrive_file.id}"
           modified_time = gdrive_file.modified_time || Time.new.utc
 
-          if self.class.folder?(file)
+          if self.class.folder?(gdrive_file)
             bytestream_ids = []
             container_ids = []
 
@@ -100,7 +100,6 @@ module BrowseEverything
                   end
                 end
               end
-
             end
 
             # This ensures that the entire tree is build for the objects
@@ -110,10 +109,12 @@ module BrowseEverything
             end
 
             request_params.page_token = file_list.next_page_token
+            resources
           end
 
           # Recurse if there are more pages of results
           resources += request_path(drive: drive, request_params: request_params, path: path) if request_params.page_token.present?
+          resources
         end
 
         def batch_request_path(path = '')
