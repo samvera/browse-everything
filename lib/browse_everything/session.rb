@@ -42,7 +42,7 @@ module BrowseEverything
         session_models = orm_class.where(**arguments)
         models = session_models
         models.map do |model|
-          new_attributes = JSON.parse(model.authorization)
+          new_attributes = JSON.parse(model.session)
           build(**new_attributes.symbolize_keys)
         end
       end
