@@ -39,7 +39,11 @@ module BrowseEverything
       # @return [Array<Session>]
       def where(**arguments)
         session_models = orm_class.where(**arguments)
-        session_models.map(&:session)
+        models = session_models
+        models.map do |model|
+          new_attributes = model.session
+          new(**new_attributes.symbolize_keys)
+        end
       end
       alias find_by where
     end
@@ -92,7 +96,6 @@ module BrowseEverything
     end
 
     delegate :root_container, to: :provider
-
     delegate :authorization_url, to: :provider
 
     private
@@ -103,7 +106,7 @@ module BrowseEverything
         return @orm unless @orm.nil?
 
         # This ensures that the ID is persisted
-        orm_model = self.class.orm_class.new(session: self)
+        orm_model = self.class.orm_class.new(session: attributes)
         orm_model.save
         @orm = orm_model.reload
       end

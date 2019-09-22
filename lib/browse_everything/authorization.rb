@@ -31,7 +31,11 @@ module BrowseEverything
       # @return [Array<Authorization>]
       def where(**arguments)
         authorization_models = orm_class.where(**arguments)
-        authorization_models.map(&:authorization)
+        models = authorization_models
+        models.map do |model|
+          new_attributes = model.authorization
+          new(**new_attributes.symbolize_keys)
+        end
       end
       alias find_by where
     end
@@ -66,7 +70,7 @@ module BrowseEverything
         return @orm unless @orm.nil?
 
         # This ensures that the ID is persisted
-        orm_model = self.class.orm_class.new(authorization: self)
+        orm_model = self.class.orm_class.new(authorization: self.attributes)
         orm_model.save
         @orm = orm_model.reload
       end
