@@ -4,6 +4,7 @@ require 'jwt'
 module BrowseEverything
   class SessionsController < ActionController::Base
     skip_before_action :verify_authenticity_token
+    before_action :validate_authorization_ids
 
     def create
       @session = Session.build(**session_attributes)
@@ -68,7 +69,12 @@ module BrowseEverything
           authorization = Authorization.find(id: authorization_id)
           !authorization.nil? && request_code == authorization.code
         end
-        validations.reduce(:|)
+
+        unless token_param && validations.reduce(:|) do
+          provider_id = session_params[:provider_id]
+          message = "Failed to validate the authorization token.  Please request the authorization using #{provider_authorize_url(provider_id)}"
+          return head(:unauthorized, body: message)
+        end
       end
 
       def session_attributes
