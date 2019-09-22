@@ -195,9 +195,17 @@ module BrowseEverything
         # @raise [Signet::AuthorizationError] this error is raised if the authorization is invalid
         def credentials
           @credentials = authorizer.get_credentials(user_id)
-          return unless @credentials.nil?
+          # Renew the access token if the credentials are non-existent or expired
+          if @credentials.nil?
+            @credentials = authorizer.get_and_store_credentials_from_code(user_id: user_id, code: @auth_code)
+            return @credentials
+          end
 
-          @credentials = authorizer.get_and_store_credentials_from_code(user_id: user_id, code: @auth_code)
+          overridden_credentials = Auth::Google::Credentials.new
+          overridden_credentials.client_id = client_id.id
+          overridden_credentials.client_secret = client_id.secret
+          overridden_credentials.update_token!('access_token' => @credentials.access_token)
+          @credentials = overridden_credentials
         end
 
         # Construct a new object for interfacing with the Google Drive API

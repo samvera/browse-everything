@@ -7,6 +7,14 @@ require 'browse_everything/retriever'
 require 'fast_jsonapi'
 
 module BrowseEverything
+  module Auth
+    module Google
+      # The credentials are still needed
+      autoload :Credentials,        'browse_everything/auth/google/credentials'
+      autoload :RequestParameters,  'browse_everything/auth/google/request_parameters'
+    end
+  end
+
   autoload :Browser,   'browse_everything/browser'
   autoload :FileEntry, 'browse_everything/file_entry'
 
