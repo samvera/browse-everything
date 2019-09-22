@@ -19,7 +19,14 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   # .engine_cart.yml
   def remove_turbolinks
     gsub_file('Gemfile', /gem 'turbolinks'.*$/, '')
-    # This is specific to Rails 5.2.x releases
+    # This is specific to Rails 5.2.z releases
     gsub_file('app/assets/javascripts/application.js', /\/\/= require turbolinks.*$/, '')
+    # This is specific to Rails 6.y.z releases
+    gsub_file('app/assets/javascripts/application.js', /\/\/= require turbolinks.*$/, '')
+    gsub_file('app/assets/javascripts/application.js', /require\("turbolinks".*$/, '')
+  end
+
+  def install_webpacker
+    rake "webpacker:install"
   end
 end
