@@ -196,11 +196,13 @@ module BrowseEverything
         def credentials
           @credentials = authorizer.get_credentials(user_id)
           # Renew the access token if the credentials are non-existent or expired
-          if @credentials.nil?
+          if @credentials.nil? || @credentials.expired?
             @credentials = authorizer.get_and_store_credentials_from_code(user_id: user_id, code: @auth_code)
             return @credentials
           end
 
+          # This should work with simply redeeming the code with @credentials
+          # Why this is needed should be further explored
           overridden_credentials = Auth::Google::Credentials.new
           overridden_credentials.client_id = client_id.id
           overridden_credentials.client_secret = client_id.secret
