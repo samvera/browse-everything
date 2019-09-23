@@ -7,6 +7,8 @@ gemspec
 
 group :development, :test do
   gem 'pry-byebug' unless ENV['CI']
+  # rspec-rails does not automatically integrate this from gemspec dependencies
+  gem 'rails-controller-testing'
 end
 
 # BEGIN ENGINE_CART BLOCK
