@@ -15,14 +15,30 @@ module BrowseEverything
 
       def find_bytestream(id:)
         batch_request_path(id)
+        @resources.first
       end
 
       def find_container(id:)
         batch_request_path(id)
+        @resources.first
+      end
+
+      def build_root_container(children:)
+        bytestreams = @resources.select { |child| child.is_a?(Bytestream) }
+        containers = @resources.select { |child| child.is_a?(Container) }
+        Container.new(
+          id: '/',
+          bytestreams: bytestreams,
+          containers: containers,
+          location: '',
+          name: 'root',
+          mtime: DateTime.now
+        )
       end
 
       def root_container
         batch_request_path
+        build_root_container(children: @resources)
       end
 
       # Provides a URL for authorizing against Google Drive
@@ -73,6 +89,7 @@ module BrowseEverything
 
         def request_path(drive:, request_params:, path: '')
           resources = []
+          @resources = []
           container_tree = {}
           bytestream_tree = {}
 
@@ -108,13 +125,14 @@ module BrowseEverything
               build_resource(gdrive_file, bytestream_tree, container_tree)
             end
 
+            # This is needed (rather than returning the results) given the
+            # manner by which Google Drive API transactions are undertaken
+            @resources += resources
             request_params.page_token = file_list.next_page_token
-            resources
           end
 
           # Recurse if there are more pages of results
-          resources += request_path(drive: drive, request_params: request_params, path: path) if request_params.page_token.present?
-          resources
+          request_path(drive: drive, request_params: request_params, path: path) if request_params.page_token.present?
         end
 
         def batch_request_path(path = '')
@@ -123,9 +141,9 @@ module BrowseEverything
           drive_service.batch do |drive|
             request_params = Auth::Google::RequestParameters.new
             request_params.q += " and '#{path}' in parents " if path.present?
-            resources = request_path(drive: drive, request_params: request_params, path: path)
+            request_path(drive: drive, request_params: request_params, path: path)
           end
-          resources
+          @resources
         end
 
         def config
