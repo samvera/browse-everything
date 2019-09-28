@@ -5,6 +5,14 @@ module BrowseEverything
   class ProvidersController < ActionController::Base
     skip_before_action :verify_authenticity_token
 
+    def index
+      @providers = Provider.all(host: request.host, port: request.port)
+      @serializer = ProviderSerializer.new(@providers)
+      respond_to do |format|
+        format.json_api { render json: @serializer.serialized_json }
+      end
+    end
+
     def show
       @provider = Provider.build(**provider_attributes)
       @serializer = ProviderSerializer.new(@provider)
@@ -23,15 +31,9 @@ module BrowseEverything
 
       # Construct and return the JWT
       @json_web_token = build_json_web_token(@authorization)
+      @auth_token = { authToken: @json_web_token }
       respond_to do |format|
-        format.json do
-          json_response = {
-            token: @json_web_token
-          }
-
-          render json: json_response
-        end
-
+        format.json { render json: json_response }
         format.html { render 'browse_everything/authorize' }
       end
     end

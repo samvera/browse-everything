@@ -11,7 +11,7 @@ module BrowseEverything
       @session.save
       @serializer = SessionSerializer.new(@session)
       respond_to do |format|
-        format.json { render json: @serializer.serialized_json }
+        format.json_api { render json: @serializer.serialized_json }
       end
     end
 
@@ -21,26 +21,57 @@ module BrowseEverything
       @session.save
       @serializer = SessionSerializer.new(@session)
       respond_to do |format|
-        format.json { render json: @serializer.serialized_json }
+        format.json_api { render json: @serializer.serialized_json }
       end
     end
 
     private
+
+      def json_api_request?
+        mime_type = Mime::Type.lookup_by_extension(:json_api)
+        request.content_type == mime_type.to_s
+      end
+
+      def json_api_params
+        return unless json_api_request?
+
+        payload = JSON.parse(request.body.string)
+        ActionController::Parameters.new(payload)
+      end
+
+      def session_json_api_attributes
+        data_params = json_api_params[:data]
+        return unless data_params
+
+        json_api_attributes = data_params[:attributes]
+        json_api_attributes.permit(:provider_id)
+      end
 
       def session_params
         params.permit(:provider_id)
       end
 
       def token_param
-        params[:token]
+        params[:token] || json_api_params[:token]
+      end
+
+      def token_header
+        auth_header = headers['Authorization']
+        return unless auth_header
+
+        auth_header.sub('Bearer ', '')
+      end
+
+      def token_data
+        token_header || token_param
       end
 
       # Decode the JSON Web Tokens transmitted in the request
       # @return [Array<String>] the set of JWTs
       def json_web_tokens
-        return [] unless token_param
+        return [] unless token_data
 
-        @json_web_tokens ||= JWT.decode(token_param, nil, false)
+        @json_web_tokens ||= JWT.decode(token_data, nil, false)
       end
 
       # @return [Array<Hash>] the set of serialized Authorizations transmitted
@@ -72,8 +103,9 @@ module BrowseEverything
         end
 
         unless token_param && validations.reduce(:|)
-          provider_id = session_params[:provider_id]
-          message = "Failed to validate the authorization token.  Please request the authorization using #{provider_authorize_url(provider_id)}"
+          provider_id = session_attributes[:provider_id]
+          # message = "Failed to validate the authorization token.  Please request the authorization using #{provider_authorize_url(provider_id)}"
+          message = "Failed to validate the authorization token.  Please request a new authorization token."
           return head(:unauthorized, body: message)
         end
       end
@@ -84,7 +116,8 @@ module BrowseEverything
           port: request.port,
           authorization_ids: authorization_ids
         }
-        values = default_values.merge(session_params)
+        new_session_attributes = session_params || session_json_api_attributes
+        values = default_values.merge(new_session_attributes.to_h)
         values.to_h.symbolize_keys
       end
   end

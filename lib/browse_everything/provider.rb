@@ -26,10 +26,22 @@ module BrowseEverything
       BrowseEverything.config
     end
 
+    def self.all(host: 'http://localhost', port: 80)
+      config.to_h.map do |key, _value|
+        build(id: key.to_s, host: host, port: port)
+      end
+    end
+
     def initialize(auth_code: nil, host: 'http://localhost', port: 80)
       @auth_code = auth_code
       @host = host
       @port = port
+    end
+
+    def name
+      namespaced_name = self.class.name
+      last_segment = namespaced_name.split('::').last.underscore.humanize
+      last_segment.gsub(/\s(.)/) { " #{$1.capitalize}" }
     end
 
     def id
@@ -68,6 +80,12 @@ module BrowseEverything
     # @return [String]
     def callback
       connector_response_url(callback_options)
+    end
+
+    class FileSystem < Provider
+      def authorization_url
+        nil
+      end
     end
   end
 end
