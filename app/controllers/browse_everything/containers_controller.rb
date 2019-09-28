@@ -5,14 +5,17 @@ require 'jwt'
 
 module BrowseEverything
   class ContainersController < ActionController::Base
+    include BrowseEverything::Controller::Authorizable
+
     skip_before_action :verify_authenticity_token
+    # before_action :validate_authorization_ids
 
     def index
       @container = root_container
-      @serializer = ContainerSerializer.new(@container)
+      @serialized = serialize(root_container)
 
       respond_to do |format|
-        format.json { render json: @serializer.serialized_json }
+        format.json_api { render json: @serialized }
       end
     rescue Signet::AuthorizationError => authorization_error
       # Retrieve and destroy the most recent authorization (as it is invalid)
@@ -39,7 +42,7 @@ module BrowseEverything
       @serializer = ContainerSerializer.new(@container)
 
       respond_to do |format|
-        format.json { render json: @serializer.serialized_json }
+        format.json_api { render json: @serializer.serialized_json }
       end
     end
 
@@ -47,26 +50,6 @@ module BrowseEverything
 
       def id
         params[:id]
-      end
-
-      def token_param
-        params[:token]
-      end
-
-      def json_web_token
-        return [] unless token_param
-
-        @json_web_token ||= JWT.decode(token_param, nil, false)
-      end
-
-      # This method should be renamed
-      def authorizations
-        values = json_web_token.map { |payload| payload["data"] }
-        values.compact
-      end
-
-      def authorization_ids
-        authorizations.map { |authorization| authorization["id"] }
       end
 
       def session_id
@@ -79,7 +62,8 @@ module BrowseEverything
         # This should follow the query_service#find_by pattern
         results = Session.find_by(id: session_id)
         @session = results.first
-        if token_param.present?
+        # This might be a security flaw
+        if token_data.present?
           @session.authorization_ids += authorization_ids
         end
         @session
@@ -87,5 +71,22 @@ module BrowseEverything
 
       delegate :provider, to: :session
       delegate :find_container, :root_container, to: :provider
+
+      # This is a work-around which might violate the JSON-API spec.
+      # It may also simply be a bug in fast_json_api
+      def serialize(container)
+        serializer = ContainerSerializer.new(@container)
+        serialized = serializer.serializable_hash
+        if !container.bytestreams.empty?
+          serialized_bytestreams = BytestreamSerializer.new(container.bytestreams)
+          serialized[:data][:relationships][:bytestreams] = serialized_bytestreams.serializable_hash
+        end
+        if !container.containers.empty?
+          serialized_containers = ContainerSerializer.new(container.containers)
+          serialized[:data][:relationships][:containers] = serialized_containers.serializable_hash
+        end
+
+        JSON.generate(serialized)
+      end
   end
 end

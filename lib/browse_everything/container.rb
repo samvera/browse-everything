@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 module BrowseEverything
   class Container
-    attr_accessor :id, :bytestream_ids, :container_ids, :location, :name, :mtime
+    attr_accessor :id, :bytestreams, :bytestream_ids, :containers, :container_ids, :location, :name, :mtime
 
     # Constructor
     # @param id
