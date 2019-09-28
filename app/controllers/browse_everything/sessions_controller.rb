@@ -116,7 +116,7 @@ module BrowseEverything
           port: request.port,
           authorization_ids: authorization_ids
         }
-        new_session_attributes = session_params || session_json_api_attributes
+        new_session_attributes = session_params.empty? ? session_json_api_attributes : session_params
         values = default_values.merge(new_session_attributes.to_h)
         values.to_h.symbolize_keys
       end
