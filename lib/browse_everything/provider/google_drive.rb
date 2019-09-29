@@ -18,9 +18,26 @@ module BrowseEverything
         @resources.first
       end
 
+      def build_container(gdrive_container)
+        location = "key:#{gdrive_container.id}"
+        modified_time = gdrive_container.modified_time || Time.new.utc
+        batch_request_path(gdrive_container.id)
+        bytestreams = @resources.select { |child| child.is_a?(Bytestream) }
+        containers = @resources.select { |child| child.is_a?(Container) }
+
+        Container.new(
+          id: gdrive_container.id,
+          bytestreams: bytestreams,
+          containers: containers,
+          location: location,
+          name: gdrive_container.name,
+          mtime: modified_time
+        )
+      end
+
       def find_container(id:)
-        batch_request_path(id)
-        @resources.first
+        gdrive_container = drive_service.get_file(id, fields: 'id, name, modifiedTime')
+        build_container(gdrive_container)
       end
 
       def build_root_container(children:)
@@ -88,7 +105,9 @@ module BrowseEverything
           end
         end
 
-        def request_path(drive:, request_params:, path: '')
+        # This should be renamed, given that the path is passed in the
+        # request_params Hash
+        def request_path(drive:, request_params:)
           resources = []
           @resources = []
           container_tree = {}
@@ -133,7 +152,7 @@ module BrowseEverything
           end
 
           # Recurse if there are more pages of results
-          request_path(drive: drive, request_params: request_params, path: path) if request_params.page_token.present?
+          request_path(drive: drive, request_params: request_params) if request_params.page_token.present?
         end
 
         def batch_request_path(path = '')
@@ -142,7 +161,7 @@ module BrowseEverything
           drive_service.batch do |drive|
             request_params = Auth::Google::RequestParameters.new
             request_params.q += " and '#{path}' in parents " if path.present?
-            request_path(drive: drive, request_params: request_params, path: path)
+            request_path(drive: drive, request_params: request_params)
           end
           @resources
         end

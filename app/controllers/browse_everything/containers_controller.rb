@@ -39,10 +39,10 @@ module BrowseEverything
 
     def show
       @container = find_container(id: id)
-      @serializer = ContainerSerializer.new(@container)
+      @serialized = serialize(@container)
 
       respond_to do |format|
-        format.json_api { render json: @serializer.serialized_json }
+        format.json_api { render json: @serialized }
       end
     end
 
