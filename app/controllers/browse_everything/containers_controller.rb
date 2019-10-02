@@ -63,9 +63,7 @@ module BrowseEverything
         results = Session.find_by(id: session_id)
         @session = results.first
         # This might be a security flaw
-        if token_data.present?
-          @session.authorization_ids += authorization_ids
-        end
+        @session.authorization_ids += authorization_ids if token_data.present?
         @session
       end
 
@@ -77,11 +75,11 @@ module BrowseEverything
       def serialize(container)
         serializer = ContainerSerializer.new(@container)
         serialized = serializer.serializable_hash
-        if !container.bytestreams.empty?
+        unless container.bytestreams.empty?
           serialized_bytestreams = BytestreamSerializer.new(container.bytestreams)
           serialized[:data][:relationships][:bytestreams] = serialized_bytestreams.serializable_hash
         end
-        if !container.containers.empty?
+        unless container.containers.empty?
           serialized_containers = ContainerSerializer.new(container.containers)
           serialized[:data][:relationships][:containers] = serialized_containers.serializable_hash
         end

@@ -13,10 +13,10 @@ BrowseEverything::Engine.routes.draw do
     # used to create a queue of BrowseEverything::UploadJobs
     #
     # :index would also be useful here
-    resources :uploads, controller: 'browse_everything/sessions/uploads', only: [:create, :destroy]
   end
   resources :authorizations, controller: 'browse_everything/authorizations', only: [:create, :show]
   resources :providers, controller: 'browse_everything/providers', only: [:show, :index]
+  resources :uploads, controller: 'browse_everything/uploads', only: [:create, :show]
 
   # This is the route which will be needed for the OAuth callback URL
   # Rails defaults to accepting POST requests, so this might not work
