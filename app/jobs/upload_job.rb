@@ -1,38 +1,71 @@
-
 # frozen_string_literal: true
+
 class UploadJob < ApplicationJob
   attr_reader :upload_id
   queue_as :default
 
-  after_perform :destroy_sessions, :destroy_upload
-
   def perform(upload_id:)
     @upload_id = upload_id
 
-    upload.bytestreams.each do |bytestream|
-      # Do something like download the files here
+    # Download the containers
+    upload.container_ids.each do |container_id|
+      container = provider.find_container(id: container_id)
+      container.bytestreams.each do |bytestream|
+        bytestream = provider.find_bytestream(id: bytestream_id)
+        persisted = create_upload_file(bytestream: bytestream)
+        upload.file_ids << persisted.id
+      end
     end
 
-    upload.containers.each do |containers|
-      # Iterate through the container bytestreams and download the files here
+    # Download the bytestreams
+    upload.bytestream_ids.each do |bytestream_id|
+      bytestream = provider.find_bytestream(id: bytestream_id)
+      persisted = create_upload_file(bytestream: bytestream)
+      upload.file_ids << persisted.id
     end
 
-    updated_upload_jobs = upload.session.pending_upload_jobs.delete_if { |job| job.upload_id == upload_id }
-    upload.session.pending_upload_jobs = updated_upload_jobs
-    upload.session.save
+    # Update the upload
+    upload.save
   end
 
   private
 
     def upload
-      @upload ||= Upload.find_by(id: upload_id)
+      @upload ||= begin
+                    uploads = BrowseEverything::Upload.find_by(id: upload_id)
+                    uploads.first
+                  end
     end
 
-    def destroy_sessions
-      upload.session.destroy if upload.session.pending_upload_jobs.empty?
+    def session
+      return if upload.nil? || upload.session_id.blank?
+      @session ||= begin
+                     sessions = BrowseEverything::Session.find_by(id: upload.session_id)
+                     sessions.first
+                  end
     end
 
-    def destroy_upload
-      upload.destroy
+    delegate :provider, to: :session
+    delegate :auth_token, to: :provider
+
+    def request_headers
+      return {} unless auth_token
+
+      {
+        'Authorization' => "Bearer: #{auth_token}"
+      }
+    end
+
+    def build_download(url, headers)
+      response = Typhoeus.get(url, headers: headers)
+      StringIO.new(response.body)
+    end
+
+    def create_upload_file(bytestream:)
+      io = build_download(bytestream.uri, request_headers)
+      upload_file = UploadFile.new
+      upload_file.download.attach(io: io, filename: bytestream.name, content_type: bytestream.media_type)
+      upload_file.save
+      upload_file.reload
     end
 end

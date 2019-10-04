@@ -9,7 +9,7 @@ module BrowseEverything
     before_action :validate_authorization_ids
 
     def create
-      @upload = Upload.build(**upload_attributes)
+      upload = Upload.build(**upload_attributes)
 
       # Before the Upload is fully serialized, here each selected bytestream and
       # container needs to be downloaded using the asynchronous job
@@ -23,13 +23,12 @@ module BrowseEverything
       #
       # There is still the possibility that downloads will fail, but this was
       # always the case
-      @upload.save
+      upload.save
+      @serializer = UploadSerializer.new(upload)
 
       # This will be the job which asynchronously downloads the files in
       # ActiveStorage Models
-      # job.perform_now
-
-      @serializer = UploadSerializer.new(@upload)
+      upload.job.perform_now
       respond_to do |format|
         format.json_api { render json: @serializer.serialized_json }
       end

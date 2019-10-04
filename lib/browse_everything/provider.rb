@@ -82,10 +82,14 @@ module BrowseEverything
       connector_response_url(callback_options)
     end
 
-    class FileSystem < Provider
-      def authorization_url
-        nil
-      end
+    def authorization_url
+      nil
     end
+
+    def auth_token
+      nil
+    end
+
+    class FileSystem < Provider; end
   end
 end

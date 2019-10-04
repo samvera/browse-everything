@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
+  spec.add_dependency 'activestorage' # Should this be needed for Rails 5.1.x releases?
   spec.add_dependency 'addressable', '~> 2.5'
   spec.add_dependency 'aws-sdk-s3'
   spec.add_dependency 'dropbox_api', '>= 0.1.10'

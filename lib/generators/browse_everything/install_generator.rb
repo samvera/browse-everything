@@ -29,4 +29,8 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   def install_webpacker
     rake "webpacker:install"
   end
+
+  def install_active_storage
+    rake "active_storage:install"
+  end
 end

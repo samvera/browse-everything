@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 module BrowseEverything
   class Bytestream
-    attr_accessor :id, :container_id, :location, :name, :size, :mtime, :media_type
+    attr_accessor :id, :container_id, :location, :name, :size, :mtime, :uri, :media_type
 
     # Constructor
     # @param id
@@ -12,7 +12,7 @@ module BrowseEverything
     # @param size
     # @param mtime
     # @param media_type
-    def initialize(id:, container_id: nil, location:, name:, size:, mtime:, media_type: 'application/octet-stream')
+    def initialize(id:, container_id: nil, location:, name:, size:, mtime:, uri:, media_type: 'application/octet-stream')
       @id = id
       @container_id = container_id
       @location = location

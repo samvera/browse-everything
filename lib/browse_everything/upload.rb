@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module BrowseEverything
   class Upload
-    attr_accessor :id, :session, :session_id, :bytestreams, :bytestream_ids, :containers, :container_ids
+    attr_accessor :id, :session, :session_id, :bytestreams, :bytestream_ids, :containers, :container_ids, :file_ids
     include ActiveModel::Serialization
 
     # Define the ORM persister Class
@@ -16,10 +16,14 @@ module BrowseEverything
       UploadSerializer
     end
 
+    def self.job_class
+      UploadJob
+    end
+
     # For Upload Objects to be serializable, they must have a zero-argument constructor
     # @param session_id
     # @return [Session]
-    def self.build(id: nil, session_id: nil, session: nil, bytestream_ids: [], bytestreams: [], container_ids: [], containers: [])
+    def self.build(id: nil, session_id: nil, session: nil, bytestream_ids: [], bytestreams: [], container_ids: [], containers: [], file_ids: [])
       browse_everything_upload = Upload.new
       browse_everything_upload.id = id
       browse_everything_upload.session = session
@@ -42,6 +46,8 @@ module BrowseEverything
       else
         browse_everything_upload.container_ids = containers.map(&:id)
       end
+
+      browse_everything_upload.file_ids = file_ids
 
       browse_everything_upload
     end
@@ -70,7 +76,8 @@ module BrowseEverything
         'id' => id,
         'session_id' => session_id,
         'bytestream_ids' => bytestream_ids,
-        'container_ids' => container_ids
+        'container_ids' => container_ids,
+        'file_ids' => file_ids
       }
     end
 
@@ -101,7 +108,9 @@ module BrowseEverything
     # These are the ActiveStorage files retrieved from the server and saved on
     # disk to a temporary location
     def files
-      []
+      file_ids.map do |file_id|
+        UploadFile.find(file_id)
+      end
     end
 
     private

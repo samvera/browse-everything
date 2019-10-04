@@ -13,9 +13,24 @@ module BrowseEverything
         gdrive_file.mime_type == 'application/vnd.google-apps.folder'
       end
 
+      def build_bytestream(gdrive_file)
+        location = "key:#{gdrive_file.id}"
+        modified_time = gdrive_file.modified_time || Time.new.utc
+
+        BrowseEverything::Bytestream.new(
+          id: gdrive_file.id,
+          location: location,
+          name: gdrive_file.name,
+          size: gdrive_file.size.to_i,
+          mtime: modified_time,
+          media_type: gdrive_file.mime_type,
+          uri: build_download_url(gdrive_file.id)
+        )
+      end
+
       def find_bytestream(id:)
-        batch_request_path(id)
-        @resources.first
+        gdrive_file = drive_service.get_file(id, fields: 'id, name, modifiedTime, size, mimeType')
+        build_bytestream(gdrive_file)
       end
 
       def build_container(gdrive_container)
@@ -69,10 +84,15 @@ module BrowseEverything
       # @return [String]
       def callback
         provider_authorize_url(callback_options)
+        # This needs to be removed and proxying needs to be properly handled
         "http://localhost:8082/api/browse/providers/google_drive/authorize"
       end
 
       private
+
+        def build_download_url(id)
+          "https://www.googleapis.com/drive/v3/files/#{id}?alt=media"
+        end
 
         def build_resource(gdrive_file, bytestream_tree, container_tree)
           location = "key:#{gdrive_file.id}"
@@ -84,7 +104,7 @@ module BrowseEverything
 
             bytestream_ids = bytestream_tree[gdrive_file.id] if bytestream_tree.key?(gdrive_file.id)
             container_ids = container_tree[gdrive_file.id] if container_tree.key?(gdrive_file.id)
-
+            # @todo this should invoke #build_container
             BrowseEverything::Container.new(
               id: gdrive_file.id,
               bytestream_ids: bytestream_ids,
@@ -94,13 +114,15 @@ module BrowseEverything
               mtime: modified_time
             )
           else
+            # @todo this should invoke #build_bytestream
             BrowseEverything::Bytestream.new(
               id: gdrive_file.id,
               location: location,
               name: gdrive_file.name,
               size: gdrive_file.size.to_i,
               mtime: modified_time,
-              media_type: gdrive_file.mime_type
+              media_type: gdrive_file.mime_type,
+              uri: build_download_url(gdrive_file.id)
             )
           end
         end
@@ -248,6 +270,8 @@ module BrowseEverything
           overridden_credentials.update_token!('access_token' => @credentials.access_token)
           @credentials = overridden_credentials
         end
+        delegate :access_token, to: :credentials
+        alias :auth_token :access_token
 
         # Construct a new object for interfacing with the Google Drive API
         # @return [Google::Apis::DriveV3::DriveService]
