@@ -24,6 +24,7 @@ module BrowseEverything
   autoload :Session, 'browse_everything/session'
   autoload :Provider, 'browse_everything/provider'
   autoload :GoogleDrive, 'browse_everything/provider/google_drive'
+  autoload :Upload, 'browse_everything/upload'
 
   module Driver
     autoload :Base,        'browse_everything/driver/base'

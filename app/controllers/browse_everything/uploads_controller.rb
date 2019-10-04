@@ -27,7 +27,7 @@ module BrowseEverything
 
       # This will be the job which asynchronously downloads the files in
       # ActiveStorage Models
-      job.perform_now
+      # job.perform_now
 
       @serializer = UploadSerializer.new(@upload)
       respond_to do |format|
@@ -49,7 +49,19 @@ module BrowseEverything
         json_api_attributes = resource_json_api_attributes
         return unless json_api_attributes
 
-        json_api_attributes.permit(:session_id, :bytestream_ids, :container_ids)
+        # This requires that we receive the files twice, which could be
+        # problematic
+        # However, we will ultimately need to download them with a second
+        # request
+
+        # This is another bug, I'm not sure why this is not being handled
+        # json_api_attributes.permit(:session_id, :bytestream_ids, :container_ids)
+        values = {}
+        new_params = json_api_params.require(:data).require(:attributes)
+        values[:session_id] = new_params.require(:session_id)
+        values[:bytestream_ids] = new_params.require(:bytestream_ids) if new_params.include?(:bytestream_ids) && new_params[:bytestream_ids].present?
+        values[:container_ids] = new_params.require(:container_ids) if new_params.include?(:container_ids) && new_params[:container_ids].present?
+        values
       end
 
       def upload_params
@@ -61,9 +73,12 @@ module BrowseEverything
       end
 
       def upload_attributes
-        new_upload_attributes = upload_params.empty? ? upload_json_api_attributes : upload_params
-        values = default_values.merge(new_upload_attributes.to_h)
-        values.to_h.symbolize_keys
+        new_upload_attributes = if upload_params.empty?
+                                  upload_json_api_attributes
+                                else
+                                  upload_params
+                                end
+        new_upload_attributes.to_h.symbolize_keys
       end
   end
 end

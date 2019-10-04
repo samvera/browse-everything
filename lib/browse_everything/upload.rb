@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module BrowseEverything
   class Upload
-    attr_accessor :id, :provider_id, :session_id, :bytestreams, :bytestream_ids, :containers, :container_ids
+    attr_accessor :id, :session, :session_id, :bytestreams, :bytestream_ids, :containers, :container_ids
     include ActiveModel::Serialization
 
     # Define the ORM persister Class
@@ -16,12 +16,8 @@ module BrowseEverything
       UploadSerializer
     end
 
-    # For Session Objects to be serializable, they must have a zero-argument constructor
-    # @param provider_id
-    # @param authorization_ids
-    # @param upload
-    # @param host
-    # @param port
+    # For Upload Objects to be serializable, they must have a zero-argument constructor
+    # @param session_id
     # @return [Session]
     def self.build(id: nil, session_id: nil, session: nil, bytestream_ids: [], bytestreams: [], container_ids: [], containers: [])
       browse_everything_upload = Upload.new
@@ -35,7 +31,7 @@ module BrowseEverything
 
       browse_everything_upload.bytestreams = bytestreams
       if bytestreams.empty?
-        browse_everything_upload.bytestreams_ids = bytestreams_ids
+        browse_everything_upload.bytestream_ids = bytestream_ids
       else
         browse_everything_upload.bytestream_ids = bytestreams.map(&:id)
       end
