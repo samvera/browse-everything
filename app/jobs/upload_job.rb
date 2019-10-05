@@ -32,7 +32,7 @@ class UploadJob < ApplicationJob
 
     def upload
       @upload ||= begin
-                    uploads = BrowseEverything::Upload.find_by(id: upload_id)
+                    uploads = BrowseEverything::Upload.find_by(uuid: upload_id)
                     uploads.first
                   end
     end
@@ -40,7 +40,7 @@ class UploadJob < ApplicationJob
     def session
       return if upload.nil? || upload.session_id.blank?
       @session ||= begin
-                     sessions = BrowseEverything::Session.find_by(id: upload.session_id)
+                     sessions = BrowseEverything::Session.find_by(uuid: upload.session_id)
                      sessions.first
                   end
     end
@@ -52,7 +52,7 @@ class UploadJob < ApplicationJob
       return {} unless auth_token
 
       {
-        'Authorization' => "Bearer: #{auth_token}"
+        'Authorization' => "Bearer #{auth_token}"
       }
     end
 

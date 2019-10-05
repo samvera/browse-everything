@@ -60,9 +60,9 @@ module BrowseEverything
         return @session unless @session.nil?
 
         # This should follow the query_service#find_by pattern
-        results = Session.find_by(id: session_id)
+        results = Session.find_by(uuid: session_id)
         @session = results.first
-        # This might be a security flaw
+        # Add the authorization tokens from the JWT
         @session.authorization_ids += authorization_ids if token_data.present?
         @session
       end

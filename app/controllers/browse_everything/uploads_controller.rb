@@ -28,14 +28,15 @@ module BrowseEverything
 
       # This will be the job which asynchronously downloads the files in
       # ActiveStorage Models
-      upload.job.perform_now
+      upload_job = upload.job
+      upload_job.perform_now
       respond_to do |format|
         format.json_api { render json: @serializer.serialized_json }
       end
     end
 
     def show
-      @upload = Upload.find_by(id: upload_id)
+      @upload = Upload.find_by(uuid: upload_id)
       @serializer = UploadSerializer.new(@upload)
       respond_to do |format|
         format.json_api { render json: @serializer.serialized_json }

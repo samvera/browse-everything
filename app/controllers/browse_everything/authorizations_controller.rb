@@ -7,10 +7,6 @@ module BrowseEverything
     # authorization
     # @see SessionsController#authorize
     #
-    # For consistency, clients should still be able to create authorizations
-    # manually
-    def create; end
-
     def show
       @authorization = Authorization.new(**authorization_attributes)
       # This is an anti-pattern; I'm not certain how to reconcile this without

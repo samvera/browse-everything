@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module BrowseEverything
   class Upload
-    attr_accessor :id, :session, :session_id, :bytestreams, :bytestream_ids, :containers, :container_ids, :file_ids
+    attr_accessor :uuid, :session, :session_id, :bytestreams, :bytestream_ids, :containers, :container_ids, :file_ids
     include ActiveModel::Serialization
 
     # Define the ORM persister Class
@@ -23,9 +23,11 @@ module BrowseEverything
     # For Upload Objects to be serializable, they must have a zero-argument constructor
     # @param session_id
     # @return [Session]
-    def self.build(id: nil, session_id: nil, session: nil, bytestream_ids: [], bytestreams: [], container_ids: [], containers: [], file_ids: [])
+    def self.build(session_id: nil, session: nil, bytestream_ids: [],
+                   bytestreams: [], container_ids: [], containers: [],
+                   file_ids: [], id: SecureRandom.uuid)
       browse_everything_upload = Upload.new
-      browse_everything_upload.id = id
+      browse_everything_upload.uuid = id
       browse_everything_upload.session = session
       browse_everything_upload.session_id = if session.nil?
                                               session_id
@@ -73,7 +75,7 @@ module BrowseEverything
     # @return [Hash]
     def attributes
       {
-        'id' => id,
+        'id' => uuid,
         'session_id' => session_id,
         'bytestream_ids' => bytestream_ids,
         'container_ids' => container_ids,
@@ -87,10 +89,7 @@ module BrowseEverything
       @serialize ||= self.class.serializer_class.new(self)
     end
 
-    def id
-      return if @orm.nil?
-      @orm.id
-    end
+    alias :id :uuid
     delegate :save, :save!, :destroy, :destroy!, to: :orm # Persistence methods
 
     # Sessions are responsible for managing the relationships to authorizations
@@ -102,7 +101,7 @@ module BrowseEverything
     # If that is the preferred approach, blocking until the ActiveJob completes
     # needs to be supported...
     def job
-      self.class.job_class.new(**job_args)
+      self.class.job_class.new(**default_job_args)
     end
 
     # These are the ActiveStorage files retrieved from the server and saved on
@@ -122,12 +121,21 @@ module BrowseEverything
 
         # This ensures that the ID is persisted
         json_attributes = JSON.generate(attributes)
-        orm_model = self.class.orm_class.new(upload: json_attributes)
-        orm_model.save
+
+        # Search for the model by UUID first
+        existing_orm = self.class.orm_class.where(uuid: uuid)
+        if existing_orm.empty?
+          orm_model = self.class.orm_class.new(uuid: uuid, upload: json_attributes)
+          orm_model.save
+        else
+          orm_model = existing_orm.first
+          orm_model.upload = json_attributes
+          orm_model.save
+        end
         @orm = orm_model.reload
       end
 
-      def job_args
+      def default_job_args
         {
           upload_id: id.to_s
         }

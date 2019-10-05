@@ -52,7 +52,7 @@ module BrowseEverything::Controller::Authorizable
         authorization_id = data["id"]
         request_code = data["code"]
 
-        authorizations = BrowseEverything::Authorization.where(id: authorization_id)
+        authorizations = BrowseEverything::Authorization.where(uuid: authorization_id)
         authorization = authorizations.first
         !authorization.nil? && request_code == authorization.code
       end

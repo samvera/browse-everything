@@ -19,7 +19,7 @@ module BrowseEverything
     end
 
     def update
-      @session = Session.find_by(id: session_id)
+      @session = Session.find_by(uuid: session_id)
 
       @session.save
       @serializer = SessionSerializer.new(@session)

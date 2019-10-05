@@ -2,7 +2,7 @@
 module BrowseEverything
   class Authorization
     include ActiveModel::Serialization
-    attr_accessor :id, :code
+    attr_accessor :uuid, :code
 
     # Define the ORM persister Class
     # @return [Class]
@@ -18,9 +18,9 @@ module BrowseEverything
 
     # For Session Objects to be serializable, they must have a 0-argument
     # constructor
-    def self.build(id: nil, code: nil)
+    def self.build(code: nil, id: SecureRandom.uuid)
       authorization = Authorization.new
-      authorization.id = id
+      authorization.uuid = id
       authorization.code = code
       authorization
     end
@@ -46,7 +46,7 @@ module BrowseEverything
     # @return [Hash]
     def attributes
       {
-        'id' => id,
+        'id' => uuid,
         'code' => code
       }
     end
@@ -57,11 +57,9 @@ module BrowseEverything
       @serialize ||= self.class.serializer_class.new(self)
     end
 
-    def id
-      return if @orm.nil?
-      @orm.id
-    end
-    delegate :save, :save!, :destroy, :destroy!, to: :orm # Persistence methods
+    alias :id :uuid
+    # Persistence methods for the ActiveRecord ORM
+    delegate :save, :save!, :destroy, :destroy!, to: :orm
 
     private
 
@@ -72,8 +70,17 @@ module BrowseEverything
 
         # This ensures that the ID is persisted
         json_attributes = JSON.generate(attributes)
-        orm_model = self.class.orm_class.new(authorization: json_attributes)
-        orm_model.save
+
+        # Search for the model by UUID first
+        existing_orm = self.class.orm_class.where(uuid: uuid)
+        if existing_orm.empty?
+          orm_model = self.class.orm_class.new(uuid: uuid, authorization: json_attributes)
+          orm_model.save
+        else
+          orm_model = existing_orm.first
+          orm_model.authorization = json_attributes
+          orm_model.save
+        end
         @orm = orm_model.reload
       end
   end

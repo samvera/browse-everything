@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module BrowseEverything
   class Session
-    attr_accessor :id, :provider_id, :host, :port, :authorization_ids
+    attr_accessor :uuid, :provider_id, :host, :port, :authorization_ids
     include ActiveModel::Serialization
 
     # Define the ORM persister Class
@@ -23,9 +23,10 @@ module BrowseEverything
     # @param host
     # @param port
     # @return [Session]
-    def self.build(id: nil, provider_id: nil, authorization_ids: [], host: nil, port: nil)
+    def self.build(provider_id: nil, authorization_ids: [], host: nil,
+                   port: nil, id: SecureRandom.uuid)
       browse_everything_session = Session.new
-      browse_everything_session.id = id
+      browse_everything_session.uuid = id
       browse_everything_session.provider_id = provider_id
       browse_everything_session.authorization_ids = authorization_ids
       browse_everything_session.host = host
@@ -54,7 +55,7 @@ module BrowseEverything
     # @return [Hash]
     def attributes
       {
-        'id' => id,
+        'id' => uuid,
         'provider_id' => provider_id,
         'host' => host,
         'port' => port,
@@ -68,17 +69,15 @@ module BrowseEverything
       @serialize ||= self.class.serializer_class.new(self)
     end
 
-    def id
-      return if @orm.nil?
-      @orm.id
-    end
-    delegate :save, :save!, :destroy, :destroy!, to: :orm # Persistence methods
+    alias :id :uuid
+    # Persistence methods
+    delegate :save, :save!, :destroy, :destroy!, to: :orm
 
     def authorizations
       values = authorization_ids.map do |authorization_id|
         # This needs to be restructured to something like
         # query_service.find_by(id: authorization_id) (to support Valkyrie)
-        results = Authorization.find_by(id: authorization_id)
+        results = Authorization.find_by(uuid: authorization_id)
         results.first
       end
 
@@ -108,8 +107,17 @@ module BrowseEverything
 
         # This ensures that the ID is persisted
         json_attributes = JSON.generate(attributes)
-        orm_model = self.class.orm_class.new(session: json_attributes)
-        orm_model.save
+
+        # Search for the model by UUID first
+        existing_orm = self.class.orm_class.where(uuid: uuid)
+        if existing_orm.empty?
+          orm_model = self.class.orm_class.new(uuid: uuid, session: json_attributes)
+          orm_model.save
+        else
+          orm_model = existing_orm.first
+          orm_model.session = json_attributes
+          orm_model.save
+        end
         @orm = orm_model.reload
       end
   end

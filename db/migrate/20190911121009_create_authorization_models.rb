@@ -2,6 +2,7 @@
 class CreateAuthorizationModels < ActiveRecord::Migration[5.2]
   def change
     create_table :authorization_models do |t|
+      t.string :uuid
       t.text :authorization
 
       t.timestamps
