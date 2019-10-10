@@ -1,0 +1,73 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "BrowseEverything API V1",
+    "version": "v1"
+  },
+  "paths": {
+    "/containers": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "it retrieves a folder or directory from the provider",
+        "responses": {
+          "200": {
+            "description": "container exists",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "data": [
+                  {
+                    "attributes": [
+                      {
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    ],
+                    "relationships": {
+                      "bytestreams": {
+                        "data": [
+                          {
+                            "id": {
+                              "type": "string"
+                            }
+                          }
+                        ]
+                      },
+                      "containers": {
+                        "data": [
+                          {
+                            "id": {
+                              "type": "string"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              },
+              "required": [
+                "id",
+                "data"
+              ]
+            }
+          },
+          "404": {
+            "description": "the container cannot be found"
+          }
+        }
+      }
+    }
+  }
+}

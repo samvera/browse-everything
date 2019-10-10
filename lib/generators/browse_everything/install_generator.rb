@@ -12,6 +12,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   end
 
   def copy_migrations
+    # This needs to be run later?
     rake "browse_everything:install:migrations"
   end
 

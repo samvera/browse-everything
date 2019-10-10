@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'typhoeus'
 
   spec.add_development_dependency 'bixby', '>= 1.0'
-  spec.add_development_dependency 'bundler', '>= 1.3'
+  spec.add_development_dependency 'bundler', '>= 1.17'
   spec.add_development_dependency 'capybara'
   spec.add_development_dependency 'chromedriver-helper', '~> 2.1'
   spec.add_development_dependency 'coveralls'
