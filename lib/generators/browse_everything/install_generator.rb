@@ -15,22 +15,34 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
     rake "browse_everything:install:migrations"
   end
 
+  def install_webpacker
+    rake "webpacker:install"
+  end
+
   # This should be removed with --skip-turbolinks, and that is passed in
   # .engine_cart.yml
   def remove_turbolinks
     gsub_file('Gemfile', /gem 'turbolinks'.*$/, '')
     # This is specific to Rails 5.2.z releases
-    gsub_file('app/assets/javascripts/application.js', /\/\/= require turbolinks.*$/, '')
-    # This is specific to Rails 6.y.z releases
-    gsub_file('app/assets/javascripts/application.js', /\/\/= require turbolinks.*$/, '')
-    gsub_file('app/assets/javascripts/application.js', /require\("turbolinks".*$/, '')
-  end
-
-  def install_webpacker
-    rake "webpacker:install"
+    if Rails.version =~ /^5\./
+      gsub_file('app/assets/javascripts/application.js', /\/\/= require turbolinks.*$/, '')
+    elsif File.exists?(Rails.root.join('app', 'assets', 'javascripts', 'application.js'))
+      # This is specific to Rails 6.y.z releases
+      gsub_file('app/assets/javascripts/application.js', /require\("turbolinks".*$/, '')
+    end
   end
 
   def install_active_storage
     rake "active_storage:install"
+  end
+
+  def install_rswag
+    # This is needed for a bug, as rswag will not install for the dependent app.
+    # unless it is explicitly required here
+    insert_into_file 'config/application.rb', after: 'require "rails/test_unit/railtie"' do
+      "\nrequire 'rswag'"
+    end
+
+    generate 'rswag:install'
   end
 end

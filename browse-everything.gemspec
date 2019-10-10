@@ -29,7 +29,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'googleauth', '0.6.6'
   spec.add_dependency 'jsonapi-resources'
   spec.add_dependency 'puma', '~> 3.11'
-  spec.add_dependency 'rails', '>= 4.2'
+  spec.add_dependency 'rails', '>= 5.2' # We're going to need to require support for webpacker given the usage of rswag-ui to generate Swagger documentation
+  spec.add_dependency 'rswag'
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'signet', '~> 0.8'
   spec.add_dependency 'thor', '~> 0.19'
