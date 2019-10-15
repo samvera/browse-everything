@@ -84,8 +84,6 @@ module BrowseEverything
       # @return [String]
       def callback
         provider_authorize_url(callback_options)
-        # This needs to be removed and proxying needs to be properly handled
-        "http://localhost:8082/api/browse/providers/google_drive/authorize"
       end
 
       private
