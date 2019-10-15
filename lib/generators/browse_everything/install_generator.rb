@@ -12,13 +12,12 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
     generate 'browse_everything:config'
   end
 
-  def copy_migrations
-    # This needs to be run later?
-    rake "browse_everything:install:migrations"
-  end
-
   def install_webpacker
     rake "webpacker:install"
+  end
+
+  def copy_migrations
+    rake "browse_everything_engine:install:migrations"
   end
 
   # This should be removed with --skip-turbolinks, and that is passed in
