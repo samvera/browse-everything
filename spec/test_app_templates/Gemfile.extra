@@ -1,9 +1,4 @@
 gem 'jquery-rails'
 gem 'puma-rails'
 
-if ENV['TEST_BOOTSTRAP'] == "3"
-  gem "bootstrap-sass"
-else
-  # bootstrap 4
-  gem "bootstrap"
-end
+gem 'rack-cors'

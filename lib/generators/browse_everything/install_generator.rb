@@ -38,6 +38,17 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
     rake "active_storage:install"
   end
 
+  def install_rack_cors
+    application <<-RUBY
+        config.middleware.insert_before 0, Rack::Cors do
+          allow do
+            origins '*'
+            resource '*', headers: :any, methods: [:get, :post, :options]
+          end
+        end
+      RUBY
+  end
+
   def install_rswag
     # This is needed for a bug, as rswag will not install for the dependent app.
     # unless it is explicitly required here
@@ -51,7 +62,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   # Things get more complicated here with RSpec
   # Need to install rspec, rspec-rails
   def install_rspec
-    exec 'rspec --init'
+    run 'rspec --init'
     insert_into_file 'spec/spec_helper.rb', before: 'RSpec.configure do |config|' do
       "\nrequire 'rspec'\n require 'rspec-rails'"
     end
@@ -62,12 +73,12 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
 
   def install_swagger_api_spec
     FileUtils.mkdir_p 'swagger/v1'
-    copy_file '../swagger/v1/swagger.json', 'swagger/v1/swagger.json'
+    copy_file 'swagger/v1/swagger.json', 'swagger/v1/swagger.json'
   end
 
   def install_swagger_tests
     FileUtils.mkdir_p 'spec/integration'
-    Dir.glob("../spec/integration/*_spec.rb").each do |test_file_path|
+    Dir.glob("spec/integration/*_spec.rb").each do |test_file_path|
       segments = test_file_path.split('/')
       target_segments = segments[1..]
       target_path = target_segments.join('/')

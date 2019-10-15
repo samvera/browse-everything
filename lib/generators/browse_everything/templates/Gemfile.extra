@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'rack-cors'
 gem 'rspec'
 gem 'rspec-rails'
 gem 'rswag'
