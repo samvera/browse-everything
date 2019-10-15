@@ -1,3 +1,3 @@
 class UploadFile < ApplicationRecord
-  has_one_attached :download
+  has_one_attached :bytestream
 end
