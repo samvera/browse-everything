@@ -1,4 +1,4 @@
-class CreateUploadFiles < ActiveRecord::Migration[6.0]
+class CreateUploadFiles < ActiveRecord::Migration[5.2]
   def change
     create_table :upload_files do |t|
 
