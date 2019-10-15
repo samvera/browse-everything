@@ -2,10 +2,10 @@ require 'swagger_helper'
 
 RSpec.describe 'Container resources', type: :request do
 
-  path '/containers' do
-    # produces 'application/vnd.api+json'
-    parameter name: :id, :in => :path, :type => :string
+  path '/browse/containers' do
     get 'it retrieves a folder or directory from the provider' do
+      produces 'application/vnd.api+json'
+      parameter name: :id, :in => :path, :type => :string
 
       response '200', 'container exists' do
         schema type: :object,

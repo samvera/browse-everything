@@ -1,21 +1,24 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "BrowseEverything API V1",
+    "title": "API V1",
     "version": "v1"
   },
   "paths": {
-    "/containers": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "type": "string",
-          "required": true
-        }
-      ],
+    "/browse/containers": {
       "get": {
         "summary": "it retrieves a folder or directory from the provider",
+        "produces": [
+          "application/vnd.api+json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "container exists",
@@ -65,6 +68,337 @@
           },
           "404": {
             "description": "the container cannot be found"
+          }
+        }
+      }
+    },
+    "/browse/providers": {
+      "get": {
+        "summary": "it retrieves a listing of all providers configured for the API",
+        "produces": [
+          "application/vnd.api+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "there are providers available",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": [
+                  {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "attributes": [
+                      {
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    ],
+                    "links": {
+                      "authorization_url": {
+                        "scheme": {
+                          "type": "string"
+                        },
+                        "host": {
+                          "type": "string"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "query": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "required": [
+                "data"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/browse/sessions": {
+      "post": {
+        "summary": "creates a session for the selection files for ingest",
+        "consumes": [
+          "application/vnd.api+json"
+        ],
+        "produces": [
+          "application/vnd.api+json"
+        ],
+        "parameters": [
+          {
+            "name": "session",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "attributes": {
+                  "provider_id": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "attributes"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "session was created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "data": {
+                  "attributes": [
+                    {
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "relationships": {
+                    "authorizations": [
+                      {
+                        "data": [
+                          {
+                            "id": {
+                              "type": "string"
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "provider": {
+                      "data": [
+                        {
+                          "id": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "data"
+              ]
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "retrieves a session for selection files for ingest",
+        "produces": [
+          "application/vnd.api+json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "session exists",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "data": {
+                  "attributes": [
+                    {
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "relationships": {
+                    "authorizations": [
+                      {
+                        "data": [
+                          {
+                            "id": {
+                              "type": "string"
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "provider": {
+                      "data": [
+                        {
+                          "id": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "data"
+              ]
+            }
+          },
+          "404": {
+            "description": "the session cannot be found"
+          }
+        }
+      }
+    },
+    "/browse/upload": {
+      "post": {
+        "summary": "creates an upload for the selection files for ingest",
+        "consumes": [
+          "application/vnd.api+json"
+        ],
+        "produces": [
+          "application/vnd.api+json"
+        ],
+        "parameters": [
+          {
+            "name": "upload",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "attributes": {
+                  "session_id": {
+                    "type": "string"
+                  },
+                  "bytestream_ids": [
+                    {
+                      "id": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "container_ids": [
+                    {
+                      "id": {
+                        "type": "string"
+                      }
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "attributes"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "upload was created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "data": {
+                  "attributes": {
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "bytestream_ids": [
+                      {
+                        "id": {
+                          "type": "string"
+                        }
+                      }
+                    ],
+                    "container_ids": [
+                      {
+                        "id": {
+                          "type": "string"
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "data"
+              ]
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "retrieves an upload for selection files for ingest",
+        "produces": [
+          "application/vnd.api+json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "upload exists",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "data": {
+                  "attributes": {
+                    "session_id": {
+                      "type": "string"
+                    },
+                    "bytestream_ids": [
+                      {
+                        "id": {
+                          "type": "string"
+                        }
+                      }
+                    ],
+                    "container_ids": [
+                      {
+                        "id": {
+                          "type": "string"
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "data"
+              ]
+            }
+          },
+          "404": {
+            "description": "the upload cannot be found"
           }
         }
       }
