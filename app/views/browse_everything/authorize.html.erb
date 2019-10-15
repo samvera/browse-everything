@@ -1,7 +1,6 @@
 <script>
-  var authorizeEvent = new CustomEvent('browseEverything.authorize', {detail: <%= JSON.generate(@auth_token).html_safe %>});
   var authorizePromise = new Promise(function(resolve, reject) {
-    window.opener.document.dispatchEvent(authorizeEvent);
+    window.opener.postMessage(<%= JSON.generate(@auth_token).html_safe %>, '*');
     return resolve();
   });
   authorizePromise.then(function() {
