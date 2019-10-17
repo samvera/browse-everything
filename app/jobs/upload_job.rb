@@ -64,7 +64,7 @@ class UploadJob < ApplicationJob
     def create_upload_file(bytestream:)
       io = build_download(bytestream.uri, request_headers)
       upload_file = UploadFile.new
-      upload_file.download.attach(io: io, filename: bytestream.name, content_type: bytestream.media_type)
+      upload_file.bytestream.attach(io: io, filename: bytestream.name, content_type: bytestream.media_type)
       upload_file.save
       upload_file.reload
     end
