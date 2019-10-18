@@ -5,5 +5,5 @@ source 'https://rubygems.org'
 gem 'rack-cors'
 gem 'rspec'
 gem 'rspec-rails'
-gem 'rswag'
+gem 'rswag', '2.0.6' # Blocked until 2.1.z resolved https://github.com/rswag/rswag/issues/248
 gem 'webpacker'
