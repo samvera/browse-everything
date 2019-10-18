@@ -13,59 +13,14 @@ module BrowseEverything
         gdrive_file.mime_type == 'application/vnd.google-apps.folder'
       end
 
-      def build_bytestream(gdrive_file)
-        location = "key:#{gdrive_file.id}"
-        modified_time = gdrive_file.modified_time || Time.new.utc
-
-        BrowseEverything::Bytestream.new(
-          id: gdrive_file.id,
-          location: location,
-          name: gdrive_file.name,
-          size: gdrive_file.size.to_i,
-          mtime: modified_time,
-          media_type: gdrive_file.mime_type,
-          uri: build_download_url(gdrive_file.id)
-        )
-      end
-
       def find_bytestream(id:)
         gdrive_file = drive_service.get_file(id, fields: 'id, name, modifiedTime, size, mimeType')
         build_bytestream(gdrive_file)
       end
 
-      def build_container(gdrive_container)
-        location = "key:#{gdrive_container.id}"
-        modified_time = gdrive_container.modified_time || Time.new.utc
-        batch_request_path(gdrive_container.id)
-        bytestreams = @resources.select { |child| child.is_a?(Bytestream) }
-        containers = @resources.select { |child| child.is_a?(Container) }
-
-        Container.new(
-          id: gdrive_container.id,
-          bytestreams: bytestreams,
-          containers: containers,
-          location: location,
-          name: gdrive_container.name,
-          mtime: modified_time
-        )
-      end
-
       def find_container(id:)
         gdrive_container = drive_service.get_file(id, fields: 'id, name, modifiedTime')
         build_container(gdrive_container)
-      end
-
-      def build_root_container(children:)
-        bytestreams = @resources.select { |child| child.is_a?(Bytestream) }
-        containers = @resources.select { |child| child.is_a?(Container) }
-        Container.new(
-          id: '/',
-          bytestreams: bytestreams,
-          containers: containers,
-          location: '',
-          name: 'root',
-          mtime: DateTime.now
-        )
       end
 
       def root_container
@@ -87,6 +42,51 @@ module BrowseEverything
       end
 
       private
+
+        def build_root_container
+          bytestreams = @resources.select { |child| child.is_a?(Bytestream) }
+          containers = @resources.select { |child| child.is_a?(Container) }
+          Container.new(
+            id: '/',
+            bytestreams: bytestreams,
+            containers: containers,
+            location: '',
+            name: 'root',
+            mtime: DateTime.current
+          )
+        end
+
+        def build_container(gdrive_container)
+          location = "key:#{gdrive_container.id}"
+          modified_time = gdrive_container.modified_time || Time.new.utc
+          batch_request_path(gdrive_container.id)
+          bytestreams = @resources.select { |child| child.is_a?(Bytestream) }
+          containers = @resources.select { |child| child.is_a?(Container) }
+
+          Container.new(
+            id: gdrive_container.id,
+            bytestreams: bytestreams,
+            containers: containers,
+            location: location,
+            name: gdrive_container.name,
+            mtime: modified_time
+          )
+        end
+
+        def build_bytestream(gdrive_file)
+          location = "key:#{gdrive_file.id}"
+          modified_time = gdrive_file.modified_time || Time.new.utc
+
+          BrowseEverything::Bytestream.new(
+            id: gdrive_file.id,
+            location: location,
+            name: gdrive_file.name,
+            size: gdrive_file.size.to_i,
+            mtime: modified_time,
+            media_type: gdrive_file.mime_type,
+            uri: build_download_url(gdrive_file.id)
+          )
+        end
 
         def build_download_url(id)
           "https://www.googleapis.com/drive/v3/files/#{id}?alt=media"
@@ -148,7 +148,6 @@ module BrowseEverything
 
               # A GDrive file may have multiple parents
               gdrive_file.parents do |parent|
-
                 if resources.include?(parent)
                   if self.class.folder?(gdrive_file)
                     container_tree[parent] << gdrive_file.id
@@ -176,8 +175,6 @@ module BrowseEverything
         end
 
         def batch_request_path(path = '')
-          resources = []
-
           drive_service.batch do |drive|
             request_params = Auth::Google::RequestParameters.new
             request_params.q += " and '#{path}' in parents " if path.present?
@@ -269,7 +266,7 @@ module BrowseEverything
           @credentials = overridden_credentials
         end
         delegate :access_token, to: :credentials
-        alias :auth_token :access_token
+        alias auth_token access_token
 
         # Construct a new object for interfacing with the Google Drive API
         # @return [Google::Apis::DriveV3::DriveService]

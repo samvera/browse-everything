@@ -69,7 +69,7 @@ module BrowseEverything
       @serialize ||= self.class.serializer_class.new(self)
     end
 
-    alias :id :uuid
+    alias id uuid
     # Persistence methods
     delegate :save, :save!, :destroy, :destroy!, to: :orm
 
@@ -112,12 +112,11 @@ module BrowseEverything
         existing_orm = self.class.orm_class.where(uuid: uuid)
         if existing_orm.empty?
           orm_model = self.class.orm_class.new(uuid: uuid, session: json_attributes)
-          orm_model.save
         else
           orm_model = existing_orm.first
           orm_model.session = json_attributes
-          orm_model.save
         end
+        orm_model.save
         @orm = orm_model.reload
       end
   end

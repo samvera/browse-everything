@@ -27,16 +27,30 @@ Metrics/CyclomaticComplexity:
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
   Max: 28
+  Exclude:
+    - 'lib/browse_everything/provider/google_drive.rb'
 
 # Offense count: 1
 # Configuration parameters: CountKeywordArgs.
 Metrics/ParameterLists:
   Max: 7
+  Exclude:
+    - 'lib/browse_everything/bytestream.rb'
+    - 'lib/browse_everything/container.rb'
+    - 'lib/browse_everything/upload.rb'
 
 # Offense count: 1
 RSpec/DescribeClass:
   Exclude:
     - 'spec/javascripts/jasmine_spec.rb'
+
+RSpec/EmptyExampleGroup:
+  Exclude:
+    - 'spec/controllers/browse_everything/sessions_controller_spec.rb'
+    - 'spec/integration/containers_spec.rb'
+    - 'spec/integration/providers_spec.rb'
+    - 'spec/integration/sessions_spec.rb'
+    - 'spec/integration/uploads_spec.rb'
 
 # Offense count: 2
 RSpec/MultipleExpectations:

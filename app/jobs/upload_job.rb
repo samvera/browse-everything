@@ -40,8 +40,8 @@ class UploadJob < ApplicationJob
     def session
       return if upload.nil? || upload.session_id.blank?
       @session ||= begin
-                     sessions = BrowseEverything::Session.find_by(uuid: upload.session_id)
-                     sessions.first
+                    sessions = BrowseEverything::Session.find_by(uuid: upload.session_id)
+                    sessions.first
                   end
     end
 

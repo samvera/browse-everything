@@ -36,18 +36,18 @@ module BrowseEverything
                                             end
 
       browse_everything_upload.bytestreams = bytestreams
-      if bytestreams.empty?
-        browse_everything_upload.bytestream_ids = bytestream_ids
-      else
-        browse_everything_upload.bytestream_ids = bytestreams.map(&:id)
-      end
+      browse_everything_upload.bytestream_ids = if bytestreams.empty?
+                                                  bytestream_ids
+                                                else
+                                                  bytestreams.map(&:id)
+                                                end
 
       browse_everything_upload.containers = containers
-      if containers.empty?
-        browse_everything_upload.container_ids = container_ids
-      else
-        browse_everything_upload.container_ids = containers.map(&:id)
-      end
+      browse_everything_upload.container_ids = if containers.empty?
+                                                 container_ids
+                                               else
+                                                 containers.map(&:id)
+                                               end
 
       browse_everything_upload.file_ids = file_ids
 
@@ -89,7 +89,7 @@ module BrowseEverything
       @serialize ||= self.class.serializer_class.new(self)
     end
 
-    alias :id :uuid
+    alias id uuid
     delegate :save, :save!, :destroy, :destroy!, to: :orm # Persistence methods
 
     # Sessions are responsible for managing the relationships to authorizations
@@ -126,12 +126,11 @@ module BrowseEverything
         existing_orm = self.class.orm_class.where(uuid: uuid)
         if existing_orm.empty?
           orm_model = self.class.orm_class.new(uuid: uuid, upload: json_attributes)
-          orm_model.save
         else
           orm_model = existing_orm.first
           orm_model.upload = json_attributes
-          orm_model.save
         end
+        orm_model.save
         @orm = orm_model.reload
       end
 

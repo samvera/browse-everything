@@ -15,18 +15,18 @@ module BrowseEverything
       @id = id
 
       @bytestreams = bytestreams
-      if @bytestreams.empty?
-        @bytestream_ids = bytestream_ids
-      else
-        @bytestream_ids = @bytestreams.map(&:id)
-      end
+      @bytestream_ids = if @bytestreams.empty?
+                          bytestream_ids
+                        else
+                          @bytestreams.map(&:id)
+                        end
 
       @containers = containers
-      if @containers.empty?
-        @container_ids = container_ids
-      else
-        @container_ids = @containers.map(&:id)
-      end
+      @container_ids = if @containers.empty?
+                         container_ids
+                       else
+                         @containers.map(&:id)
+                       end
 
       @location = location
       @name = name

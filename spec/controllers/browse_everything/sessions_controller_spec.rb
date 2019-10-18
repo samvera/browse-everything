@@ -47,7 +47,5 @@ RSpec.describe BrowseEverything::SessionsController, type: :controller do
   end
 
   describe '#update' do
-
   end
-
 end

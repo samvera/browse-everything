@@ -27,7 +27,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
     # This is specific to Rails 5.2.z releases
     if Rails.version =~ /^5\./
       gsub_file('app/assets/javascripts/application.js', /\/\/= require turbolinks.*$/, '')
-    elsif File.exists?(Rails.root.join('app', 'assets', 'javascripts', 'application.js'))
+    elsif File.exist?(Rails.root.join('app', 'assets', 'javascripts', 'application.js'))
       # This is specific to Rails 6.y.z releases
       gsub_file('app/assets/javascripts/application.js', /require\("turbolinks".*$/, '')
     end
@@ -66,12 +66,12 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
 
     generate 'rswag:install'
     gsub_file 'spec/swagger_helper.rb',
-      "config.swagger_root = Rails.root.join('swagger').to_s",
-      "rails_root_path = Pathname.new(File.dirname(__FILE__))\nconfig.swagger_root = rails_root_path.join('..', 'swagger').to_s"
+              "config.swagger_root = Rails.root.join('swagger').to_s",
+              "rails_root_path = Pathname.new(File.dirname(__FILE__))\nconfig.swagger_root = rails_root_path.join('..', 'swagger').to_s"
   end
 
   def install_swagger_api_spec
-    FileUtils.mkdir_p Rails.root.join('swagger','v1')
+    FileUtils.mkdir_p Rails.root.join('swagger', 'v1')
     copy_file 'swagger/v1/swagger.json', 'swagger/v1/swagger.json'
   end
 

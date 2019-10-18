@@ -41,7 +41,7 @@ module BrowseEverything
     def name
       namespaced_name = self.class.name
       last_segment = namespaced_name.split('::').last.underscore.humanize
-      last_segment.gsub(/\s(.)/) { " #{$1.capitalize}" }
+      last_segment.gsub(/\s(.)/) { " #{Regexp.last_match(1).capitalize}" }
     end
 
     def id
