@@ -62,8 +62,6 @@ module BrowseEverything
           # There is token data and it is valid
           return if token_data && validations.reduce(:|)
 
-          # provider_id = session_attributes[:provider_id]
-          # message = "Failed to validate the authorization token.  Please request the authorization using #{provider_authorize_url(provider_id)}"
           message = "Failed to validate the authorization token.  Please request a new authorization token."
           head(:unauthorized, body: message)
         end
