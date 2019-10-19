@@ -4,5 +4,9 @@ class ProviderSerializer
   include FastJsonapi::ObjectSerializer
   attributes :id, :name
 
-  link :authorization_url, &:authorization_url
+  # rubocop:disable Style/SymbolProc
+  link :authorization_url do |object|
+    object.authorization_url
+  end
+  # rubocop:enable Style/SymbolProc
 end
