@@ -8,6 +8,7 @@ module BrowseEverything
     include BrowseEverything::Controller::Authorizable
 
     skip_before_action :verify_authenticity_token
+    # This should not need to be disabled
     # before_action :validate_authorization_ids
 
     def index
@@ -38,7 +39,9 @@ module BrowseEverything
     end
 
     def show
-      @container = find_container(id: id)
+      decoded_id = CGI.unescape(id)
+      decoded_id = decoded_id.gsub('&#x0002E;', '.')
+      @container = find_container(id: decoded_id)
       @serialized = serialize(@container)
 
       respond_to do |format|
