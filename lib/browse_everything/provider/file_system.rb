@@ -52,9 +52,13 @@ module BrowseEverything
         end
 
         def find_container_children(directory)
-          dir_children_paths = directory.children.select { |child| File.directory?(child) }
+          parent_path = Pathname.new(directory.path)
+          dir_children_paths = directory.children.select do |child|
+            File.directory?(parent_path.join(child))
+          end
+
           dir_children_paths.map do |path|
-            dir = Dir.new(path)
+            dir = Dir.new(parent_path.join(path))
             build_container(dir)
           end
         end
@@ -78,9 +82,13 @@ module BrowseEverything
         end
 
         def find_bytestream_children(directory)
-          file_children_paths = directory.children.select { |child| File.file?(child) }
+          parent_path = Pathname.new(directory.path)
+          file_children_paths = directory.children.select do |child|
+            File.file?(parent_path.join(child))
+          end
+
           file_children_paths.map do |path|
-            file = File.new(path)
+            file = File.new(parent_path.join(path))
             build_bytestream(file)
           end
         end
