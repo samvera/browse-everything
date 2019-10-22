@@ -53,7 +53,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   def install_rspec
     run 'rspec --init'
     insert_into_file 'spec/spec_helper.rb', before: 'RSpec.configure do |config|' do
-      "\nrequire 'rspec'\nrequire 'rspec-rails'\n"
+      "\nrequire 'rspec'\nrequire 'rails'\nrequire 'rswag'\nrequire 'rspec-rails'\n"
     end
   end
 
@@ -67,7 +67,10 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
     generate 'rswag:install'
     gsub_file 'spec/swagger_helper.rb',
               "config.swagger_root = Rails.root.join('swagger').to_s",
-              "rails_root_path = Pathname.new(File.dirname(__FILE__))\nconfig.swagger_root = rails_root_path.join('..', 'swagger').to_s"
+              "rails_root_path = Pathname.new(File.dirname(__FILE__))\n  config.swagger_root = rails_root_path.join('..', 'swagger').to_s"
+    gsub_file 'spec/swagger_helper.rb',
+              "rails_helper",
+              "spec_helper"
   end
 
   def install_swagger_api_spec
