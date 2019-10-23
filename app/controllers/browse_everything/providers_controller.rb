@@ -6,7 +6,7 @@ module BrowseEverything
     skip_before_action :verify_authenticity_token
 
     def index
-      @providers = Provider.all(host: request.host, port: request.port)
+      @providers = Driver.all(host: request.host, port: request.port)
       @serializer = ProviderSerializer.new(@providers)
       respond_to do |format|
         format.json_api { render json: @serializer.serialized_json }
@@ -58,7 +58,7 @@ module BrowseEverything
       end
 
       def current_provider
-        Provider.build(**provider_attributes)
+        Driver.build(**provider_attributes)
       end
 
       def authorization_params

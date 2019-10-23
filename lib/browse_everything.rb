@@ -22,32 +22,11 @@ module BrowseEverything
   autoload :Container, 'browse_everything/container'
   autoload :Authorization, 'browse_everything/authorization'
   autoload :Session, 'browse_everything/session'
-  autoload :Provider, 'browse_everything/provider'
-  autoload :GoogleDrive, 'browse_everything/provider/google_drive'
   autoload :Upload, 'browse_everything/upload'
 
-  module Driver
-    autoload :Base,        'browse_everything/driver/base'
-    autoload :FileSystem,  'browse_everything/driver/file_system'
-    autoload :Dropbox,     'browse_everything/driver/dropbox'
-    autoload :Box,         'browse_everything/driver/box'
-    autoload :GoogleDrive, 'browse_everything/driver/google_drive'
-    autoload :S3,          'browse_everything/driver/s3'
-
-    # Access the sorter set for the base driver class
-    # @return [Proc]
-    def sorter
-      BrowseEverything::Driver::Base.sorter
-    end
-
-    # Provide a custom sorter for all driver classes
-    # @param [Proc] the sorting lambda (or proc)
-    def sorter=(sorting_proc)
-      BrowseEverything::Driver::Base.sorter = sorting_proc
-    end
-
-    module_function :sorter, :sorter=
-  end
+  autoload :Driver, 'browse_everything/driver'
+  autoload :FileSystem, 'browse_everything/driver/file_system'
+  autoload :GoogleDrive, 'browse_everything/driver/google_drive'
 
   module Auth
     module Google

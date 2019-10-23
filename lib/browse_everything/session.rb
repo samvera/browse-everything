@@ -91,12 +91,12 @@ module BrowseEverything
       authorizations.last.code
     end
 
-    def provider
-      @provider ||= Provider.build(id: provider_id, auth_code: auth_code, host: host, port: port)
+    def driver
+      @driver ||= Driver.build(id: provider_id, auth_code: auth_code, host: host, port: port)
     end
 
-    delegate :root_container, to: :provider
-    delegate :authorization_url, to: :provider
+    delegate :root_container, to: :driver
+    delegate :authorization_url, to: :driver
 
     private
 

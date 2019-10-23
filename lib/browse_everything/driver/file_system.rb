@@ -1,78 +1,102 @@
 # frozen_string_literal: true
-
 module BrowseEverything
-  module Driver
-    class FileSystem < Base
-      def icon
-        'file'
+  class Driver
+    # The Driver class for interfacing with a file system as a storage provider
+    class FileSystem < BrowseEverything::Driver
+      # Determine whether or not a file system node is a directory
+      # @return [Boolean]
+      def self.directory?(file_system_node)
+        File.directory?(file_system_node)
       end
 
-      def validate_config
-        raise BrowseEverything::InitializationError, 'FileSystem driver requires a :home argument' if config[:home].blank?
+      def find_bytestream(id:)
+        return unless File.exist?(id)
+
+        file = File.new(id)
+        bytestream = build_bytestream(file)
+        @resources = [bytestream]
+        bytestream
       end
 
-      # Retrieve the contents of a directory
-      # @param path [String] the path to a file system resource
-      # @return [Array<BrowseEverything::FileEntry>]
-      def contents(path = '')
-        real_path = File.join(config[:home], path)
-        values = if File.directory?(real_path)
-                   make_directory_entry real_path
-                 else
-                   [details(real_path)]
-                 end
-        @entries = values.compact
+      def find_container(id:)
+        return unless File.exist?(id) && self.class.directory?(id)
 
-        @sorter.call(@entries)
+        directory = Dir.new(id)
+        traverse_directory(directory)
+        build_container(directory)
       end
 
-      def link_for(path)
-        full_path = File.expand_path(path)
-        file_size = file_size(full_path)
-        ["file://#{full_path}", { file_name: File.basename(path), file_size: file_size }]
-      end
-
-      def authorized?
-        true
-      end
-
-      # Construct a FileEntry objects for a file-system resource
-      # @param path [String] path to the file
-      # @param display [String] display label for the resource
-      # @return [BrowseEverything::FileEntry]
-      def details(path, display = File.basename(path))
-        return nil unless File.exist? path
-        info = File::Stat.new(path)
-        BrowseEverything::FileEntry.new(
-          make_pathname(path),
-          [key, path].join(':'),
-          display,
-          info.size,
-          info.mtime,
-          info.directory?
-        )
+      def root_container
+        root_id = config[:home]
+        find_container(id: root_id)
       end
 
       private
 
-        # Construct an array of FileEntry objects for the contents of a
-        # directory
-        # @param real_path [String] path to the file system directory
-        # @return [Array<BrowseEverything::FileEntry>]
-        def make_directory_entry(real_path)
-          entries = []
-          entries + Dir[File.join(real_path, '*')].collect { |f| details(f) }
+        def build_container(dir)
+          absolute_path = File.absolute_path(dir.path)
+          uri = "file://#{absolute_path}"
+          name = File.basename(absolute_path)
+
+          bytestreams = @resources.select { |child| child.is_a?(Bytestream) }
+          containers = @resources.select { |child| child.is_a?(Container) }
+
+          Container.new(
+            id: absolute_path,
+            bytestreams: bytestreams,
+            containers: containers,
+            location: uri,
+            name: name,
+            mtime: File.mtime(absolute_path)
+          )
         end
 
-        def make_pathname(path)
-          Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(config[:home]))
+        def find_container_children(directory)
+          parent_path = Pathname.new(directory.path)
+          dir_children_paths = directory.children.select do |child|
+            File.directory?(parent_path.join(child))
+          end
+
+          dir_children_paths.map do |path|
+            dir = Dir.new(parent_path.join(path))
+            build_container(dir)
+          end
         end
 
-        def file_size(path)
-          File.size(path).to_i
-        rescue StandardError => error
-          Rails.logger.error "Failed to find the file size for #{path}: #{error}"
-          0
+        def build_bytestream(file)
+          absolute_path = File.absolute_path(file.path)
+          uri = "file://#{absolute_path}"
+          name = File.basename(absolute_path)
+          extname = File.extname(absolute_path)
+          mime_type = Mime::Type.lookup_by_extension(extname)
+
+          BrowseEverything::Bytestream.new(
+            id: absolute_path,
+            location: uri,
+            name: name,
+            size: file.size.to_i,
+            mtime: file.mtime,
+            media_type: mime_type,
+            uri: uri
+          )
+        end
+
+        def find_bytestream_children(directory)
+          parent_path = Pathname.new(directory.path)
+          file_children_paths = directory.children.select do |child|
+            File.file?(parent_path.join(child))
+          end
+
+          file_children_paths.map do |path|
+            file = File.new(parent_path.join(path))
+            build_bytestream(file)
+          end
+        end
+
+        def traverse_directory(directory)
+          @resources = []
+          @resources = find_container_children(directory)
+          @resources += find_bytestream_children(directory)
         end
     end
   end

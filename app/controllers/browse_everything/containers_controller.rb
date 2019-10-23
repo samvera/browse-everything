@@ -70,8 +70,8 @@ module BrowseEverything
         @session
       end
 
-      delegate :provider, to: :session
-      delegate :find_container, :root_container, to: :provider
+      delegate :driver, to: :session
+      delegate :find_container, :root_container, to: :driver
 
       # This is a work-around which might violate the JSON-API spec.
       # It may also simply be a bug in fast_json_api
