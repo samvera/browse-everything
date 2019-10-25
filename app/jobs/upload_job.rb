@@ -9,9 +9,9 @@ class UploadJob < ApplicationJob
 
     # Download the containers
     upload.container_ids.each do |container_id|
-      container = provider.find_container(id: container_id)
+      container = driver.find_container(id: container_id)
       container.bytestreams.each do |bytestream|
-        bytestream = provider.find_bytestream(id: bytestream_id)
+        bytestream = driver.find_bytestream(id: bytestream_id)
         persisted = create_upload_file(bytestream: bytestream)
         upload.file_ids << persisted.id
       end
@@ -19,7 +19,7 @@ class UploadJob < ApplicationJob
 
     # Download the bytestreams
     upload.bytestream_ids.each do |bytestream_id|
-      bytestream = provider.find_bytestream(id: bytestream_id)
+      bytestream = driver.find_bytestream(id: bytestream_id)
       persisted = create_upload_file(bytestream: bytestream)
       upload.file_ids << persisted.id
     end
@@ -45,8 +45,8 @@ class UploadJob < ApplicationJob
                   end
     end
 
-    delegate :provider, to: :session
-    delegate :auth_token, to: :provider
+    delegate :driver, to: :session
+    delegate :auth_token, to: :driver
 
     def request_headers
       return {} unless auth_token
@@ -63,7 +63,7 @@ class UploadJob < ApplicationJob
 
     def create_upload_file(bytestream:)
       io = if bytestream.file_uri?
-             file_path = file_uri.gsub('file://', '')
+             file_path = bytestream.uri.gsub('file://', '')
              File.new(file_path)
            else
              build_download(bytestream.uri, request_headers)

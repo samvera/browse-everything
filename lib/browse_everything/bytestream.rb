@@ -4,6 +4,10 @@ module BrowseEverything
   class Bytestream
     attr_accessor :id, :container_id, :location, :name, :size, :mtime, :uri, :media_type
 
+    def file_uri?
+      /^file\:\/\// =~ uri
+    end
+
     # Constructor
     # @param id
     # @param container_id
