@@ -59,7 +59,8 @@ module BrowseEverything
           @config = ActiveSupport::HashWithIndifferentAccess.new config_values
           @config.deep_symbolize_keys
         rescue Errno::ENOENT
-          raise ConfigurationError, 'Missing browse_everything_providers.yml configuration file'
+          Rails.logger.warn 'Missing browse_everything_providers.yml configuration file'
+          @config = ActiveSupport::HashWithIndifferentAccess.new({})
         end
       else
         raise InitializationError, "Unrecognized configuration: #{value.inspect}"
