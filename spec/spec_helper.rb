@@ -36,7 +36,7 @@ require 'capybara/rspec'
 require 'rspec'
 require 'rspec/rails'
 require 'rspec/its'
-require 'chromedriver-helper'
+require 'webdrivers'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -46,6 +46,12 @@ require 'webmock/rspec'
 WebMock.disable_net_connect!(allow_localhost: true)
 
 RSpec.configure do |config|
+  config.before(:each, type: :feature) { WebMock.disable! }
+  config.after(:each, type: :feature) do
+    WebMock.enable!
+    WebMock.disable_net_connect!(allow_localhost: true)
+  end
+
   config.expect_with :rspec do |c|
     c.syntax = %i[should expect]
   end
