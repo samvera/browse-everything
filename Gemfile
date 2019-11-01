@@ -36,12 +36,15 @@ else
   case ENV['RAILS_VERSION']
   when /^5\./
     gem 'capybara', '~> 2.18.0'
-  when /^4\.2/
+    gem 'sass-rails', '~> 5'
+  when /^4\./
     gem 'coffee-rails', '~> 4.1.0'
     gem 'json', '~> 1.8'
     gem 'railties', '~> 4.2'
     gem 'responders', '~> 2.0'
     gem 'sass-rails', '>= 5.0'
+  else
+    gem 'sass-rails'
   end
 end
 # END ENGINE_CART BLOCK
