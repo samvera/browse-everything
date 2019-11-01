@@ -34,6 +34,8 @@ else
   end
 
   case ENV['RAILS_VERSION']
+  when '6.0.0' # This will only be necessary until release 6.0.1 is published
+    gem 'sass-rails', '~> 5'
   when /^5\./
     gem 'capybara', '~> 2.18.0'
     gem 'sass-rails', '~> 5'
