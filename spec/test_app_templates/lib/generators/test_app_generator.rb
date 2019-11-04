@@ -28,11 +28,36 @@ class TestAppGenerator < Rails::Generators::Base
   end
 
   def inject_javascript
-    insert_into_file 'app/assets/javascripts/application.js', after: '//= require_tree .' do
-      %(
-        //= require jquery
-        //= require browse_everything
-      )
+    binding.pry
+    if Rails.version =~ /^6\./
+      # copy_file 'template/foo', 'app/assets/javascripts.js'
+
+=begin
+      insert_into_file 'app/javascript/packs/application.js', after: 'require("channels")' do
+        %(
+          //= require_tree .
+        )
+      end
+=end
+
+      insert_into_file 'app/assets/config/manifest.js', after: '//= link_directory ../stylesheets .css' do
+        %(
+          //= link_directory ../javascripts .js
+        )
+      end
+
+      insert_into_file 'app/views/layouts/application.html.erb', after: "<%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>"
+        %(
+          <%= javascript_include_tag 'application' %>
+        )
+      end
+    else
+      insert_into_file 'app/assets/javascripts/application.js', after: '//= require_tree .' do
+        %(
+          //= require jquery
+          //= require browse_everything
+        )
+      end
     end
   end
 
@@ -57,5 +82,11 @@ class TestAppGenerator < Rails::Generators::Base
     copy_file '../support/app/controllers/file_handler_controller.rb', 'app/controllers/file_handler_controller.rb'
     copy_file '../support/app/views/file_handler/main.html.erb', 'app/views/file_handler/main.html.erb'
     copy_file '../support/app/views/file_handler/index.html.erb', 'app/views/file_handler/index.html.erb'
+  end
+
+  def install_webpacker
+    if Rails.version =~ /^6\./
+      rake 'webpacker:install'
+    end
   end
 end
