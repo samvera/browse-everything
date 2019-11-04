@@ -36,6 +36,7 @@ else
   case ENV['RAILS_VERSION']
   when '6.0.0' # This will only be necessary until release 6.0.1 is published
     gem 'sass-rails', '~> 5'
+    gem 'webpacker' # This is necessary or the generator will break
   when /^5\./
     gem 'capybara', '~> 2.18.0'
     gem 'sass-rails', '~> 5'
@@ -47,6 +48,7 @@ else
     gem 'sass-rails', '>= 5.0'
   else
     gem 'sass-rails'
+    gem 'webpacker' # This is necessary or the generator will break
   end
 end
 # END ENGINE_CART BLOCK
