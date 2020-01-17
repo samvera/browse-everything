@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'google-api-client', '~> 0.23'
   spec.add_dependency 'google_drive', '>= 2.1', "< 4"
   spec.add_dependency 'googleauth', '>= 0.6.6', '< 1.0'
-  spec.add_dependency 'rails', '>= 4.2', '< 6.0'
+  spec.add_dependency 'rails', '>= 4.2', '< 7.0'
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'signet', '~> 0.8'
   spec.add_dependency 'sprockets', '~> 3.7'
