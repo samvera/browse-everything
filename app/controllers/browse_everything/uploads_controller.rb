@@ -31,16 +31,41 @@ module BrowseEverything
       upload_job = upload.job
       upload_job.perform_now
       respond_to do |format|
+        format.json_api { render status: :created, json: @serializer.serialized_json }
+      end
+    end
+
+    def index
+      @uploads = Upload.all
+
+      @serializer = UploadSerializer.new(@uploads)
+      respond_to do |format|
         format.json_api { render json: @serializer.serialized_json }
       end
     end
 
     def show
-      @upload = Upload.find_by(uuid: upload_id)
+      uploads = Upload.find_by(uuid: upload_id)
+      raise ResourceNotFound if uploads.empty?
+
+      @upload = uploads.first
       @serializer = UploadSerializer.new(@upload)
       respond_to do |format|
         format.json_api { render json: @serializer.serialized_json }
       end
+    rescue ResourceNotFound => not_found_error
+      head(:not_found)
+    end
+
+    def destroy
+      uploads = Upload.find_by(uuid: upload_id)
+      raise ResourceNotFound if uploads.empty?
+
+      @upload = uploads.first
+      @upload.destroy
+      head(:success)
+    rescue ResourceNotFound => not_found_error
+      head(:not_found)
     end
 
     private

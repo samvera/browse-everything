@@ -48,6 +48,15 @@ module BrowseEverything
         end
       end
       alias find_by where
+
+      def all
+        session_models = orm_class.all
+        models = session_models
+        models.map do |model|
+          new_attributes = JSON.parse(model.session)
+          build(**new_attributes.symbolize_keys)
+        end
+      end
     end
 
     # Generate the attributes used for serialization

@@ -8,25 +8,33 @@ module BrowseEverything
     # @see SessionsController#authorize
     #
     def show
-      @authorization = Authorization.new(**authorization_attributes)
-      # This is an anti-pattern; I'm not certain how to reconcile this without
-      # persisting the resource using ActiveRecord and instead using #create
-      @authorization.store_session_values
+      authorizations = Authorization.find_by(uuid: id)
+      raise ResourceNotFound if authorizations.empty?
+      @authorization = authorizations.first
+
       @serializer = AuthorizationSerializer.new(@authorization)
 
       respond_to do |format|
-        format.json { render json: @serializer.serialized_json }
+        format.json_api { render json: @serializer.serialized_json }
       end
+    rescue ResourceNotFound => not_found_error
+      head(:not_found)
+    end
+
+    def destroy
+      authorizations = Authorization.find_by(uuid: id)
+      raise ResourceNotFound if authorizations.empty?
+      @authorization = authorizations.first
+      @authorization.destroy
+      head(:success)
+    rescue ResourceNotFound => not_found_error
+      head(:not_found)
     end
 
     private
 
-      def authorization_params
-        params.permit(:code)
-      end
-
-      def authorization_attributes
-        authorization_params.merge(session: session)
+      def id
+        params[:id]
       end
   end
 end

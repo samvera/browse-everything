@@ -14,21 +14,51 @@ module BrowseEverything
       @session.save
       @serializer = SessionSerializer.new(@session)
       respond_to do |format|
+        format.json_api { render status: :created, json: @serializer.serialized_json }
+      end
+    end
+
+    def index
+      @sessions = Session.all
+
+      @serializer = SessionSerializer.new(@sessions)
+      respond_to do |format|
         format.json_api { render json: @serializer.serialized_json }
       end
     end
 
-    def update
-      @session = Session.find_by(uuid: session_id)
+    def show
+      sessions = Session.find_by(uuid: id)
+      @session = sessions.first
+      # Refactor this
+      raise ResourceNotFound if @session.nil?
 
       @session.save
       @serializer = SessionSerializer.new(@session)
       respond_to do |format|
         format.json_api { render json: @serializer.serialized_json }
       end
+    rescue ResourceNotFound => not_found_error
+      head(:not_found)
+    end
+
+    def destroy
+      sessions = Session.find_by(uuid: id)
+      @session = sessions.first
+      # Refactor this
+      raise ResourceNotFound if @session.nil?
+
+      @session.destroy
+      head(:success)
+    rescue ResourceNotFound => not_found_error
+      head(:not_found)
     end
 
     private
+
+      def id
+        params[:id]
+      end
 
       def session_json_api_attributes
         json_api_attributes = resource_json_api_attributes

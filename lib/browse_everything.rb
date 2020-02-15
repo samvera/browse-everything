@@ -40,6 +40,8 @@ module BrowseEverything
   class NotImplementedError < StandardError; end
   class NotAuthorizedError < StandardError; end
 
+  class ResourceNotFound < StandardError; end
+
   class Configuration < OpenStruct; end
 
   class << self

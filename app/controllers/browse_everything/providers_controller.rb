@@ -17,7 +17,7 @@ module BrowseEverything
       @provider = current_provider
       @serializer = ProviderSerializer.new(@provider)
       respond_to do |format|
-        format.json { render json: @serializer.serialized_json }
+        format.json_api { render json: @serializer.serialized_json }
       end
     end
 

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'jwt'
+require 'pry-byebug'
 
 module BrowseEverything
   module Controller
@@ -8,15 +9,17 @@ module BrowseEverything
 
       private
 
-        def token_param
-          params[:token] || json_api_params[:token]
+        def token_header
+          auth_header = request.authorization
+          return if auth_header.nil?
+
+          auth_header.gsub(/Bearer\s*/, '')
         end
 
-        def token_header
-          auth_header = headers['Authorization']
-          return unless auth_header
+        def token_param
+          return json_api_params[:token] if self.respond_to?(:json_api_params)
 
-          auth_header.sub('Bearer ', '')
+          token_header || params[:token]
         end
 
         def token_data

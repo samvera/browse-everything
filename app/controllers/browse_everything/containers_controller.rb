@@ -42,11 +42,15 @@ module BrowseEverything
       decoded_id = CGI.unescape(id)
       decoded_id = decoded_id.gsub('&#x0002E;', '.')
       @container = find_container(id: decoded_id)
+      # Refactor this
+      raise ResourceNotFound if @container.nil?
       @serialized = serialize(@container)
 
       respond_to do |format|
         format.json_api { render json: @serialized }
       end
+    rescue ResourceNotFound => not_found_error
+      head(:not_found)
     end
 
     private
