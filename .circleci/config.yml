@@ -12,7 +12,7 @@ jobs:
         type: string
       bundler_version:
         type: string
-        default: 2.0.1
+        default: 2.1.4
     executor:
       name: 'samvera/ruby'
       ruby_version: << parameters.ruby_version >>
@@ -27,7 +27,7 @@ jobs:
           project: 'browse-everything'
 
       - samvera/engine_cart_generate:
-          cache_key: v1-internal-test-app-{{ checksum "browse-everything.gemspec" }}-{{ checksum "spec/test_app_templates/lib/generators/test_app_generator.rb" }}-{{ checksum "lib/generators/browse_everything/install_generator.rb" }}-{{ checksum "lib/generators/browse_everything/config_generator.rb" }}--<< parameters.rails_version >>-<< parameters.ruby_version >>
+          cache_key: v2-internal-test-app-{{ checksum "browse-everything.gemspec" }}-{{ checksum "spec/test_app_templates/lib/generators/test_app_generator.rb" }}-{{ checksum "lib/generators/browse_everything/install_generator.rb" }}-{{ checksum "lib/generators/browse_everything/config_generator.rb" }}--<< parameters.rails_version >>-<< parameters.ruby_version >>
 
       - samvera/bundle_for_gem:
           ruby_version: << parameters.ruby_version >>
@@ -36,36 +36,46 @@ jobs:
 
       - samvera/rubocop
 
-      - run:
-          name: Install Karma for JavaScript and functional tests
-          command: sudo npm install -g karma karma-jasmine karma-chrome-launcher
-
       - samvera/parallel_rspec
 
 workflows:
   ci:
     jobs:
       - build:
+          name: "ruby2-7_rails6-0"
+          ruby_version: 2.7.0
+          rails_version: 6.0.2
+      - build:
+          name: "ruby2-7_rails5-2"
+          ruby_version: 2.7.0
+          rails_version: 5.2.4
+      - build:
+          name: "ruby2-7_rails5-1"
+          ruby_version: 2.7.0
+          rails_version: 5.1.7
+
+      - build:
+          name: "ruby2-6_rails6-0"
+          ruby_version: 2.6.5
+          rails_version: 6.0.2
+      - build:
           name: "ruby2-6_rails5-2"
-          ruby_version: 2.6.3
-          rails_version: 5.2.3
+          ruby_version: 2.6.5
+          rails_version: 5.2.4
       - build:
           name: "ruby2-6_rails5-1"
-          ruby_version: 2.6.3
+          ruby_version: 2.6.5
           rails_version: 5.1.7
+
+      - build:
+          name: "ruby2-5_rails6-0"
+          ruby_version: 2.5.7
+          rails_version: 6.0.2
       - build:
           name: "ruby2-5_rails5-2"
-          ruby_version: 2.5.5
-          rails_version: 5.2.3
+          ruby_version: 2.5.7
+          rails_version: 5.2.4
       - build:
           name: "ruby2-5_rails5-1"
-          ruby_version: 2.5.5
-          rails_version: 5.1.7
-      - build:
-          name: "ruby2-4_rails5-2"
-          ruby_version: 2.4.6
-          rails_version: 5.2.3
-      - build:
-          name: "ruby2-4_rails5-1"
-          ruby_version: 2.4.6
+          ruby_version: 2.5.7
           rails_version: 5.1.7

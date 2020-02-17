@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'google_drive', '~> 2.1'
   spec.add_dependency 'googleauth', '0.6.6'
   spec.add_dependency 'jsonapi-resources'
-  spec.add_dependency 'puma', '~> 3.11'
+  spec.add_dependency 'puma', '>= 3.11'
   spec.add_dependency 'rails', '>= 5.2' # We're going to need to require support for webpacker given the usage of rswag-ui to generate Swagger documentation
   spec.add_dependency 'rswag', '2.0.6' # Blocked until 2.1.z resolved https://github.com/rswag/rswag/issues/248
   spec.add_dependency 'ruby-box'
