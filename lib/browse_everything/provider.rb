@@ -2,6 +2,7 @@
 require 'google/apis/drive_v3'
 require 'googleauth'
 require 'googleauth/stores/file_token_store'
+require_relative 'provider/file_system'
 require_relative 'provider/google_drive'
 
 module BrowseEverything
@@ -86,10 +87,12 @@ module BrowseEverything
       nil
     end
 
+    def externally_authorized?
+      !authorization_url.nil?
+    end
+
     def auth_token
       nil
     end
-
-    class FileSystem < Provider; end
   end
 end

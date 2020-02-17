@@ -25,7 +25,7 @@ module BrowseEverything
 
       def root_container
         batch_request_path
-        build_root_container(children: @resources)
+        build_root_container
       end
 
       # Provides a URL for authorizing against Google Drive

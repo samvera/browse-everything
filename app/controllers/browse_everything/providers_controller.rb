@@ -14,7 +14,7 @@ module BrowseEverything
     end
 
     def show
-      @provider = Provider.build(**provider_attributes)
+      @provider = current_provider
       @serializer = ProviderSerializer.new(@provider)
       respond_to do |format|
         format.json { render json: @serializer.serialized_json }
@@ -26,14 +26,22 @@ module BrowseEverything
     # The persisted authorization is used to validate the JSON Web Token
     # transmitted in requests
     def authorize
-      @authorization = Authorization.build(**authorization_attributes)
+      build_attributes = if current_provider.externally_authorized?
+                           authorization_attributes
+                         else
+                           {}
+                         end
+      @authorization = Authorization.build(**build_attributes)
       @authorization.save
 
       # Construct and return the JWT
       @json_web_token = build_json_web_token(@authorization)
       @auth_token = { authToken: @json_web_token }
       respond_to do |format|
-        format.json { render json: json_response }
+        format.json do
+          json_response = JSON.generate(@auth_token)
+          render json: json_response
+        end
         format.html { render 'browse_everything/authorize' }
       end
     end
@@ -41,13 +49,16 @@ module BrowseEverything
     private
 
       def provider_params
-        params.permit(:id)
+        params.permit(:provider_id)
       end
 
       def provider_attributes
-        default_values = { host: request.host, port: request.port }
-        values = default_values.merge(provider_params)
-        values.to_h.symbolize_keys
+        values = { host: request.host, port: request.port, id: provider_params[:provider_id] }
+        values.symbolize_keys
+      end
+
+      def current_provider
+        Provider.build(**provider_attributes)
       end
 
       def authorization_params
