@@ -48,6 +48,15 @@ module BrowseEverything
         end
       end
       alias find_by where
+
+      def all
+        session_models = orm_class.all
+        models = session_models
+        models.map do |model|
+          new_attributes = JSON.parse(model.session)
+          build(**new_attributes.symbolize_keys)
+        end
+      end
     end
 
     # Generate the attributes used for serialization
@@ -91,12 +100,12 @@ module BrowseEverything
       authorizations.last.code
     end
 
-    def provider
-      @provider ||= Provider.build(id: provider_id, auth_code: auth_code, host: host, port: port)
+    def driver
+      @driver ||= Driver.build(id: provider_id, auth_code: auth_code, host: host, port: port)
     end
 
-    delegate :root_container, to: :provider
-    delegate :authorization_url, to: :provider
+    delegate :root_container, to: :driver
+    delegate :authorization_url, to: :driver
 
     private
 

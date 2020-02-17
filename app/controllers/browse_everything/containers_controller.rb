@@ -42,11 +42,15 @@ module BrowseEverything
       decoded_id = CGI.unescape(id)
       decoded_id = decoded_id.gsub('&#x0002E;', '.')
       @container = find_container(id: decoded_id)
+      # Refactor this
+      raise ResourceNotFound if @container.nil?
       @serialized = serialize(@container)
 
       respond_to do |format|
         format.json_api { render json: @serialized }
       end
+    rescue ResourceNotFound => not_found_error
+      head(:not_found)
     end
 
     private
@@ -70,8 +74,8 @@ module BrowseEverything
         @session
       end
 
-      delegate :provider, to: :session
-      delegate :find_container, :root_container, to: :provider
+      delegate :driver, to: :session
+      delegate :find_container, :root_container, to: :driver
 
       # This is a work-around which might violate the JSON-API spec.
       # It may also simply be a bug in fast_json_api

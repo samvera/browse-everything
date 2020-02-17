@@ -68,6 +68,15 @@ module BrowseEverything
         end
       end
       alias find_by where
+
+      def all
+        upload_models = orm_class.all
+        models = upload_models
+        models.map do |model|
+          new_attributes = JSON.parse(model.upload)
+          build(**new_attributes.symbolize_keys)
+        end
+      end
     end
 
     # Generate the attributes used for serialization
@@ -91,6 +100,7 @@ module BrowseEverything
 
     alias id uuid
     delegate :save, :save!, :destroy, :destroy!, to: :orm # Persistence methods
+    # @todo There needs to be a callback here if #destroy and #destroy! remove downloaded files
 
     # Sessions are responsible for managing the relationships to authorizations
     delegate :authorizations, :auth_code, to: :session

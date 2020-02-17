@@ -1,239 +1,281 @@
 # frozen_string_literal: true
-
 require 'google/apis/drive_v3'
 require 'googleauth'
 require 'googleauth/stores/file_token_store'
-require_relative 'authentication_factory'
 
 module BrowseEverything
-  module Driver
-    class GoogleDrive < Base
-      class << self
-        attr_accessor :authentication_klass
-
-        def default_authentication_klass
-          Google::Auth::UserAuthorizer
-        end
+  class Driver
+    # The Drivers class for interfacing with Google Drive as a storage provider
+    class GoogleDrive < BrowseEverything::Driver
+      # Determine whether or not a Google Drive resource is a Folder
+      # @return [Boolean]
+      def self.folder?(gdrive_file)
+        gdrive_file.mime_type == 'application/vnd.google-apps.folder'
       end
 
-      attr_reader :credentials
-
-      # Constructor
-      # @param config_values [Hash] configuration for the driver
-      def initialize(config_values)
-        self.class.authentication_klass ||= self.class.default_authentication_klass
-        super(config_values)
+      def find_bytestream(id:)
+        gdrive_file = drive_service.get_file(id, fields: 'id, name, modifiedTime, size, mimeType')
+        build_bytestream(gdrive_file)
       end
 
-      # The token here must be set using a Hash
-      # @param value [String, Hash] the new access token
-      def token=(value)
-        # This is invoked within BrowseEverythingController using a Hash
-        value = value.fetch('access_token') if value.is_a? Hash
-
-        # Restore the credentials if the access token string itself has been cached
-        restore_credentials(value) if @credentials.nil?
-
-        super(value)
+      def find_container(id:)
+        gdrive_container = drive_service.get_file(id, fields: 'id, name, modifiedTime')
+        build_container(gdrive_container)
       end
 
-      def icon
-        'google-plus-sign'
-      end
-
-      # Validates the configuration for the Google Drive provider
-      def validate_config
-        raise InitializationError, 'GoogleDrive driver requires a :client_id argument' unless config[:client_id]
-        raise InitializationError, 'GoogleDrive driver requires a :client_secret argument' unless config[:client_secret]
-      end
-
-      # Retrieve the file details
-      # @param file [Google::Apis::DriveV3::File] the Google Drive File
-      # @param path [String] path for the resource details (unused)
-      # @return [BrowseEverything::FileEntry] file entry for the resource node
-      def details(file, _path = '')
-        mime_folder = file.mime_type == 'application/vnd.google-apps.folder'
-        BrowseEverything::FileEntry.new(
-          file.id,
-          "#{key}:#{file.id}",
-          file.name,
-          file.size.to_i,
-          file.modified_time || Time.new,
-          mime_folder,
-          mime_folder ? 'directory' : file.mime_type
-        )
-      end
-
-      # Lists the files given a Google Drive context
-      # @param drive [Google::Apis::DriveV3::DriveService] the Google Drive context
-      # @param request_params [RequestParameters] the object containing the parameters for the Google Drive API request
-      # @param path [String] the path (default to the root)
-      # @return [Array<BrowseEverything::FileEntry>] file entries for the path
-      def list_files(drive, request_params, path: '')
-        drive.list_files(request_params.to_h) do |file_list, error|
-          # Raise an exception if there was an error Google API's
-          if error.present?
-            # In order to properly trigger reauthentication, the token must be cleared
-            # Additionally, the error is not automatically raised from the Google Client
-            @token = nil
-            raise error
-          end
-
-          values = file_list.files.map do |gdrive_file|
-            details(gdrive_file, path)
-          end
-          @entries += values.compact
-
-          request_params.page_token = file_list.next_page_token
-        end
-
-        @entries += list_files(drive, request_params, path: path) if request_params.page_token.present?
-      end
-
-      # Retrieve the files for any given resource on Google Drive
-      # @param path [String] the root or Folder path for which to list contents
-      # @return [Array<BrowseEverything::FileEntry>] file entries for the path
-      def contents(path = '')
-        @entries = []
-        drive_service.batch do |drive|
-          request_params = Auth::Google::RequestParameters.new
-          request_params.q += " and '#{path}' in parents " if path.present?
-          list_files(drive, request_params, path: path)
-        end
-
-        @sorter.call(@entries)
-      end
-
-      # Retrieve a link for a resource
-      # @param id [String] identifier for the resource
-      # @return [Array<String, Hash>] authorized link to the resource
-      def link_for(id)
-        file = drive_service.get_file(id, fields: 'id, name, size')
-        auth_header = { 'Authorization' => "Bearer #{credentials.access_token}" }
-        extras = {
-          auth_header: auth_header,
-          expires: 1.hour.from_now,
-          file_name: file.name,
-          file_size: file.size.to_i
-        }
-        [download_url(id), extras]
+      def root_container
+        batch_request_path
+        build_root_container
       end
 
       # Provides a URL for authorizing against Google Drive
       # @return [String] the URL
-      def auth_link(*_args)
+      def authorization_url
         Addressable::URI.parse(authorizer.get_authorization_url)
       end
 
-      # Whether or not the current provider is authorized
-      # @return [true,false]
-      def authorized?
-        @token.present?
-      end
-
-      # Client ID for authorizing against the Google API's
-      # @return [Google::Auth::ClientId]
-      def client_id
-        @client_id ||= Google::Auth::ClientId.from_hash(client_secrets)
-      end
-
-      # Token store file used for authorizing against the Google API's
-      # (This is fundamentally used to temporarily cache access tokens)
-      # @return [Google::Auth::Stores::FileTokenStore]
-      def token_store
-        Google::Auth::Stores::FileTokenStore.new(file: file_token_store_path)
-      end
-
-      def session
-        AuthenticationFactory.new(
-          self.class.authentication_klass,
-          client_id,
-          scope,
-          token_store,
-          callback
-        )
-      end
-
-      delegate :authenticate, to: :session
-
-      # Authorization Object for Google API
-      # @return [Google::Auth::UserAuthorizer]
-      def authorizer
-        @authorizer ||= authenticate
-      end
-
-      # Request to authorize the provider
-      # This is *the* method which, passing an HTTP request, redeems an authorization code for an access token
-      # @return [String] a new access token
-      def authorize!
-        @credentials = authorizer.get_credentials_from_code(user_id: user_id, code: code)
-        @token = @credentials.access_token
-        @code = nil # The authorization code can only be redeemed for an access token once
-        @token
-      end
-
-      # This is the method accessed by the BrowseEverythingController for authorizing using an authorization code
-      # @param params [Hash] HTTP response passed to the OAuth callback
-      # @param _data [Object,nil] an unused parameter
-      # @return [String] a new access token
-      def connect(params, _data, _url_options)
-        @code = params[:code]
-        authorize!
-      end
-
-      # Construct a new object for interfacing with the Google Drive API
-      # @return [Google::Apis::DriveV3::DriveService]
-      def drive_service
-        Google::Apis::DriveV3::DriveService.new.tap do |s|
-          s.authorization = credentials
-        end
+      # Generate the URL for the API callback
+      # Note: this is tied to the routes used for the OAuth callbacks
+      # @return [String]
+      def callback
+        provider_authorize_url(callback_options)
       end
 
       private
 
+        def build_root_container
+          bytestreams = @resources.select { |child| child.is_a?(Bytestream) }
+          containers = @resources.select { |child| child.is_a?(Container) }
+          Container.new(
+            id: '/',
+            bytestreams: bytestreams,
+            containers: containers,
+            location: '',
+            name: 'root',
+            mtime: DateTime.current
+          )
+        end
+
+        def build_container(gdrive_container)
+          location = "key:#{gdrive_container.id}"
+          modified_time = gdrive_container.modified_time || Time.new.utc
+          batch_request_path(gdrive_container.id)
+          bytestreams = @resources.select { |child| child.is_a?(Bytestream) }
+          containers = @resources.select { |child| child.is_a?(Container) }
+
+          Container.new(
+            id: gdrive_container.id,
+            bytestreams: bytestreams,
+            containers: containers,
+            location: location,
+            name: gdrive_container.name,
+            mtime: modified_time
+          )
+        end
+
+        def build_bytestream(gdrive_file)
+          location = "key:#{gdrive_file.id}"
+          modified_time = gdrive_file.modified_time || Time.new.utc
+
+          BrowseEverything::Bytestream.new(
+            id: gdrive_file.id,
+            location: location,
+            name: gdrive_file.name,
+            size: gdrive_file.size.to_i,
+            mtime: modified_time,
+            media_type: gdrive_file.mime_type,
+            uri: build_download_url(gdrive_file.id)
+          )
+        end
+
+        def build_download_url(id)
+          "https://www.googleapis.com/drive/v3/files/#{id}?alt=media"
+        end
+
+        def build_resource(gdrive_file, bytestream_tree, container_tree)
+          location = "key:#{gdrive_file.id}"
+          modified_time = gdrive_file.modified_time || Time.new.utc
+
+          if self.class.folder?(gdrive_file)
+            bytestream_ids = []
+            container_ids = []
+
+            bytestream_ids = bytestream_tree[gdrive_file.id] if bytestream_tree.key?(gdrive_file.id)
+            container_ids = container_tree[gdrive_file.id] if container_tree.key?(gdrive_file.id)
+            # @todo this should invoke #build_container
+            BrowseEverything::Container.new(
+              id: gdrive_file.id,
+              bytestream_ids: bytestream_ids,
+              container_ids: container_ids,
+              location: location,
+              name: gdrive_file.name,
+              mtime: modified_time
+            )
+          else
+            # @todo this should invoke #build_bytestream
+            BrowseEverything::Bytestream.new(
+              id: gdrive_file.id,
+              location: location,
+              name: gdrive_file.name,
+              size: gdrive_file.size.to_i,
+              mtime: modified_time,
+              media_type: gdrive_file.mime_type,
+              uri: build_download_url(gdrive_file.id)
+            )
+          end
+        end
+
+        # This should be renamed, given that the path is passed in the
+        # request_params Hash
+        def request_path(drive:, request_params:)
+          resources = []
+          @resources = []
+          container_tree = {}
+          bytestream_tree = {}
+
+          drive.list_files(request_params.to_h) do |file_list, error|
+            # Raise an exception if there was an error Google API's
+            raise error if error.present?
+
+            members = file_list.files
+            members.map do |gdrive_file|
+              # All GDrive Folders have File entries
+              if self.class.folder?(gdrive_file)
+                container_tree[gdrive_file.id] = []
+                bytestream_tree[gdrive_file.id] = []
+              end
+              resources << gdrive_file.id
+
+              # A GDrive file may have multiple parents
+              gdrive_file.parents do |parent|
+                if resources.include?(parent)
+                  if self.class.folder?(gdrive_file)
+                    container_tree[parent] << gdrive_file.id
+                  else
+                    bytestream_tree[parent] << gdrive_file.id
+                  end
+                end
+              end
+            end
+
+            # This ensures that the entire tree is build for the objects
+            resources = members.map do |gdrive_file|
+              # Here the API responses are parsed into BrowseEverything objects
+              build_resource(gdrive_file, bytestream_tree, container_tree)
+            end
+
+            # This is needed (rather than returning the results) given the
+            # manner by which Google Drive API transactions are undertaken
+            @resources += resources
+            request_params.page_token = file_list.next_page_token
+          end
+
+          # Recurse if there are more pages of results
+          request_path(drive: drive, request_params: request_params) if request_params.page_token.present?
+        end
+
+        def batch_request_path(path = '')
+          drive_service.batch do |drive|
+            request_params = Auth::Google::RequestParameters.new
+            request_params.q += " and '#{path}' in parents " if path.present?
+            request_path(drive: drive, request_params: request_params)
+          end
+          @resources
+        end
+
+        def config
+          values = BrowseEverything.config['google_drive'] || {
+            client_id: nil,
+            client_secret: nil
+          }
+
+          OpenStruct.new(values)
+        end
+
         def client_secrets
           {
             Google::Auth::ClientId::WEB_APP => {
-              Google::Auth::ClientId::CLIENT_ID => config[:client_id],
-              Google::Auth::ClientId::CLIENT_SECRET => config[:client_secret]
+              Google::Auth::ClientId::CLIENT_ID => config.client_id,
+              Google::Auth::ClientId::CLIENT_SECRET => config.client_secret
             }
           }
+        end
+
+        # Client ID for authorizing against the Google API's
+        # @return [Google::Auth::ClientId]
+        def client_id
+          @client_id ||= Google::Auth::ClientId.from_hash(client_secrets)
+        end
+
+        def scope
+          Google::Apis::DriveV3::AUTH_DRIVE_READONLY
         end
 
         # This is required for using the googleauth Gem
         # @see http://www.rubydoc.info/gems/googleauth/Google/Auth/Stores/FileTokenStore FileTokenStore for googleauth
         # @return [Tempfile] temporary file within which to cache credentials
         def file_token_store_path
-          Tempfile.new('gdrive.yaml')
+          Rails.root.join('gdrive.yml')
         end
 
-        def scope
-          Google::Apis::DriveV3::AUTH_DRIVE
+        # Token store file used for authorizing against the Google API's
+        # (This is fundamentally used to temporarily cache access tokens)
+        # @return [Google::Auth::Stores::FileTokenStore]
+        def token_store
+          Google::Auth::Stores::FileTokenStore.new(file: file_token_store_path)
+        end
+
+        def build_user_authorizer
+          Google::Auth::UserAuthorizer.new(
+            client_id,
+            scope,
+            token_store,
+            callback
+          )
+        end
+
+        # Authorization Object for Google API
+        # @return [Google::Auth::UserAuthorizer]
+        def authorizer
+          @authorizer ||= build_user_authorizer
         end
 
         # Provides the user ID for caching access tokens
         # (This is a hack which attempts to anonymize the access tokens)
         # @return [String] the ID for the user
         def user_id
-          'current_user'
+          'browse_everything'
         end
 
-        # Please see https://developers.google.com/drive/v3/web/manage-downloads
-        # @param id [String] the ID for the Google Drive File
-        # @return [String] the URL for the file download
-        def download_url(id)
-          "https://www.googleapis.com/drive/v3/files/#{id}?alt=media"
-        end
+        # The authorization code is retrieved from the session
+        # @raise [Signet::AuthorizationError] this error is raised if the authorization is invalid
+        def credentials
+          @credentials = authorizer.get_credentials(user_id)
+          # Renew the access token if the credentials are non-existent or expired
+          if @credentials.nil? || @credentials.expired?
+            @credentials = authorizer.get_and_store_credentials_from_code(user_id: user_id, code: @auth_code)
+            return @credentials
+          end
 
-        # Restore the credentials for the Google API
-        # @param access_token [String] the access token redeemed using an authorization code
-        # @return Credentials credentials restored from a cached access token
-        def restore_credentials(access_token)
-          client = Auth::Google::Credentials.new
-          client.client_id = client_id.id
-          client.client_secret = client_id.secret
-          client.update_token!('access_token' => access_token)
-          @credentials = client
+          # This should work with simply redeeming the code with @credentials
+          # Why this is needed should be further explored
+          overridden_credentials = Auth::Google::Credentials.new
+          overridden_credentials.client_id = client_id.id
+          overridden_credentials.client_secret = client_id.secret
+          overridden_credentials.update_token!('access_token' => @credentials.access_token)
+          @credentials = overridden_credentials
+        end
+        delegate :access_token, to: :credentials
+        alias auth_token access_token
+
+        # Construct a new object for interfacing with the Google Drive API
+        # @return [Google::Apis::DriveV3::DriveService]
+        def drive_service
+          raise StandardError if auth_code.nil?
+
+          Google::Apis::DriveV3::DriveService.new.tap do |drive_service|
+            drive_service.authorization = credentials
+          end
         end
     end
   end

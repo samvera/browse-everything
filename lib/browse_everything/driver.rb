@@ -2,25 +2,25 @@
 require 'google/apis/drive_v3'
 require 'googleauth'
 require 'googleauth/stores/file_token_store'
-require_relative 'provider/file_system'
-require_relative 'provider/google_drive'
+require_relative 'driver/file_system'
+require_relative 'driver/google_drive'
 
 module BrowseEverything
-  class Provider
+  class Driver
     include BrowseEverything::Engine.routes.url_helpers
 
     attr_accessor :auth_code
 
-    def self.provider_class_for(provider_name)
-      "BrowseEverything::Provider::#{provider_name.camelize}".constantize
+    def self.driver_class_for(driver_name)
+      "BrowseEverything::Driver::#{driver_name.camelize}".constantize
     rescue NameError
-      Rails.logger.warn("Provider #{provider_name} is not supported in BrowseEverything")
+      Rails.logger.warn("Driver #{driver_name} is not supported in BrowseEverything")
       self
     end
 
     def self.build(id:, auth_code: nil, host: 'http://localhost', port: 80)
-      provider_class = provider_class_for(id)
-      provider_class.new(auth_code: auth_code, host: host, port: port)
+      driver_class = driver_class_for(id)
+      driver_class.new(auth_code: auth_code, host: host, port: port)
     end
 
     def self.config
