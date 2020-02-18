@@ -37,6 +37,10 @@ jobs:
       - samvera/rubocop
 
       - run:
+          name: Install Karma for JavaScript and functional tests
+          command: sudo npm install -g karma karma-jasmine karma-chrome-launcher
+
+      - run:
           name: Run rspec in parallel
           command: |
             mkdir /tmp/test-results
