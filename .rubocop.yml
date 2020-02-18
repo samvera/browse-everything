@@ -9,9 +9,6 @@ AllCops:
 
 Rails:
   Enabled: true
-Rails/FilePath:
-  Exclude:
-    - 'lib/generators/browse_everything/config_generator.rb'
 
 Metrics/ClassLength:
   Max: 130
@@ -48,7 +45,7 @@ Style/NumericLiterals:
   MinDigits: 7
 
 Layout/IndentationConsistency:
-  EnforcedStyle: rails
+  EnforcedStyle: indented_internal_methods
 
 Naming/FileName:
   Exclude:
