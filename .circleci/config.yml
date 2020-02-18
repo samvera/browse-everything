@@ -40,7 +40,7 @@ jobs:
           name: Run rspec in parallel
           command: |
             mkdir /tmp/test-results
-            bundle exec rspec --exclude-pattern "**/integration/*_spec.rb" $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec rspec --exclude-pattern "swagger/**/*_spec.rb" $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
       - store_test_results:
           path: /tmp/test-results
       - store_artifacts:

@@ -1,3 +1,3 @@
 --color
 --require spec_helper
---exclude-pattern "**/integration/*_spec.rb"
+--exclude-pattern "swagger/**/*_spec.rb"

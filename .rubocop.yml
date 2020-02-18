@@ -24,6 +24,7 @@ Metrics/BlockLength:
   Exclude:
     - '*.gemspec'
     - 'spec/**/*'
+    - 'swagger/spec/**/*'
 
 RSpec/NestedGroups:
   Enabled: false
@@ -43,16 +44,23 @@ RSpec/MultipleExpectations:
 
 RSpec/EmptyExampleGroup:
   Exclude:
-    - 'spec/integration/authorizations_spec.rb'
-    - 'spec/integration/bytestreams_spec.rb'
-    - 'spec/integration/containers_spec.rb'
-    - 'spec/integration/providers_spec.rb'
-    - 'spec/integration/sessions_spec.rb'
-    - 'spec/integration/uploads_spec.rb'
+    - 'swagger/spec/integration/authorizations_spec.rb'
+    - 'swagger/spec/integration/bytestreams_spec.rb'
+    - 'swagger/spec/integration/containers_spec.rb'
+    - 'swagger/spec/integration/providers_spec.rb'
+    - 'swagger/spec/integration/sessions_spec.rb'
+    - 'swagger/spec/integration/uploads_spec.rb'
     - 'spec/controllers/browse_everything/sessions_controller_spec.rb'
 
 Style/NumericLiterals:
   MinDigits: 7
+
+Style/HashEachMethods:
+  Enabled: false
+Style/HashTransformKeys:
+  Enabled: false
+Style/HashTransformValues:
+  Enabled: false
 
 Layout/IndentationConsistency:
   EnforcedStyle: indented_internal_methods

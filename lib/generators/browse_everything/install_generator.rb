@@ -83,8 +83,8 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   end
 
   def install_swagger_tests
-    FileUtils.mkdir_p Rails.root.join('spec', 'integration')
-    pattern = Rails.root.join('..', 'spec', 'integration', '*_spec.rb').to_s
+    FileUtils.mkdir_p Rails.root.join('swagger', 'spec', 'integration')
+    pattern = Rails.root.join('..', 'swagger', 'spec', 'integration', '*_spec.rb').to_s
     Dir.glob(pattern).each do |test_file_path|
       basename = File.basename(test_file_path)
       target_path = Rails.root.join('spec', 'integration', basename)
