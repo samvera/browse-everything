@@ -1,9 +1,7 @@
 inherit_from: .rubocop_todo.yml
-inherit_gem:
-  bixby: bixby_default.yml
 
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.7
   DisplayCopNames: true
   Exclude:
     - 'vendor/**/*'

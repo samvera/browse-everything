@@ -36,7 +36,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'thor', '~> 0.19'
   spec.add_dependency 'typhoeus'
 
-  spec.add_development_dependency 'bixby', '>= 1.0'
   spec.add_development_dependency 'bundler', '>= 1.3.0' # This is needed for Rails 6.y.z
   spec.add_development_dependency 'capybara'
   spec.add_development_dependency 'chromedriver-helper', '~> 2.1'
