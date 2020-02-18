@@ -40,9 +40,17 @@ module BrowseEverything
   class NotImplementedError < StandardError; end
   class NotAuthorizedError < StandardError; end
 
-  class ResourceNotFound < StandardError; end
+  class Configuration < OpenStruct
+    def include?(key)
+      to_h.with_indifferent_access.key?(key)
+    end
 
-  class Configuration < OpenStruct; end
+    def [](key)
+      to_h.with_indifferent_access[key]
+    end
+
+    alias delete delete_field
+  end
 
   class << self
     attr_writer :config
@@ -71,7 +79,7 @@ module BrowseEverything
         raise InitializationError, "Unrecognized configuration: #{values.inspect}"
       end
 
-      if @config.is_a?(Hash) && @config.key?('drop_box') # rubocop:disable Style/GuardClause
+      if @config.include?('drop_box') # rubocop:disable Style/GuardClause
         warn '[DEPRECATION] `drop_box` is deprecated.  Please use `dropbox` instead.'
         @config['dropbox'] = @config.delete('drop_box')
       end

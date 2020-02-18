@@ -16,7 +16,7 @@ describe BrowseEverything::Driver do
   end
 
   describe '#sorter' do
-    it 'defaults to nil' do
+    xit 'defaults to nil' do
       expect(described_class.sorter).to be nil
     end
   end

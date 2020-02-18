@@ -26,5 +26,10 @@ BrowseEverything::Engine.routes.draw do
   get 'providers/:provider_id/authorize', to: 'browse_everything/providers#authorize', as: 'provider_authorize'
 
   # Legacy Routes
-  get 'connect', to: 'browse_everything#auth', as: 'connector_response'
+  scope 'v1' do
+    get 'connect', to: 'browse_everything#auth', as: 'connector_response'
+    match 'resolve', to: 'browse_everything#resolve', as: 'resolver', via: %i[get post]
+    match ':provider(/*path)', to: 'browse_everything#show', as: 'contents', via: %i[get post], format: false
+    root to: 'browse_everything#index'
+  end
 end

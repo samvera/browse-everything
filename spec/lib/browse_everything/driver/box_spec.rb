@@ -54,7 +54,7 @@ describe BrowseEverything::Driver::Box do
     subject { provider.auth_link }
 
     it { is_expected.to start_with('https://www.box.com/api/oauth2/authorize') }
-    it { is_expected.to include('browse%2Fconnect') }
+    it { is_expected.to include(CGI.escape('browse/v1/connect')) }
     it { is_expected.to include('response_type') }
   end
 
