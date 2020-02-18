@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module BrowseEverything
   class Driver
     # The Driver class for interfacing with a file system as a storage provider

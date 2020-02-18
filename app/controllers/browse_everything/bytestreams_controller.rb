@@ -11,19 +11,21 @@ module BrowseEverything
       @bytestream = find_bytestream(id: decoded_id)
       # Refactor this
       raise ResourceNotFound if @bytestream.nil?
+
       @serialized = serialize(@bytestream)
 
       respond_to do |format|
         format.json_api { render json: @serialized }
       end
-    rescue ResourceNotFound => not_found_error
+    rescue ResourceNotFound => e
       head(:not_found)
     end
 
     private
-##
 
-##
+      ##
+
+      ##
 
       def id
         params[:id]

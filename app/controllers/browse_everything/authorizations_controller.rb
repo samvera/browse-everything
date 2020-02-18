@@ -10,6 +10,7 @@ module BrowseEverything
     def show
       authorizations = Authorization.find_by(uuid: id)
       raise ResourceNotFound if authorizations.empty?
+
       @authorization = authorizations.first
 
       @serializer = AuthorizationSerializer.new(@authorization)
@@ -17,17 +18,18 @@ module BrowseEverything
       respond_to do |format|
         format.json_api { render json: @serializer.serialized_json }
       end
-    rescue ResourceNotFound => not_found_error
+    rescue ResourceNotFound => e
       head(:not_found)
     end
 
     def destroy
       authorizations = Authorization.find_by(uuid: id)
       raise ResourceNotFound if authorizations.empty?
+
       @authorization = authorizations.first
       @authorization.destroy
       head(:success)
-    rescue ResourceNotFound => not_found_error
+    rescue ResourceNotFound => e
       head(:not_found)
     end
 

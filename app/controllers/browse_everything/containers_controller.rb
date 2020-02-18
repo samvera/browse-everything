@@ -45,12 +45,13 @@ module BrowseEverything
       @container = find_container(id: decoded_id)
       # Refactor this
       raise ResourceNotFound if @container.nil?
+
       @serialized = serialize(@container)
 
       respond_to do |format|
         format.json_api { render json: @serialized }
       end
-    rescue ResourceNotFound => not_found_error
+    rescue ResourceNotFound => e
       head(:not_found)
     end
 

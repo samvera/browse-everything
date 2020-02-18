@@ -18,7 +18,7 @@ module BrowseEverything
         end
 
         def token_param
-          return json_api_params[:token] if self.respond_to?(:json_api_params)
+          return json_api_params[:token] if respond_to?(:json_api_params)
 
           token_header || params[:token]
         end

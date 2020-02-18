@@ -25,6 +25,17 @@ Metrics/BlockLength:
     - '*.gemspec'
     - 'spec/**/*'
     - 'swagger/spec/**/*'
+Metrics/MethodLength:
+  Exclude:
+    - 'lib/browse_everything/driver/google_drive.rb'
+
+Lint/UselessAssignment:
+  Exclude:
+    - 'app/controllers/browse_everything/authorizations_controller.rb'
+    - 'app/controllers/browse_everything/bytestreams_controller.rb'
+    - 'app/controllers/browse_everything/containers_controller.rb'
+    - 'app/controllers/browse_everything/sessions_controller.rb'
+    - 'app/controllers/browse_everything/uploads_controller.rb'
 
 RSpec/NestedGroups:
   Enabled: false
@@ -32,7 +43,7 @@ RSpec/NestedGroups:
 RSpec/DescribeClass:
   Exclude:
     - 'spec/javascripts/**/*'
-    
+
 RSpec/LeadingSubject:
   Enabled: false
 

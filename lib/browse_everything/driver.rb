@@ -7,7 +7,8 @@ require_relative 'driver/file_system'
 require_relative 'driver/google_drive'
 
 module BrowseEverything
-  class Driver
+  # This replaces (but should not) replace the Base Driver Class
+  class Provider
     include BrowseEverything::Engine.routes.url_helpers
 
     attr_accessor :auth_code
