@@ -12,6 +12,13 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
     generate 'browse_everything:config'
   end
 
+  def add_webpacker
+    return unless Rails.version =~ /^5\./
+
+    append_to_file 'Gemfile', "\ngem 'webpacker'"
+    Bundler.clean_system 'bundle install --quiet'
+  end
+
   def install_webpacker
     rake 'webpacker:install'
   end
