@@ -53,7 +53,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   def install_rspec
     run 'rspec --init'
     insert_into_file 'spec/spec_helper.rb', before: 'RSpec.configure do |config|' do
-      "\nrequire 'rails'\nrequire 'rspec'\nrequire 'rspec-rails'\n"
+      "\nrequire 'rails'\nrequire 'rspec'\nrequire 'rspec/rails'\n"
     end
   end
 

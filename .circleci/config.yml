@@ -36,7 +36,16 @@ jobs:
 
       - samvera/rubocop
 
-      - samvera/parallel_rspec
+      - run:
+          name: Run rspec in parallel
+          command: |
+            mkdir /tmp/test-results
+            bundle exec rspec --exclude-pattern "**/integration/*_spec.rb" $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+      - store_test_results:
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
 
 workflows:
   ci:
