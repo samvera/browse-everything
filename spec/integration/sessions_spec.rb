@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 require 'jwt'
 
@@ -30,7 +32,7 @@ RSpec.describe 'Session resources', type: :request do
           }
         }
       end
-      security [ apiKey: [] ]
+      security [apiKey: []]
 
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
@@ -47,10 +49,10 @@ RSpec.describe 'Session resources', type: :request do
                 attributes: {
                   provider_id: { type: :string }
                 }
-              },
+              }
             }
           },
-          required: [ 'data' ]
+          required: ['data']
         }
       )
 
@@ -72,7 +74,7 @@ RSpec.describe 'Session resources', type: :request do
                       items: [
                         { type: :string }
                       ]
-                    },
+                    }
                   }
                 },
                 relationships: {
@@ -103,12 +105,12 @@ RSpec.describe 'Session resources', type: :request do
                       }
                     }
                   }
-                },
+                }
               },
               required: ['id']
             }
           },
-          required: [ 'data' ]
+          required: ['data']
         )
 
         run_test!
@@ -142,7 +144,7 @@ RSpec.describe 'Session resources', type: :request do
 
     get 'retrieves all existing sessions' do
       # Tests #index
-      security [ apiKey: [] ]
+      security [apiKey: []]
       produces 'application/vnd.api+json'
 
       response '200', 'session exists' do
@@ -167,13 +169,13 @@ RSpec.describe 'Session resources', type: :request do
                         { type: { type: :string } },
                         { attributes: { type: :object } }
                       ]
-                    },
-                  },
+                    }
+                  }
                 }
               ]
             }
           },
-          required: [ 'data' ]
+          required: ['data']
         )
         run_test!
       end
@@ -197,7 +199,7 @@ RSpec.describe 'Session resources', type: :request do
 
     delete 'retrieves an existing session' do
       # Tests #destroy
-      security [ apiKey: [] ]
+      security [apiKey: []]
       produces 'application/vnd.api+json'
       parameter name: :id, in: :path, type: :string
 
@@ -212,7 +214,7 @@ RSpec.describe 'Session resources', type: :request do
 
     get 'retrieves an existing session' do
       # Tests #show
-      security [ apiKey: [] ]
+      security [apiKey: []]
       produces 'application/vnd.api+json'
       parameter name: :id, in: :path, type: :string
 
@@ -237,12 +239,12 @@ RSpec.describe 'Session resources', type: :request do
                       { type: { type: :string } },
                       { attributes: { type: :object } }
                     ]
-                  },
-                },
-              },
+                  }
+                }
+              }
             }
           },
-          required: [ 'data' ]
+          required: ['data']
         )
         run_test!
       end
@@ -251,7 +253,6 @@ RSpec.describe 'Session resources', type: :request do
         let(:id) { 'invalid' }
         run_test!
       end
-
     end
   end
 end

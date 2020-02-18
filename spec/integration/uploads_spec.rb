@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 require 'jwt'
 
@@ -25,49 +27,47 @@ RSpec.describe 'Upload resources', type: :request do
 
   path '/browse/uploads' do
     get 'retrieves all persisted uploads' do
-      security [ apiKey: [] ]
+      security [apiKey: []]
       produces 'application/vnd.api+json'
 
       response '200', 'uploads exist' do
         schema(type: :object,
-          properties: {
-            data: {
-              type: :array,
-              items: [
-                type: :object,
-                properties: {
-                  id: { type: :string },
-                  type: { type: :string },
-                  attributes: {
-                    type: :object,
-                    properties: {
-                      session_id: { type: :string },
-                      bytestream_ids: {
-                        type: :array
+               properties: {
+                 data: {
+                   type: :array,
+                   items: [
+                     type: :object,
+                     properties: {
+                       id: { type: :string },
+                       type: { type: :string },
+                       attributes: {
+                         type: :object,
+                         properties: {
+                           session_id: { type: :string },
+                           bytestream_ids: {
+                             type: :array
 
-                      },
-                      container_ids: {
-                        type: :array
+                           },
+                           container_ids: {
+                             type: :array
 
-                      }
-                    }
-                  },
-                  relationships: {
-                    type: :object,
-                    properties: {
-                      session: {
-                        type: :object
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          required: [ 'data' ]
-        )
+                           }
+                         }
+                       },
+                       relationships: {
+                         type: :object,
+                         properties: {
+                           session: {
+                             type: :object
+                           }
+                         }
+                       }
+                     }
+                   ]
+                 }
+               },
+               required: ['data'])
         run_test!
-
       end
     end
 
@@ -83,7 +83,7 @@ RSpec.describe 'Upload resources', type: :request do
         }
       end
 
-      security [ apiKey: [] ]
+      security [apiKey: []]
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
       parameter(
@@ -103,7 +103,7 @@ RSpec.describe 'Upload resources', type: :request do
                       type: :array,
                       items: [
                         { id: { type: :string } }
-                      ],
+                      ]
                     },
                     container_ids: {
                       type: :array,
@@ -116,53 +116,52 @@ RSpec.describe 'Upload resources', type: :request do
               }
             }
           },
-          required: [ 'data' ]
+          required: ['data']
         }
       )
 
       response '201', 'upload was created' do
         schema(type: :object,
-          properties: {
-            data: {
-              type: :object,
-              properties: {
-                id: { type: :string },
-                type: { type: :string },
-                attributes: {
-                  type: :object,
-                  properties: {
-                    session_id: { type: :string },
-                    bytestream_ids: {
-                      type: :array,
-                      items: [
-                        { id: { type: :string } }
-                      ],
+               properties: {
+                 data: {
+                   type: :object,
+                   properties: {
+                     id: { type: :string },
+                     type: { type: :string },
+                     attributes: {
+                       type: :object,
+                       properties: {
+                         session_id: { type: :string },
+                         bytestream_ids: {
+                           type: :array,
+                           items: [
+                             { id: { type: :string } }
+                           ]
 
-                    },
-                    container_ids: {
-                      type: :array,
-                      items: [
-                        { id: { type: :string } }
-                      ],
+                         },
+                         container_ids: {
+                           type: :array,
+                           items: [
+                             { id: { type: :string } }
+                           ]
 
-                    }
-                  }
-                },
-                relationships: {
-                  type: :object,
-                  properties: {
-                    session: {
-                      type: :object
+                         }
+                       }
+                     },
+                     relationships: {
+                       type: :object,
+                       properties: {
+                         session: {
+                           type: :object
 
-                    }
+                         }
 
-                  }
-                }
-              }
-            }
-          },
-          required: [ 'data' ]
-        )
+                       }
+                     }
+                   }
+                 }
+               },
+               required: ['data'])
 
         run_test!
       end
@@ -179,7 +178,7 @@ RSpec.describe 'Upload resources', type: :request do
 
     delete 'deletes an existing upload' do
       # Tests #show
-      security [ apiKey: [] ]
+      security [apiKey: []]
       produces 'application/vnd.api+json'
       parameter name: :id, in: :path, type: :string
 
@@ -193,47 +192,46 @@ RSpec.describe 'Upload resources', type: :request do
     end
 
     get 'retrieves an upload for selection files for ingest' do
-      security [ apiKey: [] ]
+      security [apiKey: []]
       produces 'application/vnd.api+json'
-      parameter name: :id, :in => :path, :type => :string
+      parameter name: :id, in: :path, type: :string
 
       response '200', 'upload exists' do
         schema(type: :object,
-          properties: {
-            data: {
-              type: :object,
-              properties: {
-                id: { type: :string },
-                type: { type: :string },
-                attributes: {
-                  type: :object,
-                  properties: {
-                    session_id: { type: :string },
-                    bytestream_ids: {
-                      type: :array
+               properties: {
+                 data: {
+                   type: :object,
+                   properties: {
+                     id: { type: :string },
+                     type: { type: :string },
+                     attributes: {
+                       type: :object,
+                       properties: {
+                         session_id: { type: :string },
+                         bytestream_ids: {
+                           type: :array
 
-                    },
-                    container_ids: {
-                      type: :array
+                         },
+                         container_ids: {
+                           type: :array
 
-                    }
-                  }
-                },
-                relationships: {
-                  type: :object,
-                  properties: {
-                    session: {
-                      type: :object
+                         }
+                       }
+                     },
+                     relationships: {
+                       type: :object,
+                       properties: {
+                         session: {
+                           type: :object
 
-                    }
+                         }
 
-                  }
-                }
-              }
-            }
-          },
-          required: [ 'data' ]
-        )
+                       }
+                     }
+                   }
+                 }
+               },
+               required: ['data'])
         run_test!
       end
 
@@ -242,6 +240,5 @@ RSpec.describe 'Upload resources', type: :request do
         run_test!
       end
     end
-
   end
 end

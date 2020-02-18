@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 require 'pry-byebug'
 require 'jwt'
@@ -27,7 +29,7 @@ RSpec.describe 'Container resources', type: :request do
 
   path '/browse/sessions/{session_id}/containers' do
     get 'it retrieves the root directory or folder from the provider' do
-      security [ apiKey: [] ]
+      security [apiKey: []]
 
       produces 'application/vnd.api+json'
       parameter name: :session_id, in: :path, type: :string
@@ -48,7 +50,7 @@ RSpec.describe 'Container resources', type: :request do
                     name: { type: :string },
                     mtime: { type: :string }
                   },
-                  required: [ 'id', 'name', 'mtime' ]
+                  required: %w[id name mtime]
                 },
                 relationships: {
                   bytestreams: {
@@ -65,12 +67,12 @@ RSpec.describe 'Container resources', type: :request do
                       { attributes: { type: :object } },
                       { relationships: { type: :object } }
                     ]
-                  },
-                },
-              },
+                  }
+                }
+              }
             }
           },
-          required: [ 'data' ]
+          required: ['data']
         )
         run_test!
       end
@@ -79,10 +81,10 @@ RSpec.describe 'Container resources', type: :request do
 
   path '/browse/sessions/{session_id}/containers/{id}' do
     get 'it retrieves a directory or folder from the provider' do
-      security [ apiKey: [] ]
+      security [apiKey: []]
       produces 'application/vnd.api+json'
-      parameter name: :session_id, :in => :path, :type => :string
-      parameter name: :id, :in => :path, :type => :string
+      parameter name: :session_id, in: :path, type: :string
+      parameter name: :id, in: :path, type: :string
 
       response '200', 'when the container exists' do
         let(:file_path) { Rails.root.to_s }
@@ -102,7 +104,7 @@ RSpec.describe 'Container resources', type: :request do
                     name: { type: :string },
                     mtime: { type: :string }
                   },
-                  required: [ 'id', 'name', 'mtime' ]
+                  required: %w[id name mtime]
                 },
                 relationships: {
                   bytestreams: {
@@ -119,12 +121,12 @@ RSpec.describe 'Container resources', type: :request do
                       { attributes: { type: :object } },
                       { relationships: { type: :object } }
                     ]
-                  },
-                },
-              },
+                  }
+                }
+              }
             }
           },
-          required: [ 'data' ]
+          required: ['data']
         )
 
         run_test!

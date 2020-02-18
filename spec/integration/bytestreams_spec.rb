@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 require 'pry-byebug'
 require 'jwt'
@@ -27,10 +29,10 @@ RSpec.describe 'Bytestream resources', type: :request do
 
   path '/browse/sessions/{session_id}/bytestreams/{id}' do
     get 'it retrieves a file or asset from the provider' do
-      security [ apiKey: [] ]
+      security [apiKey: []]
       produces 'application/vnd.api+json'
-      parameter name: :session_id, :in => :path, :type => :string
-      parameter name: :id, :in => :path, :type => :string
+      parameter name: :session_id, in: :path, type: :string
+      parameter name: :id, in: :path, type: :string
 
       response '200', 'when the bytestream exists' do
         let(:file_path) { Rails.root.join('Gemfile').to_s }
@@ -50,13 +52,13 @@ RSpec.describe 'Bytestream resources', type: :request do
                     name: { type: :string },
                     mtime: { type: :string }
                   },
-                  required: [ 'name', 'mtime', 'media_type', 'uri', 'size', 'location' ]
+                  required: %w[name mtime media_type uri size location]
                 },
-                required: [ 'id', 'type', 'attributes' ]
+                required: %w[id type attributes]
               }
             }
           },
-          required: [ 'data' ]
+          required: ['data']
         )
 
         run_test!

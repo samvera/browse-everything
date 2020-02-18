@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 require 'pry-byebug'
 require 'jwt'
@@ -15,7 +17,7 @@ RSpec.describe 'Authorizations resources', type: :request do
   path '/browse/authorizations/{id}' do
     delete 'retrieves an existing session' do
       # Tests #destroy
-      security [ apiKey: [] ]
+      security [apiKey: []]
       produces 'application/vnd.api+json'
       parameter name: :id, in: :path, type: :string
 
@@ -29,9 +31,9 @@ RSpec.describe 'Authorizations resources', type: :request do
     end
 
     get 'it retrieves an established authorization' do
-      security [ apiKey: [] ]
+      security [apiKey: []]
       produces 'application/vnd.api+json'
-      parameter name: :id, :in => :path, :type => :string
+      parameter name: :id, in: :path, type: :string
 
       response '200', 'when the authorization is successfully created' do
         schema(
@@ -48,12 +50,12 @@ RSpec.describe 'Authorizations resources', type: :request do
                     id: { type: :string },
                     code: { type: :string }
                   },
-                  required: [ 'code' ]
+                  required: ['code']
                 },
-                required: [ 'id', 'type', 'attributes' ]
-              },
+                required: %w[id type attributes]
+              }
             },
-            required: [ 'data' ]
+            required: ['data']
           }
         )
 

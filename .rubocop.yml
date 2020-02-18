@@ -41,6 +41,15 @@ RSpec/ExampleLength:
 RSpec/MultipleExpectations:
   Enabled: false
 
+RSpec/EmptyExampleGroup:
+  Exclude:
+    - 'spec/integration/authorizations_spec.rb'
+    - 'spec/integration/bytestreams_spec.rb'
+    - 'spec/integration/containers_spec.rb'
+    - 'spec/integration/providers_spec.rb'
+    - 'spec/integration/sessions_spec.rb'
+    - 'spec/integration/uploads_spec.rb'
+
 Style/NumericLiterals:
   MinDigits: 7
 
