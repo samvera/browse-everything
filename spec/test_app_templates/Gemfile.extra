@@ -1,4 +1,4 @@
 gem 'jquery-rails'
 gem 'puma-rails'
-
 gem 'rack-cors'
+gem 'webpacker'
