@@ -24,4 +24,7 @@ BrowseEverything::Engine.routes.draw do
   #   This would probably violate the principles of RESTful architecture
   # This is a custom action for the OAuth callback
   get 'providers/:provider_id/authorize', to: 'browse_everything/providers#authorize', as: 'provider_authorize'
+
+  # Legacy Routes
+  get 'connect', to: 'browse_everything#auth', as: 'connector_response'
 end

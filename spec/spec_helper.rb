@@ -86,6 +86,6 @@ module BrowserConfigHelper
   end
 
   def unstub_configuration
-    BrowseEverything.configure(nil)
+    BrowseEverything.reset_configuration
   end
 end

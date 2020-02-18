@@ -61,17 +61,17 @@ module BrowseEverything
     end
 
     def configure(values = {})
-      if value.is_a?(Hash)
-        @config = ActiveSupport::HashWithIndifferentAccess.new value
+      if values.is_a?(Hash)
+        @config = ActiveSupport::HashWithIndifferentAccess.new(values)
         @config = Configuration.new(values)
-      elsif value.is_a?(String)
+      elsif values.is_a?(String)
         # There should be a deprecation warning issued here
         parse_config_file(values)
       else
-        raise InitializationError, "Unrecognized configuration: #{value.inspect}"
+        raise InitializationError, "Unrecognized configuration: #{values.inspect}"
       end
 
-      if @config.include? 'drop_box' # rubocop:disable Style/GuardClause
+      if @config.is_a?(Hash) && @config.key?('drop_box') # rubocop:disable Style/GuardClause
         warn '[DEPRECATION] `drop_box` is deprecated.  Please use `dropbox` instead.'
         @config['dropbox'] = @config.delete('drop_box')
       end
@@ -79,6 +79,10 @@ module BrowseEverything
 
     def config
       @config ||= parse_config_file(default_config_file_path)
+    end
+
+    def reset_configuration
+      @config = nil
     end
   end
 end
