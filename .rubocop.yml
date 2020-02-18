@@ -55,13 +55,6 @@ RSpec/EmptyExampleGroup:
 Style/NumericLiterals:
   MinDigits: 7
 
-Style/HashEachMethods:
-  Enabled: false
-Style/HashTransformKeys:
-  Enabled: false
-Style/HashTransformValues:
-  Enabled: false
-
 Layout/IndentationConsistency:
   EnforcedStyle: indented_internal_methods
 
