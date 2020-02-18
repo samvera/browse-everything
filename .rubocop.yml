@@ -49,6 +49,7 @@ RSpec/EmptyExampleGroup:
     - 'spec/integration/providers_spec.rb'
     - 'spec/integration/sessions_spec.rb'
     - 'spec/integration/uploads_spec.rb'
+    - 'spec/controllers/browse_everything/sessions_controller_spec.rb'
 
 Style/NumericLiterals:
   MinDigits: 7
