@@ -2,19 +2,21 @@
 
 BrowseEverything::Engine.routes.draw do
   # Supporting other RESTful operations should be done for sessions
-  resources :sessions, controller: 'browse_everything/sessions', only: [:create, :show, :destroy, :index] do
+  resources :sessions, controller: 'browse_everything/sessions', only: %i[create update] do
     # I'm not certain what :index would imply here - but it might be useful to
     # request all possible containers within the scope of a
     # session
     resources :bytestreams, controller: 'browse_everything/bytestreams', only: [:show]
-    resources :containers, controller: 'browse_everything/containers', only: [:show, :index]
-  end
-  # This actually is not used by the current client - should these be exposed?
-  resources :authorizations, controller: 'browse_everything/authorizations', only: [:show, :destroy]
+    resources :containers, controller: 'browse_everything/containers', only: %i[show index]
 
-  resources :providers, controller: 'browse_everything/providers', only: [:show, :index]
-  # We cannot support updating uploads, as then we would need to cancel the job for the files
-  resources :uploads, controller: 'browse_everything/uploads', only: [:create, :show, :destroy, :index]
+    # Supporting PUT and PATCH requests has me nervous, as Uploads should be
+    # used to create a queue of BrowseEverything::UploadJobs
+    #
+    # :index would also be useful here
+  end
+  resources :authorizations, controller: 'browse_everything/authorizations', only: %i[create show]
+  resources :providers, controller: 'browse_everything/providers', only: %i[show index]
+  resources :uploads, controller: 'browse_everything/uploads', only: %i[create show]
 
   # This is the route which will be needed for the OAuth callback URL
   # Rails defaults to accepting POST requests, so this might not work

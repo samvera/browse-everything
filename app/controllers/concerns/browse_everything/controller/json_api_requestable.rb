@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module BrowseEverything
   module Controller
     module JsonApiRequestable

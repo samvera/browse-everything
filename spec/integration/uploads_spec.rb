@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'swagger_helper'
 
 RSpec.describe 'Upload resources', type: :request do
@@ -30,7 +31,7 @@ RSpec.describe 'Upload resources', type: :request do
                    }
                  }
                },
-               required: ['id', 'data']
+               required: %w[id data]
 
         run_test!
       end
@@ -53,7 +54,7 @@ RSpec.describe 'Upload resources', type: :request do
                  }
                },
 
-               required: ['id', 'data']
+               required: %w[id data]
         let(:id) { 'foo' }
         run_test!
       end

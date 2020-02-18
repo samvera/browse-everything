@@ -9,6 +9,7 @@ module BrowseEverythingHelper
     v1, v2 = value.split('/', 2)
     m1, m2 = matcher.split('/', 2)
     return false if m1 != '*' && v1 != m1
+
     m2.nil? || m2 == '*' || m2 == v2
   end
 

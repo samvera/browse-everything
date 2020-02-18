@@ -33,7 +33,7 @@ describe BrowseEverything::Retriever do
 
       before do
         stub_request(
-          :head, "https://drive.google.com/uc?export=download&id=id"
+          :head, 'https://drive.google.com/uc?export=download&id=id'
         ).and_return(
           headers: {
             'Content-Length' => '1234'
@@ -41,7 +41,7 @@ describe BrowseEverything::Retriever do
         )
 
         stub_request(
-          :get, "https://drive.google.com/uc?export=download&id=id"
+          :get, 'https://drive.google.com/uc?export=download&id=id'
         ).and_return(
           headers: {
             'Content-Length' => '1234'
@@ -101,7 +101,7 @@ describe BrowseEverything::Retriever do
     context 'when retrieving data using chunked-encoded streams' do
       before do
         stub_request(
-          :get, "https://retrieve.cloud.example.com/some/dir/file.pdf"
+          :get, 'https://retrieve.cloud.example.com/some/dir/file.pdf'
         ).and_return(
           headers: {
             'Content-Type' => 'text/plain'
@@ -124,7 +124,7 @@ describe BrowseEverything::Retriever do
     context 'when downloading content' do
       before do
         stub_request(
-          :get, "https://retrieve.cloud.example.com/some/dir/file.pdf"
+          :get, 'https://retrieve.cloud.example.com/some/dir/file.pdf'
         ).and_return(
           headers: {
             'Content-Type' => 'text/plain'
@@ -156,9 +156,10 @@ describe BrowseEverything::Retriever do
         }
       end
       let(:download_options) { spec['0'] }
+
       before do
         stub_request(
-          :get, "https://retrieve.cloud.example.com/some/dir/file_error.pdf"
+          :get, 'https://retrieve.cloud.example.com/some/dir/file_error.pdf'
         ).and_return(
           status: 403
         )
@@ -232,9 +233,10 @@ describe BrowseEverything::Retriever do
 
     context 'when can retrieve' do
       let(:url) { 'https://retrieve.cloud.example.com/some/dir/can_retrieve.pdf' }
+
       before do
         stub_request(
-          :get, "https://retrieve.cloud.example.com/some/dir/can_retrieve.pdf"
+          :get, 'https://retrieve.cloud.example.com/some/dir/can_retrieve.pdf'
         ).to_return(
           status: 206,
           body: '%'
@@ -248,9 +250,10 @@ describe BrowseEverything::Retriever do
 
     context 'when cannot retrieve' do
       let(:url) { 'https://retrieve.cloud.example.com/some/dir/cannot_retrieve.pdf' }
+
       before do
         stub_request(
-          :get, "https://retrieve.cloud.example.com/some/dir/cannot_retrieve.pdf"
+          :get, 'https://retrieve.cloud.example.com/some/dir/cannot_retrieve.pdf'
         ).to_return(
           status: 403
         )

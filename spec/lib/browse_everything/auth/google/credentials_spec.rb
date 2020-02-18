@@ -19,6 +19,10 @@ describe BrowseEverything::Auth::Google::Credentials do
       allow(faraday).to receive(:default_connection).and_return(connection)
     end
 
+    after do
+      WebMock.enable!
+    end
+
     context 'when an access has already been retrieved' do
       before do
         credentials.access_token = 'test-token'
@@ -33,10 +37,6 @@ describe BrowseEverything::Auth::Google::Credentials do
     it 'requests a new token from the OAuth provider' do
       expect(credentials.fetch_access_token).to be_a Hash
       expect(credentials.fetch_access_token).to eq({})
-    end
-
-    after do
-      WebMock.enable!
     end
   end
 end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module BrowseEverything
   class Authorization
     include ActiveModel::Serialization
@@ -54,7 +55,7 @@ module BrowseEverything
     # Build the JSON-API serializer Object
     # @return [AuthorizationSerializer]
     def serializer
-      @serialize ||= self.class.serializer_class.new(self)
+      @serializer ||= self.class.serializer_class.new(self)
     end
 
     alias id uuid

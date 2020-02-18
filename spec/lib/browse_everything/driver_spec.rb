@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 describe BrowseEverything::Driver do
-  let(:my_driver) do
-    MyDriver.new
-  end
-
-  before do
-    class MyDriver
+  let(:my_driver_class) do
+    Class.new do
       include BrowseEverything::Driver
 
       def get_sorter # rubocop:disable Naming/AccessorMethodName
         sorter
       end
     end
+  end
+
+  let(:my_driver) do
+    my_driver_class.new
   end
 
   describe '#sorter' do

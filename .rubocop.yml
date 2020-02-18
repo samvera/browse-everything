@@ -15,7 +15,7 @@ Metrics/ClassLength:
   Exclude:
     - 'lib/browse_everything/driver/google_drive.rb'
     - 'lib/browse_everything/provider/google_drive.rb'
-Metrics/LineLength:
+Layout/LineLength:
   Max: 400
   Exclude:
     - 'spec/lib/browse_everything/driver/box_spec.rb'

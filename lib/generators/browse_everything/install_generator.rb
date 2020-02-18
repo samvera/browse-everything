@@ -13,11 +13,11 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   end
 
   def install_webpacker
-    rake "webpacker:install"
+    rake 'webpacker:install'
   end
 
   def copy_migrations
-    rake "browse_everything_engine:install:migrations"
+    rake 'browse_everything_engine:install:migrations'
   end
 
   # This should be removed with --skip-turbolinks, and that is passed in
@@ -26,7 +26,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
     gsub_file('Gemfile', /gem 'turbolinks'.*$/, '')
     # This is specific to Rails 5.2.z releases
     if Rails.version =~ /^5\./
-      gsub_file('app/assets/javascripts/application.js', /\/\/= require turbolinks.*$/, '')
+      gsub_file('app/assets/javascripts/application.js', %r{//= require turbolinks.*$}, '')
     elsif File.exist?(Rails.root.join('app', 'assets', 'javascripts', 'application.js'))
       # This is specific to Rails 6.y.z releases
       gsub_file('app/assets/javascripts/application.js', /require\("turbolinks".*$/, '')
@@ -34,7 +34,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   end
 
   def install_active_storage
-    rake "active_storage:install"
+    rake 'active_storage:install'
   end
 
   def install_rack_cors
@@ -45,7 +45,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
             resource '*', headers: :any, methods: [:get, :post, :options]
           end
         end
-      RUBY
+    RUBY
   end
 
   # Things get more complicated here with RSpec

@@ -9,10 +9,11 @@ class UploadJob < ApplicationJob
 
     # Download the containers
     upload.container_ids.each do |container_id|
-      container = driver.find_container(id: container_id)
-      container.bytestreams.each do |bytestream|
-        bytestream = driver.find_bytestream(id: bytestream_id)
-        persisted = create_upload_file(bytestream: bytestream)
+      container = provider.find_container(id: container_id)
+      # @todo Fix the _bytestream
+      container.bytestreams.each do |_bytestream|
+        retrieved_bytestream = provider.find_bytestream(id: bytestream_id)
+        persisted = create_upload_file(bytestream: retrieved_bytestream)
         upload.file_ids << persisted.id
       end
     end
@@ -39,6 +40,7 @@ class UploadJob < ApplicationJob
 
     def session
       return if upload.nil? || upload.session_id.blank?
+
       @session ||= begin
                     sessions = BrowseEverything::Session.find_by(uuid: upload.session_id)
                     sessions.first

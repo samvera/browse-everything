@@ -117,6 +117,7 @@ describe BrowseEverything::Driver::Dropbox do
 
     describe '#link_for' do
       subject(:link_args) { driver.link_for('/Getting Started.pdf') }
+
       before do
         stub_request(
           :post, 'https://content.dropboxapi.com/2/files/download'

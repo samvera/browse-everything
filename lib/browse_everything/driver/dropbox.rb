@@ -110,8 +110,8 @@ module BrowseEverything
         downloaded_file = downloaded_file_for(path)
         size = File.size(downloaded_file.path)
         size.to_i
-      rescue StandardError => error
-        Rails.logger.error "Failed to find the file size for #{path}: #{error}"
+      rescue StandardError => e
+        Rails.logger.error "Failed to find the file size for #{path}: #{e}"
         0
       end
 

@@ -46,7 +46,7 @@ describe BrowseEverything::Driver::S3 do
       expect { described_class.new(bucket: 'bucket', region: 'us-east-1', response_type: :foo) }.to raise_error(BrowseEverything::InitializationError)
     end
 
-    context 'deprecating :signed_url' do
+    context 'with the deprecated :signed_url config. setting' do
       it 'sets the value of :signed_url to :response_type' do
         driver = described_class.new(bucket: 'bucket', region: 'us-east-1', signed_url: false)
         expect(driver.config).not_to have_key(:signed_url)

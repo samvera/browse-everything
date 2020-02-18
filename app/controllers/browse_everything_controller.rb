@@ -27,11 +27,11 @@ class BrowseEverythingController < ActionController::Base
   # provider#show method is invoked here
   def show
     render partial: 'files', layout: !request.xhr?
-  rescue StandardError => error
+  rescue StandardError => e
     reset_provider_session!
 
     # Should an error be raised, log the error and redirect the use to reauthenticate
-    logger.warn "Failed to retrieve the hosted files: #{error}"
+    logger.warn "Failed to retrieve the hosted files: #{e}"
     render partial: 'auth', layout: !request.xhr?
   end
 
@@ -70,6 +70,7 @@ class BrowseEverythingController < ActionController::Base
     # Clears all authentication tokens, codes, and other data from the Rails session
     def reset_provider_session!
       return unless @provider_session
+
       @provider_session.token = nil
       @provider_session.code = nil
       @provider_session.data = nil

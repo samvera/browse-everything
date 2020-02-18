@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 module BrowseEverything
-  class Driver
-    # The Driver class for interfacing with a file system as a storage provider
-    class FileSystem < BrowseEverything::Driver
+  class Provider
+    # The Provider class for interfacing with a file system as a storage provider
+    class FileSystem < BrowseEverything::Provider
       # Determine whether or not a file system node is a directory
       # @return [Boolean]
       def self.directory?(file_system_node)
@@ -26,22 +27,9 @@ module BrowseEverything
         build_container(directory)
       end
 
-      # Construct a FileEntry objects for a file-system resource
-      # @param path [String] path to the file
-      # @param display [String] display label for the resource
-      # @return [BrowseEverything::FileEntry]
-      def details(path, display = File.basename(path))
-        return nil unless File.exist? path
-
-        info = File::Stat.new(path)
-        BrowseEverything::FileEntry.new(
-          make_pathname(path),
-          [key, path].join(':'),
-          display,
-          info.size,
-          info.mtime,
-          info.directory?
-        )
+      def root_container
+        root_id = config[:home]
+        find_container(id: root_id)
       end
 
       private
@@ -106,11 +94,10 @@ module BrowseEverything
           end
         end
 
-        def file_size(path)
-          File.size(path).to_i
-        rescue StandardError => e
-          Rails.logger.error "Failed to find the file size for #{path}: #{e}"
-          0
+        def traverse_directory(directory)
+          @resources = []
+          @resources = find_container_children(directory)
+          @resources += find_bytestream_children(directory)
         end
     end
   end

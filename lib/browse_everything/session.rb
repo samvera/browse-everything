@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module BrowseEverything
   class Session
     attr_accessor :uuid, :provider_id, :host, :port, :authorization_ids
@@ -75,7 +76,7 @@ module BrowseEverything
     # Build the JSON-API serializer Object
     # @return [SessionSerializer]
     def serializer
-      @serialize ||= self.class.serializer_class.new(self)
+      @serializer ||= self.class.serializer_class.new(self)
     end
 
     alias id uuid
