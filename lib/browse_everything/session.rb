@@ -102,7 +102,7 @@ module BrowseEverything
     end
 
     def driver
-      @driver ||= Driver.build(id: provider_id, auth_code: auth_code, host: host, port: port)
+      @driver ||= Provider.build(id: provider_id, auth_code: auth_code, host: host, port: port)
     end
 
     delegate :root_container, to: :driver

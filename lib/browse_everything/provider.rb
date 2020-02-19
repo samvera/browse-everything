@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative 'provider/file_system'
+require_relative 'provider/google_drive'
+
 module BrowseEverything
   # This replaces (but should not) replace the Base Driver Class
   class Provider
@@ -8,7 +11,7 @@ module BrowseEverything
     attr_accessor :auth_code
 
     def self.driver_class_for(driver_name)
-      "BrowseEverything::Driver::#{driver_name.camelize}".constantize
+      "BrowseEverything::Provider::#{driver_name.camelize}".constantize
     rescue NameError
       Rails.logger.warn("Driver #{driver_name} is not supported in BrowseEverything")
       self

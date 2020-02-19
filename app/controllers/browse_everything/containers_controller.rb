@@ -36,6 +36,7 @@ module BrowseEverything
     rescue Google::Apis::ClientError => e
       head(:unauthorized, body: e.message)
     rescue StandardError => e
+      binding.pry
       head(:unauthorized, body: e.message)
     end
 

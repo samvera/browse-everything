@@ -60,7 +60,7 @@ module BrowseEverything
       end
 
       def current_provider
-        Driver.build(**provider_attributes)
+        Provider.build(**provider_attributes)
       end
 
       def authorization_params

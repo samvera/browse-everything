@@ -36,8 +36,8 @@ module BrowseEverything
   end
 
   autoload :Provider, 'browse_everything/provider'
-  autoload :FileSystem, 'browse_everything/provider/file_system'
-  autoload :GoogleDrive, 'browse_everything/provider/google_drive'
+  #autoload :Provider::FileSystem, 'browse_everything/provider/file_system'
+  #autoload :Provider::GoogleDrive, 'browse_everything/provider/google_drive'
 
   module Auth
     module Google
