@@ -65,7 +65,7 @@ class UploadJob < ApplicationJob
 
     def create_upload_file(bytestream:)
       io = if bytestream.file_uri?
-             file_path = bytestream.location.gsub('file://', '')
+             file_path = bytestream.uri.gsub('file://', '')
              File.new(file_path)
            else
              build_download(bytestream.uri, request_headers)

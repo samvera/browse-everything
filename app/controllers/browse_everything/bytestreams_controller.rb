@@ -23,10 +23,6 @@ module BrowseEverything
 
     private
 
-      ##
-
-      ##
-
       def id
         params[:id]
       end
