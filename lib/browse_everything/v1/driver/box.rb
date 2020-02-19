@@ -150,6 +150,6 @@ module BrowseEverything
             BrowseEverything::FileEntry.new(file.id, "#{key}:#{file.id}", file.name, file.size, file.created_at, file.type == 'folder')
           end
       end
-  end
+    end
   end
 end

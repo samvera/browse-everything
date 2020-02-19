@@ -155,6 +155,6 @@ module BrowseEverything
             add_files(listing, path)
           end
       end
-  end
+    end
   end
 end

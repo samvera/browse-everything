@@ -115,6 +115,6 @@ module BrowseEverything
             0
           end
       end
-  end
+    end
   end
 end

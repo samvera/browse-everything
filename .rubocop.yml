@@ -13,13 +13,14 @@ Rails:
 Metrics/ClassLength:
   Max: 130
   Exclude:
-    - 'lib/browse_everything/driver/google_drive.rb'
+    - 'lib/browse_everything/v1/driver/google_drive.rb'
     - 'lib/browse_everything/provider/google_drive.rb'
 Layout/LineLength:
   Max: 400
   Exclude:
-    - 'spec/lib/browse_everything/driver/box_spec.rb'
-    - 'spec/lib/browse_everything/driver/dropbox_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/box_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/dropbox_spec.rb'
+
 Metrics/BlockLength:
   Exclude:
     - '*.gemspec'
@@ -27,7 +28,8 @@ Metrics/BlockLength:
     - 'swagger/spec/**/*'
 Metrics/MethodLength:
   Exclude:
-    - 'lib/browse_everything/driver/google_drive.rb'
+    - 'lib/browse_everything/v1/driver/google_drive.rb'
+    - 'lib/browse_everything/provider/google_drive.rb'
 
 Lint/UselessAssignment:
   Exclude:
@@ -77,12 +79,12 @@ Naming/FileName:
 
 Style/MixinUsage:
   Exclude:
-    - 'spec/lib/browse_everything/driver/s3_spec.rb'
-    - 'spec/lib/browse_everything/driver/google_drive_spec.rb'
-    - 'spec/lib/browse_everything/driver/file_system_spec.rb'
-    - 'spec/lib/browse_everything/driver/dropbox_spec.rb'
-    - 'spec/lib/browse_everything/driver/box_spec.rb'
-    - 'spec/lib/browse_everything/driver/base_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/s3_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/google_drive_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/file_system_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/dropbox_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/box_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/base_spec.rb'
     - 'spec/lib/browse_everything/browser_spec.rb'
     - 'spec/services/browser_factory_spec.rb'
     - 'spec/helper/browse_everything_controller_helper_spec.rb'

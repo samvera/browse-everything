@@ -178,6 +178,6 @@ module BrowseEverything
             File.expand_path(dir_path)
           end
       end
-  end
+    end
   end
 end

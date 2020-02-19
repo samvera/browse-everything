@@ -280,6 +280,6 @@ module BrowseEverything
             end
           end
       end
-  end
+    end
   end
 end
