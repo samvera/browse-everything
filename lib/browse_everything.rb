@@ -24,9 +24,20 @@ module BrowseEverything
   autoload :Session, 'browse_everything/session'
   autoload :Upload, 'browse_everything/upload'
 
-  autoload :Driver, 'browse_everything/driver'
-  autoload :FileSystem, 'browse_everything/driver/file_system'
-  autoload :GoogleDrive, 'browse_everything/driver/google_drive'
+  module V1
+    module Driver
+      autoload :Base, 'browse_everything/v1/driver/base'
+      autoload :Box, 'browse_everything/v1/driver/box'
+      autoload :Dropbox, 'browse_everything/v1/driver/dropbox'
+      autoload :FileSystem, 'browse_everything/v1/driver/file_system'
+      autoload :GoogleDrive, 'browse_everything/v1/driver/google_drive'
+      autoload :S3, 'browse_everything/v1/driver/s3'
+    end
+  end
+
+  autoload :Provider, 'browse_everything/provider'
+  autoload :FileSystem, 'browse_everything/provider/file_system'
+  autoload :GoogleDrive, 'browse_everything/provider/google_drive'
 
   module Auth
     module Google

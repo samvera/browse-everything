@@ -5,9 +5,9 @@ require 'googleauth'
 require 'googleauth/stores/file_token_store'
 
 module BrowseEverything
-  class Driver
+  class Provider
     # The Drivers class for interfacing with Google Drive as a storage provider
-    class GoogleDrive < BrowseEverything::Driver
+    class GoogleDrive < BrowseEverything::Provider
       # Determine whether or not a Google Drive resource is a Folder
       # @return [Boolean]
       def self.folder?(gdrive_file)

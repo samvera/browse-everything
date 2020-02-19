@@ -2,7 +2,7 @@
 
 include BrowserConfigHelper
 
-describe BrowseEverything::Driver::Dropbox do
+describe BrowseEverything::V1::Driver::Dropbox do
   let(:browser) { BrowseEverything::Browser.new(url_options) }
   let(:provider) { browser.providers['dropbox'] }
   let(:provider_yml) do

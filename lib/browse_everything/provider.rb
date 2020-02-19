@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-require 'google/apis/drive_v3'
-require 'googleauth'
-require 'googleauth/stores/file_token_store'
-require_relative 'driver/file_system'
-require_relative 'driver/google_drive'
-
 module BrowseEverything
   # This replaces (but should not) replace the Base Driver Class
   class Provider

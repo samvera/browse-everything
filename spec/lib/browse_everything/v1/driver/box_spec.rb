@@ -2,7 +2,7 @@
 
 include BrowserConfigHelper
 
-describe BrowseEverything::Driver::Box do
+describe BrowseEverything::V1::Driver::Box do
   subject { provider }
 
   let(:browser) { BrowseEverything::Browser.new(url_options) }

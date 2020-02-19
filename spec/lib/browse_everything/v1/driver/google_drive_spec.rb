@@ -2,7 +2,7 @@
 
 include BrowserConfigHelper
 
-describe BrowseEverything::Driver::GoogleDrive do
+describe BrowseEverything::V1::Driver::GoogleDrive do
   let(:browser) { BrowseEverything::Browser.new(url_options) }
   let(:provider) { browser.providers['google_drive'] }
   let(:provider_yml) do
