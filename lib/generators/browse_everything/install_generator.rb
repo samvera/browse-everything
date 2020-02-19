@@ -12,12 +12,19 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
     generate 'browse_everything:config'
   end
 
+  def add_webpacker
+    return unless Rails.version =~ /^5\./
+
+    append_to_file 'Gemfile', "\ngem 'webpacker'"
+    Bundler.clean_system 'bundle install --quiet'
+  end
+
   def install_webpacker
-    rake "webpacker:install"
+    rake 'webpacker:install'
   end
 
   def copy_migrations
-    rake "browse_everything_engine:install:migrations"
+    rake 'browse_everything_engine:install:migrations'
   end
 
   # This should be removed with --skip-turbolinks, and that is passed in
@@ -26,7 +33,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
     gsub_file('Gemfile', /gem 'turbolinks'.*$/, '')
     # This is specific to Rails 5.2.z releases
     if Rails.version =~ /^5\./
-      gsub_file('app/assets/javascripts/application.js', /\/\/= require turbolinks.*$/, '')
+      gsub_file('app/assets/javascripts/application.js', %r{//= require turbolinks.*$}, '')
     elsif File.exist?(Rails.root.join('app', 'assets', 'javascripts', 'application.js'))
       # This is specific to Rails 6.y.z releases
       gsub_file('app/assets/javascripts/application.js', /require\("turbolinks".*$/, '')
@@ -34,7 +41,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   end
 
   def install_active_storage
-    rake "active_storage:install"
+    rake 'active_storage:install'
   end
 
   def install_rack_cors
@@ -45,7 +52,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
             resource '*', headers: :any, methods: [:get, :post, :options]
           end
         end
-      RUBY
+    RUBY
   end
 
   # Things get more complicated here with RSpec
@@ -53,7 +60,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   def install_rspec
     run 'rspec --init'
     insert_into_file 'spec/spec_helper.rb', before: 'RSpec.configure do |config|' do
-      "\nrequire 'rspec'\nrequire 'rspec-rails'\n"
+      "\nrequire 'rails'\nrequire 'rspec'\nrequire 'rspec/rails'\n"
     end
   end
 
@@ -66,8 +73,15 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
 
     generate 'rswag:install'
     gsub_file 'spec/swagger_helper.rb',
-              "config.swagger_root = Rails.root.join('swagger').to_s",
+              "  config.swagger_root = Rails.root.join('swagger').to_s",
               "rails_root_path = Pathname.new(File.dirname(__FILE__))\nconfig.swagger_root = rails_root_path.join('..', 'swagger').to_s"
+    gsub_file 'spec/swagger_helper.rb',
+              "require 'rails_helper'",
+              "require 'spec_helper'"
+
+    insert_into_file 'spec/spec_helper.rb', after: 'require \'rspec/rails\'' do
+      "\nrequire 'rswag'"
+    end
   end
 
   def install_swagger_api_spec
@@ -76,8 +90,8 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   end
 
   def install_swagger_tests
-    FileUtils.mkdir_p Rails.root.join('spec', 'integration')
-    pattern = Rails.root.join('..', 'spec', 'integration', '*_spec.rb').to_s
+    FileUtils.mkdir_p Rails.root.join('swagger', 'spec', 'integration')
+    pattern = Rails.root.join('..', 'swagger', 'spec', 'integration', '*_spec.rb').to_s
     Dir.glob(pattern).each do |test_file_path|
       basename = File.basename(test_file_path)
       target_path = Rails.root.join('spec', 'integration', basename)

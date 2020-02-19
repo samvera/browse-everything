@@ -1,9 +1,7 @@
 inherit_from: .rubocop_todo.yml
-inherit_gem:
-  bixby: bixby_default.yml
 
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.7
   DisplayCopNames: true
   Exclude:
     - 'vendor/**/*'
@@ -11,24 +9,35 @@ AllCops:
 
 Rails:
   Enabled: true
-Rails/FilePath:
-  Exclude:
-    - 'lib/generators/browse_everything/config_generator.rb'
 
 Metrics/ClassLength:
   Max: 130
   Exclude:
-    - 'lib/browse_everything/driver/google_drive.rb'
+    - 'lib/browse_everything/v1/driver/google_drive.rb'
     - 'lib/browse_everything/provider/google_drive.rb'
-Metrics/LineLength:
+Layout/LineLength:
   Max: 400
   Exclude:
-    - 'spec/lib/browse_everything/driver/box_spec.rb'
-    - 'spec/lib/browse_everything/driver/dropbox_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/box_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/dropbox_spec.rb'
+
 Metrics/BlockLength:
   Exclude:
     - '*.gemspec'
     - 'spec/**/*'
+    - 'swagger/spec/**/*'
+Metrics/MethodLength:
+  Exclude:
+    - 'lib/browse_everything/v1/driver/google_drive.rb'
+    - 'lib/browse_everything/provider/google_drive.rb'
+
+Lint/UselessAssignment:
+  Exclude:
+    - 'app/controllers/browse_everything/authorizations_controller.rb'
+    - 'app/controllers/browse_everything/bytestreams_controller.rb'
+    - 'app/controllers/browse_everything/containers_controller.rb'
+    - 'app/controllers/browse_everything/sessions_controller.rb'
+    - 'app/controllers/browse_everything/uploads_controller.rb'
 
 RSpec/NestedGroups:
   Enabled: false
@@ -36,7 +45,7 @@ RSpec/NestedGroups:
 RSpec/DescribeClass:
   Exclude:
     - 'spec/javascripts/**/*'
-    
+
 RSpec/LeadingSubject:
   Enabled: false
 
@@ -46,11 +55,21 @@ RSpec/ExampleLength:
 RSpec/MultipleExpectations:
   Enabled: false
 
+RSpec/EmptyExampleGroup:
+  Exclude:
+    - 'swagger/spec/integration/authorizations_spec.rb'
+    - 'swagger/spec/integration/bytestreams_spec.rb'
+    - 'swagger/spec/integration/containers_spec.rb'
+    - 'swagger/spec/integration/providers_spec.rb'
+    - 'swagger/spec/integration/sessions_spec.rb'
+    - 'swagger/spec/integration/uploads_spec.rb'
+    - 'spec/controllers/browse_everything/sessions_controller_spec.rb'
+
 Style/NumericLiterals:
   MinDigits: 7
 
 Layout/IndentationConsistency:
-  EnforcedStyle: rails
+  EnforcedStyle: indented_internal_methods
 
 Naming/FileName:
   Exclude:
@@ -60,12 +79,12 @@ Naming/FileName:
 
 Style/MixinUsage:
   Exclude:
-    - 'spec/lib/browse_everything/driver/s3_spec.rb'
-    - 'spec/lib/browse_everything/driver/google_drive_spec.rb'
-    - 'spec/lib/browse_everything/driver/file_system_spec.rb'
-    - 'spec/lib/browse_everything/driver/dropbox_spec.rb'
-    - 'spec/lib/browse_everything/driver/box_spec.rb'
-    - 'spec/lib/browse_everything/driver/base_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/s3_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/google_drive_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/file_system_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/dropbox_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/box_spec.rb'
+    - 'spec/lib/browse_everything/v1/driver/base_spec.rb'
     - 'spec/lib/browse_everything/browser_spec.rb'
     - 'spec/services/browser_factory_spec.rb'
     - 'spec/helper/browse_everything_controller_helper_spec.rb'

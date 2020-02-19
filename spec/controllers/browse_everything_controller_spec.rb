@@ -6,7 +6,7 @@ require 'signet/errors'
 RSpec.describe BrowseEverythingController, type: :controller do
   routes { Rails.application.class.routes }
 
-  let(:provider) { instance_double(BrowseEverything::Driver::Base) }
+  let(:provider) { instance_double(BrowseEverything::V1::Driver::Base) }
 
   before do
     allow(provider).to receive(:authorized?).and_return(true)

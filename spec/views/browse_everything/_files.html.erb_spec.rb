@@ -14,7 +14,7 @@ describe 'browse_everything/_files.html.erb', type: :view do
     )
   end
 
-  let(:provider) { instance_double(BrowseEverything::Driver::Base) }
+  let(:provider) { instance_double(BrowseEverything::V1::Driver::Base) }
   let(:page) { Capybara::Node::Simple.new(rendered) }
 
   before do

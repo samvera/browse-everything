@@ -24,9 +24,18 @@ module BrowseEverything
   autoload :Session, 'browse_everything/session'
   autoload :Upload, 'browse_everything/upload'
 
-  autoload :Driver, 'browse_everything/driver'
-  autoload :FileSystem, 'browse_everything/driver/file_system'
-  autoload :GoogleDrive, 'browse_everything/driver/google_drive'
+  module V1
+    module Driver
+      autoload :Base, 'browse_everything/v1/driver/base'
+      autoload :Box, 'browse_everything/v1/driver/box'
+      autoload :Dropbox, 'browse_everything/v1/driver/dropbox'
+      autoload :FileSystem, 'browse_everything/v1/driver/file_system'
+      autoload :GoogleDrive, 'browse_everything/v1/driver/google_drive'
+      autoload :S3, 'browse_everything/v1/driver/s3'
+    end
+  end
+
+  autoload :Provider, 'browse_everything/provider'
 
   module Auth
     module Google
@@ -40,9 +49,17 @@ module BrowseEverything
   class NotImplementedError < StandardError; end
   class NotAuthorizedError < StandardError; end
 
-  class ResourceNotFound < StandardError; end
+  class Configuration < OpenStruct
+    def include?(key)
+      to_h.with_indifferent_access.key?(key)
+    end
 
-  class Configuration < OpenStruct; end
+    def [](key)
+      to_h.with_indifferent_access[key]
+    end
+
+    alias delete delete_field
+  end
 
   class << self
     attr_writer :config
@@ -61,17 +78,17 @@ module BrowseEverything
     end
 
     def configure(values = {})
-      if value.is_a?(Hash)
-        @config = ActiveSupport::HashWithIndifferentAccess.new value
+      if values.is_a?(Hash)
+        @config = ActiveSupport::HashWithIndifferentAccess.new(values)
         @config = Configuration.new(values)
-      elsif value.is_a?(String)
+      elsif values.is_a?(String)
         # There should be a deprecation warning issued here
         parse_config_file(values)
       else
-        raise InitializationError, "Unrecognized configuration: #{value.inspect}"
+        raise InitializationError, "Unrecognized configuration: #{values.inspect}"
       end
 
-      if @config.include? 'drop_box' # rubocop:disable Style/GuardClause
+      if @config.include?('drop_box') # rubocop:disable Style/GuardClause
         warn '[DEPRECATION] `drop_box` is deprecated.  Please use `dropbox` instead.'
         @config['dropbox'] = @config.delete('drop_box')
       end
@@ -79,6 +96,10 @@ module BrowseEverything
 
     def config
       @config ||= parse_config_file(default_config_file_path)
+    end
+
+    def reset_configuration
+      @config = nil
     end
   end
 end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'signet/errors'
 require 'google/apis/errors'
 require 'jwt'
@@ -18,7 +19,7 @@ module BrowseEverything
       respond_to do |format|
         format.json_api { render json: @serialized }
       end
-    rescue Signet::AuthorizationError => authorization_error
+    rescue Signet::AuthorizationError => e
       # Retrieve and destroy the most recent authorization (as it is invalid)
       last_authorization_id = session.authorization_ids.pop
 
@@ -31,11 +32,11 @@ module BrowseEverything
 
       # Update the Session
       session.save
-      head(:forbidden, body: authorization_error.message)
-    rescue Google::Apis::ClientError => client_error
-      head(:unauthorized, body: client_error.message)
-    rescue StandardError => error
-      head(:unauthorized, body: error.message)
+      head(:forbidden, body: e.message)
+    rescue Google::Apis::ClientError => e
+      head(:unauthorized, body: e.message)
+    rescue StandardError => e
+      head(:unauthorized, body: e.message)
     end
 
     def show
@@ -44,12 +45,13 @@ module BrowseEverything
       @container = find_container(id: decoded_id)
       # Refactor this
       raise ResourceNotFound if @container.nil?
+
       @serialized = serialize(@container)
 
       respond_to do |format|
         format.json_api { render json: @serialized }
       end
-    rescue ResourceNotFound => not_found_error
+    rescue ResourceNotFound => e
       head(:not_found)
     end
 

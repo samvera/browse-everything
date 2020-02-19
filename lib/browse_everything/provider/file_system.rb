@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 module BrowseEverything
-  class Driver
-    # The Driver class for interfacing with a file system as a storage provider
-    class FileSystem < BrowseEverything::Driver
+  class Provider
+    # The Provider class for interfacing with a file system as a storage provider
+    class FileSystem < BrowseEverything::Provider
       # Determine whether or not a file system node is a directory
       # @return [Boolean]
       def self.directory?(file_system_node)
@@ -53,7 +54,8 @@ module BrowseEverything
 
         def find_container_children(directory)
           parent_path = Pathname.new(directory.path)
-          dir_children_paths = directory.children.select do |child|
+          children = Dir.children(directory.path)
+          dir_children_paths = children.select do |child|
             File.directory?(parent_path.join(child))
           end
 
@@ -83,7 +85,8 @@ module BrowseEverything
 
         def find_bytestream_children(directory)
           parent_path = Pathname.new(directory.path)
-          file_children_paths = directory.children.select do |child|
+          children = Dir.children(directory.path)
+          file_children_paths = children.select do |child|
             File.file?(parent_path.join(child))
           end
 

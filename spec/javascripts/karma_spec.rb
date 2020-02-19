@@ -10,7 +10,7 @@ describe 'Karma' do
   let(:status)  { runner[2].exitstatus }
 
   it 'expects all karma tests to pass' do
-    $stderr.puts output unless status == 0
+    warn output unless status == 0
     expect(status).to eq(0)
   end
 end

@@ -2,7 +2,7 @@
 
 include BrowserConfigHelper
 
-describe BrowseEverything::Driver::FileSystem do
+describe BrowseEverything::V1::Driver::FileSystem do
   let(:home)    { File.expand_path(BrowseEverything.config['file_system'][:home]) }
   let(:browser) { BrowseEverything::Browser.new(url_options) }
   let(:provider) { browser.providers['file_system'] }

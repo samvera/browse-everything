@@ -36,8 +36,13 @@ else
   end
 
   case ENV['RAILS_VERSION']
+  when /^6\./
+    gem 'puma', '~> 4.3'
+    gem 'sass-rails', '~> 6.0'
   when /^5\./
     gem 'capybara', '~> 2.18.0'
+    gem 'puma', '~> 3.11'
+    gem 'sass-rails', '~> 5.0'
   end
 end
 # END ENGINE_CART BLOCK

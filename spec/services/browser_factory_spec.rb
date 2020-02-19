@@ -8,7 +8,7 @@ describe BrowserFactory do
   let(:session) { instance_double(BrowseEverythingSession::ProviderSession) }
   let(:provider_session_class) { class_double(BrowseEverythingSession::ProviderSession).as_stubbed_const(transfer_nested_constants: true) }
   let(:provider_session) { instance_double(BrowseEverythingSession::ProviderSession) }
-  let(:provider) { instance_double(BrowseEverything::Driver::Base) }
+  let(:provider) { instance_double(BrowseEverything::V1::Driver::Base) }
   let(:browser_class) { class_double(BrowseEverything::Browser).as_stubbed_const(transfer_nested_constants: true) }
   let(:browser) { instance_double(BrowseEverything::Browser) }
 

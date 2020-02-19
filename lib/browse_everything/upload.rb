@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module BrowseEverything
   class Upload
     attr_accessor :uuid, :session, :session_id, :bytestreams, :bytestream_ids, :containers, :container_ids, :file_ids
@@ -95,7 +96,7 @@ module BrowseEverything
     # Build the JSON-API serializer Object
     # @return [SessionSerializer]
     def serializer
-      @serialize ||= self.class.serializer_class.new(self)
+      @serializer ||= self.class.serializer_class.new(self)
     end
 
     alias id uuid

@@ -62,23 +62,6 @@ RSpec/VerifiedDoubles:
   Exclude:
     - 'spec/views/browse_everything/_file.html.erb_spec.rb'
 
-# Offense count: 1
-Rails/OutputSafety:
-  Exclude:
-    - 'app/helpers/browse_everything_helper.rb'
-
-# Offense count: 11
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: strict, flexible
-Rails/TimeZone:
-  Exclude:
-    - 'lib/browse_everything/driver/google_drive.rb'
-    - 'lib/browse_everything/retriever.rb'
-    - 'spec/unit/browse_everything_helper_spec.rb'
-    - 'spec/unit/file_entry_spec.rb'
-    - 'spec/unit/retriever_spec.rb'
-    - 'spec/views/browse_everything/_file.html.erb_spec.rb'
-
 # Offense count: 3
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: nested, compact

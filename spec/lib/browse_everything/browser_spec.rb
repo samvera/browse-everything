@@ -44,8 +44,8 @@ describe BrowseEverything::Browser do
 
     it 'has 2 providers' do
       expect(browser.providers.keys).to eq(%w[file_system dropbox])
-      expect(browser.providers[:file_system]).to be_a BrowseEverything::Driver::FileSystem
-      expect(browser.providers[:dropbox]).to be_a BrowseEverything::Driver::Dropbox
+      expect(browser.providers[:file_system]).to be_a BrowseEverything::V1::Driver::FileSystem
+      expect(browser.providers[:dropbox]).to be_a BrowseEverything::V1::Driver::Dropbox
     end
 
     it 'uses the file configuration' do
@@ -61,8 +61,8 @@ describe BrowseEverything::Browser do
 
     it 'has 2 providers' do
       expect(browser.providers.keys).to eq(%w[file_system dropbox])
-      expect(browser.providers[:file_system]).to be_a BrowseEverything::Driver::FileSystem
-      expect(browser.providers[:dropbox]).to be_a BrowseEverything::Driver::Dropbox
+      expect(browser.providers[:file_system]).to be_a BrowseEverything::V1::Driver::FileSystem
+      expect(browser.providers[:dropbox]).to be_a BrowseEverything::V1::Driver::Dropbox
     end
 
     it 'uses the global configuration' do
@@ -76,8 +76,8 @@ describe BrowseEverything::Browser do
 
     it 'has 2 providers' do
       expect(browser.providers.keys).to eq(%w[file_system dropbox])
-      expect(browser.providers[:file_system]).to be_a BrowseEverything::Driver::FileSystem
-      expect(browser.providers[:dropbox]).to be_a BrowseEverything::Driver::Dropbox
+      expect(browser.providers[:file_system]).to be_a BrowseEverything::V1::Driver::FileSystem
+      expect(browser.providers[:dropbox]).to be_a BrowseEverything::V1::Driver::Dropbox
     end
 
     it 'uses the local configuration' do
@@ -106,7 +106,7 @@ describe BrowseEverything::Browser do
     subject(:browser) { described_class.new(url_options) }
 
     it 'retrieves the first configured provider' do
-      expect(browser.first_provider).to be_a BrowseEverything::Driver::FileSystem
+      expect(browser.first_provider).to be_a BrowseEverything::V1::Driver::FileSystem
     end
   end
 end

@@ -2,7 +2,7 @@
 
 include BrowserConfigHelper
 
-describe BrowseEverything::Driver::Dropbox do
+describe BrowseEverything::V1::Driver::Dropbox do
   let(:browser) { BrowseEverything::Browser.new(url_options) }
   let(:provider) { browser.providers['dropbox'] }
   let(:provider_yml) do
@@ -117,6 +117,7 @@ describe BrowseEverything::Driver::Dropbox do
 
     describe '#link_for' do
       subject(:link_args) { driver.link_for('/Getting Started.pdf') }
+
       before do
         stub_request(
           :post, 'https://content.dropboxapi.com/2/files/download'

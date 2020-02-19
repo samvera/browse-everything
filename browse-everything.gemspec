@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'google_drive', '~> 2.1'
   spec.add_dependency 'googleauth', '0.6.6'
   spec.add_dependency 'jsonapi-resources'
-  spec.add_dependency 'puma', '~> 3.11'
+  spec.add_dependency 'puma', '>= 3.11'
   spec.add_dependency 'rails', '>= 5.2' # We're going to need to require support for webpacker given the usage of rswag-ui to generate Swagger documentation
   spec.add_dependency 'rswag', '2.0.6' # Blocked until 2.1.z resolved https://github.com/rswag/rswag/issues/248
   spec.add_dependency 'ruby-box'
@@ -36,10 +36,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'thor', '~> 0.19'
   spec.add_dependency 'typhoeus'
 
-  spec.add_development_dependency 'bixby', '>= 1.0'
   spec.add_development_dependency 'bundler', '>= 1.3.0' # This is needed for Rails 6.y.z
   spec.add_development_dependency 'capybara'
-  spec.add_development_dependency 'chromedriver-helper', '~> 2.1'
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'engine_cart', '~> 2.0'
   spec.add_development_dependency 'factory_bot_rails'
@@ -55,5 +53,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'selenium-webdriver'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'sqlite3'
+  spec.add_development_dependency 'webdrivers'
   spec.add_development_dependency 'webmock'
 end

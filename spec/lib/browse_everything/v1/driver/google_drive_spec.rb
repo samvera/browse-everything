@@ -2,7 +2,7 @@
 
 include BrowserConfigHelper
 
-describe BrowseEverything::Driver::GoogleDrive do
+describe BrowseEverything::V1::Driver::GoogleDrive do
   let(:browser) { BrowseEverything::Browser.new(url_options) }
   let(:provider) { browser.providers['google_drive'] }
   let(:provider_yml) do
@@ -157,6 +157,7 @@ describe BrowseEverything::Driver::GoogleDrive do
 
     describe '#link_for' do
       subject(:link) { driver.link_for('asset-id2') }
+
       let(:file_response_body) do
         '{
          "id": "asset-id2",
@@ -167,7 +168,7 @@ describe BrowseEverything::Driver::GoogleDrive do
 
       before do
         stub_request(
-          :get, "https://www.googleapis.com/drive/v3/files/asset-id2?fields=id,%20name,%20size"
+          :get, 'https://www.googleapis.com/drive/v3/files/asset-id2?fields=id,%20name,%20size'
         ).to_return(
           body: file_response_body,
           status: 200,
@@ -193,7 +194,7 @@ describe BrowseEverything::Driver::GoogleDrive do
 
       it 'exposes the authorization endpoint URI' do
         expect(uri).to be_a Addressable::URI
-        expect(uri.to_s).to eq 'https://accounts.google.com/o/oauth2/auth?access_type=offline&approval_prompt=force&client_id=CLIENTID&include_granted_scopes=true&redirect_uri=http://example.com:3000/browse/connect&response_type=code&scope=https://www.googleapis.com/auth/drive'
+        expect(uri.to_s).to eq 'https://accounts.google.com/o/oauth2/auth?access_type=offline&approval_prompt=force&client_id=CLIENTID&include_granted_scopes=true&redirect_uri=http://example.com:3000/browse/v1/connect&response_type=code&scope=https://www.googleapis.com/auth/drive'
       end
     end
 

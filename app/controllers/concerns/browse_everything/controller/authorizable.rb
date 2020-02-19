@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'jwt'
 require 'pry-byebug'
 
@@ -17,7 +18,7 @@ module BrowseEverything
         end
 
         def token_param
-          return json_api_params[:token] if self.respond_to?(:json_api_params)
+          return json_api_params[:token] if self.class.ancestors.include?(BrowseEverything::Controller::JsonApiRequestable)
 
           token_header || params[:token]
         end
@@ -39,12 +40,12 @@ module BrowseEverything
         def authorization_data
           return @authorization_data unless @authorization_data.nil?
 
-          values = json_web_tokens.map { |payload| payload["data"] }
+          values = json_web_tokens.map { |payload| payload['data'] }
           @authorization_data = values.compact
         end
 
         def authorization_ids
-          @authorization_ids ||= authorization_data.map { |authorization| authorization["id"] }
+          @authorization_ids ||= authorization_data.map { |authorization| authorization['id'] }
         end
 
         # Validate that each JSON Web Token references an Authorization which
@@ -54,8 +55,8 @@ module BrowseEverything
         # Controllers
         def validate_authorization_ids
           validations = authorization_data.map do |data|
-            authorization_id = data["id"]
-            request_code = data["code"]
+            authorization_id = data['id']
+            request_code = data['code']
 
             authorizations = BrowseEverything::Authorization.where(uuid: authorization_id)
             authorization = authorizations.first
@@ -65,7 +66,7 @@ module BrowseEverything
           # There is token data and it is valid
           return if token_data && validations.reduce(:|)
 
-          message = "Failed to validate the authorization token.  Please request a new authorization token."
+          message = 'Failed to validate the authorization token.  Please request a new authorization token.'
           head(:unauthorized, body: message)
         end
     end

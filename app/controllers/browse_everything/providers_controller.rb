@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'jwt'
 
 module BrowseEverything
@@ -6,7 +7,8 @@ module BrowseEverything
     skip_before_action :verify_authenticity_token
 
     def index
-      @providers = Driver.all(host: request.host, port: request.port)
+      # This is similar to ActiveRecord::Base.all
+      @providers = Provider.all(host: request.host, port: request.port)
       @serializer = ProviderSerializer.new(@providers)
       respond_to do |format|
         format.json_api { render json: @serializer.serialized_json }
@@ -58,7 +60,7 @@ module BrowseEverything
       end
 
       def current_provider
-        Driver.build(**provider_attributes)
+        Provider.build(**provider_attributes)
       end
 
       def authorization_params

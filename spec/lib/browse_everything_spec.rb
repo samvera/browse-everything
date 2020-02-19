@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 describe BrowseEverything do
-  shared_examples "a configured BrowseEverything module" do
+  shared_examples 'a configured BrowseEverything module' do
     describe 'registered configuration' do
       it 'registers the configuration for the drivers' do
-        expect(described_class.config).to be_a ActiveSupport::HashWithIndifferentAccess
+        expect(described_class.config).to be_a BrowseEverything::Configuration
 
         expect(described_class.config).to include 'dropbox'
         expect(described_class.config['dropbox']).to include('app_key' => 'test-key')
@@ -57,17 +57,17 @@ describe BrowseEverything do
         end
 
         it 'logs a deprecation warning and sets it to the dropbox key' do
-          expect(described_class.config).not_to include 'drop_box'
-          expect(described_class.config).to include 'dropbox'
-          expect(described_class.config['dropbox']).to include('app_key' => 'test-key')
-          expect(described_class.config['dropbox']).to include('app_secret' => 'test-secret')
+          expect(described_class.config).not_to include :drop_box
+          expect(described_class.config).to include :dropbox
+          expect(described_class.config[:dropbox]).to include(app_key: 'test-key')
+          expect(described_class.config[:dropbox]).to include(app_secret: 'test-secret')
         end
       end
     end
 
     context 'with a YAML file' do
       before do
-        described_class.configure(File.expand_path('../../fixtures/config/browse_everything_providers.yml', __FILE__))
+        described_class.configure(File.expand_path('../fixtures/config/browse_everything_providers.yml', __dir__))
       end
 
       it_behaves_like 'a configured BrowseEverything module'
@@ -75,8 +75,9 @@ describe BrowseEverything do
 
     context 'without a YAML file' do
       let(:config) { '' }
+
       it 'raises a configuration error' do
-        expect { described_class.configure(:config).to raise_error(BrowseEverything::ConfigurationError, 'Missing browse_everything_providers.yml configuration file') }
+        expect { described_class.configure(config) }.to raise_error(BrowseEverything::ConfigurationError, 'Missing browse_everything_providers.yml configuration file')
       end
     end
   end

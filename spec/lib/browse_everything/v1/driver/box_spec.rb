@@ -2,7 +2,7 @@
 
 include BrowserConfigHelper
 
-describe BrowseEverything::Driver::Box do
+describe BrowseEverything::V1::Driver::Box do
   subject { provider }
 
   let(:browser) { BrowseEverything::Browser.new(url_options) }
@@ -54,7 +54,7 @@ describe BrowseEverything::Driver::Box do
     subject { provider.auth_link }
 
     it { is_expected.to start_with('https://www.box.com/api/oauth2/authorize') }
-    it { is_expected.to include('browse%2Fconnect') }
+    it { is_expected.to include(CGI.escape('browse/v1/connect')) }
     it { is_expected.to include('response_type') }
   end
 
@@ -102,11 +102,12 @@ describe BrowseEverything::Driver::Box do
     let(:folders_items_response_body) do
       '{"total_count":13,"entries":[{"type":"folder","id":"20375782799","etag":"0","name":"A very looooooooooooong box folder, why so loooooooong Lets make it even longer to show how far it gets sent to the side","size":0,"created_at":"2017-03-01T04:15:15-08:00"},{"type":"folder","id":"2571160559","etag":"0","name":"Apps Team - Shared","size":1249,"created_at":"2014-10-15T13:00:29-07:00"},{"type":"folder","id":"20194542723","etag":"0","name":"DSRD - W Pattee 3","size":2949416,"created_at":"2017-02-27T08:17:21-08:00"},{"type":"folder","id":"20284062015","etag":"0","name":"My Box Notes","size":0,"created_at":"2017-02-28T08:52:26-08:00"},{"type":"folder","id":"11305958926","etag":"0","name":"PCDM-Sufia","size":650658,"created_at":"2016-09-14T09:14:25-07:00"},{"type":"folder","id":"4227519189","etag":"0","name":"refactor","size":8766,"created_at":"2015-08-14T07:53:56-07:00"},{"type":"folder","id":"2459961273","etag":"0","name":"SaS - Development Team","size":152720753,"created_at":"2014-09-17T13:39:31-07:00"},{"type":"folder","id":"3399219062","etag":"0","name":"Scholarsphere - Migration","size":270984,"created_at":"2015-04-07T13:17:51-07:00"},{"type":"folder","id":"1168461187","etag":"0","name":"test","size":20625445557,"created_at":"2013-09-19T12:57:59-07:00"},{"type":"folder","id":"3055812547","etag":"0","name":"UX Artifacts","size":3801994,"created_at":"2015-02-04T08:21:16-08:00"},{"type":"file","id":"25581309763","etag":"1","name":"failed.tar.gz","size":28650839,"created_at":"2015-01-29T05:18:43-08:00"},{"type":"file","id":"25588823531","etag":"1","name":"scholarsphere_5712md360.xml","size":97038,"created_at":"2015-01-29T08:38:44-08:00"},{"type":"file","id":"113711622968","etag":"0","name":"test.txt","size":0,"created_at":"2016-12-20T07:50:30-08:00"}],"offset":0,"limit":1000,"order":[{"by":"type","direction":"ASC"},{"by":"name","direction":"ASC"}]}'
     end
+
     before do
       provider.token = token
 
       stub_request(
-        :get, "https://api.box.com/2.0/folders/0"
+        :get, 'https://api.box.com/2.0/folders/0'
       ).to_return(
         body: folders_response_body,
         status: 200,
@@ -115,7 +116,7 @@ describe BrowseEverything::Driver::Box do
         }
       )
       stub_request(
-        :get, "https://api.box.com/2.0/folders/0/items?fields=name,size,created_at&limit=99999&offset=0"
+        :get, 'https://api.box.com/2.0/folders/0/items?fields=name,size,created_at&limit=99999&offset=0'
       ).to_return(
         body: folders_items_response_body,
         status: 200,
@@ -240,6 +241,7 @@ describe BrowseEverything::Driver::Box do
         }
       )
     end
+
     let(:link) { provider.link_for(file_id) }
 
     context 'with a file from the root directory' do
