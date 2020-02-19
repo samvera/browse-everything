@@ -66,7 +66,6 @@ workflows:
           name: "ruby2-7_rails5-1"
           ruby_version: 2.7.0
           rails_version: 5.1.7
-
       - build:
           name: "ruby2-6_rails6-0"
           ruby_version: 2.6.5
@@ -79,7 +78,6 @@ workflows:
           name: "ruby2-6_rails5-1"
           ruby_version: 2.6.5
           rails_version: 5.1.7
-
       - build:
           name: "ruby2-5_rails6-0"
           ruby_version: 2.5.7
