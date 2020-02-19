@@ -10,29 +10,23 @@ module BrowseEverything
         attr_accessor :token, :code
 
         # Integrate sorting lambdas for configuration using initializers
-        class << self
-          attr_accessor :sorter
+        attr_accessor :sorter
 
-          def default_sorter
-            lambda { |files|
-              files.sort do |a, b|
-                if b.container?
-                  a.container? ? a.name.downcase <=> b.name.downcase : 1
-                else
-                  a.container? ? -1 : a.name.downcase <=> b.name.downcase
-                end
+        def self.default_sorter
+          lambda { |files|
+            files.sort do |a, b|
+              if b.container?
+                a.container? ? a.name.downcase <=> b.name.downcase : 1
+              else
+                a.container? ? -1 : a.name.downcase <=> b.name.downcase
               end
-            }
-          end
-
-          def inherited(subclass)
-            subclass.sorter = sorter
-          end
+            end
+          }
         end
 
         def initialize(config_values)
           @config = config_values
-          @sorter = self.class.sorter || self.class.default_sorter
+          @sorter = self.class.default_sorter
           validate_config
         end
 
