@@ -145,21 +145,25 @@ use your own fork instead. Simply change the following line in `package.json`:
 "browse-everything-react": "https://github.com/my-user/browse-everything-redux-react#my-branch",
 ```
 
-If you wish to use a directory on your local environment, one must instead use
-[yarn link](https://classic.yarnpkg.com/en/docs/cli/link/#toc-yarn-link-in-package-you-want-to-link):
-
-```bash
-cd /Users/me/src/my-browse-everything-react
-yarn link
-cd /Users/me/src/browse-everything/.internal_test_app
-yarn link "browse-everything-react"
-```
-
 After modifying the `package.json`, from within `.internal_test_app`, please invoke:
 
 ```bash
 yarn install
 ```
+
+If you wish to use a directory on your local environment, one must instead use
+the following approach:
+```bash
+cd .internal_test_app/node_modules
+rm -fr browse-everything-react
+git clone https://github.com/me/my-browse-everything-react-fork.git browse-everything-react
+cd ..
+```
+
+_Shouldn't one be able to use [yarn link](https://classic.yarnpkg.com/en/docs/cli/link/#toc-yarn-link-in-package-you-want-to-link) for this?_
+Attempting to support this has led to bugs similar to what is detailed on
+https://github.com/facebook/create-react-app/issues/3547#issuecomment-549372163.
+ There is currently an [open issue for this](http://github.com/samvera/browse-everything/issues/329).
 
 ### Testing Problems
 Should you attempt to execute the test suite and encounter the following error:
