@@ -145,11 +145,14 @@ use your own fork instead. Simply change the following line in `package.json`:
 "browse-everything-react": "https://github.com/my-user/browse-everything-redux-react#my-branch",
 ```
 
-If you wish to use a directory on your local environment, one can instead insert
-the following:
+If you wish to use a directory on your local environment, one must instead use
+[yarn link](https://classic.yarnpkg.com/en/docs/cli/link/#toc-yarn-link-in-package-you-want-to-link):
 
-```json
-"browse-everything-react": "file:///Users/me/src/my-browse-everything-react",
+```bash
+cd /Users/me/src/my-browse-everything-react
+yarn link
+cd /Users/me/src/browse-everything/.internal_test_app
+yarn link "browse-everything-react"
 ```
 
 After modifying the `package.json`, from within `.internal_test_app`, please invoke:
