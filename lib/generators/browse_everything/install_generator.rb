@@ -23,6 +23,10 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
     rake 'webpacker:install'
   end
 
+  def install_webpacker_react
+    rake 'webpacker:install:react'
+  end
+
   def copy_migrations
     rake 'browse_everything_engine:install:migrations'
   end
@@ -97,5 +101,18 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
       target_path = Rails.root.join('spec', 'integration', basename)
       copy_file test_file_path, target_path
     end
+  end
+
+  def install_javascript_packages
+    copy_file 'package.json', 'package.json'
+    system('yarn install')
+  end
+
+  def install_user_interface
+    copy_file 'app/javascript/packs/browse_everything.jsx', 'app/javascript/packs/browse_everything.jsx'
+  end
+
+  def install_procfile
+    copy_file 'Procfile', 'Procfile'
   end
 end

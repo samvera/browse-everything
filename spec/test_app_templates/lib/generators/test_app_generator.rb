@@ -13,11 +13,6 @@ class TestAppGenerator < Rails::Generators::Base
     generate 'browse_everything:config'
   end
 
-  def inject_css
-    copy_file File.expand_path('app/assets/stylesheets/application.css', ENV['RAILS_ROOT']), 'app/assets/stylesheets/application.css.scss'
-    remove_file 'app/assets/stylesheets/application.css'
-  end
-
   def inject_javascript
     insert_into_file 'app/assets/javascripts/application.js', after: '//= require_tree .' do
       %(
@@ -38,15 +33,12 @@ class TestAppGenerator < Rails::Generators::Base
       %(
 
         root :to => "file_handler#index"
-        get '/main', :to => "file_handler#main"
-        post '/file', :to => "file_handler#update"
       )
     end
   end
 
   def create_test_route
     copy_file '../support/app/controllers/file_handler_controller.rb', 'app/controllers/file_handler_controller.rb'
-    copy_file '../support/app/views/file_handler/main.html.erb', 'app/views/file_handler/main.html.erb'
     copy_file '../support/app/views/file_handler/index.html.erb', 'app/views/file_handler/index.html.erb'
   end
 end
