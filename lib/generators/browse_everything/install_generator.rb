@@ -27,6 +27,10 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
     rake 'webpacker:install:react'
   end
 
+  def install_webpack_config
+    copy_file 'config/webpack/development.js', 'config/webpack/development.js'
+  end
+
   def copy_migrations
     rake 'browse_everything_engine:install:migrations'
   end
@@ -106,6 +110,7 @@ class BrowseEverything::InstallGenerator < Rails::Generators::Base
   def install_javascript_packages
     copy_file 'package.json', 'package.json'
     system('yarn install')
+    system('ln -s /Usr/jrgriffiniii/src/my_browse_everything-react node_modules/browse_everything')
   end
 
   def install_user_interface
