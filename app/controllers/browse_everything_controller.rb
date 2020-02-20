@@ -113,6 +113,7 @@ class BrowseEverythingController < ActionController::Base
     # Retrieve the Driver for each request
     # @return [BrowseEverything::Driver::Base]
     def provider
+      byebug
       browser.providers[provider_name.to_sym] || browser.first_provider
     end
 

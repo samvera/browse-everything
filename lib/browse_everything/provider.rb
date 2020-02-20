@@ -2,6 +2,7 @@
 
 require_relative 'provider/file_system'
 require_relative 'provider/google_drive'
+require_relative 'provider/dropbox'
 
 module BrowseEverything
   # This replaces (but should not) replace the Base Driver Class
