@@ -152,7 +152,29 @@ yarn install
 ```
 
 If you wish to use a directory on your local environment, one must instead use
-the following approach:
+one of the following approaches:
+
+##### [yarn link](https://classic.yarnpkg.com/en/docs/cli/link/#toc-yarn-link-in-package-you-want-to-link):
+```bash
+cd /Users/me/src/my-browse-everything-react
+yarn link
+cd /Users/me/src/browse-everything/.internal_test_app
+yarn link "browse-everything-react"
+```
+_Note: Following this, please do *not* issue a `yarn install`, as this can break
+the build._
+
+In order to restore the `master` branch from from `samvera-labs`, one simple
+invokes:
+```bash
+cd .internal_test_app
+yarn unlink "browse-everything-react"
+yarn install --force
+```
+
+##### Symbolic Links
+However, there can be errors which arise when using `yarn link`. When these
+occur, please instead invoke:
 ```bash
 cd .internal_test_app/node_modules
 rm -fr browse-everything-react
@@ -161,6 +183,7 @@ cd ..
 ```
 
 _Shouldn't one be able to use [yarn link](https://classic.yarnpkg.com/en/docs/cli/link/#toc-yarn-link-in-package-you-want-to-link) for this?_
+
 Attempting to support this has led to bugs similar to what is detailed on
 https://github.com/facebook/create-react-app/issues/3547#issuecomment-549372163.
  There is currently an [open issue for this](http://github.com/samvera/browse-everything/issues/329).
