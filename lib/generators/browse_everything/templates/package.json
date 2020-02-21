@@ -1,0 +1,23 @@
+{
+  "name": "browse-everything",
+  "description": "Rails engine file browser for cloud storage services",
+  "version": "2.0.0",
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "@babel/preset-react": "^7.8.3",
+    "@rails/webpacker": "4.2.2",
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "browse-everything-react": "https://github.com/samvera-labs/browse-everything-redux-react",
+    "prop-types": "^15.7.2",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  },
+  "devDependencies": {
+    "babel-loader": "^8.0.6",
+    "redux-logger": "^3.0.6",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  }
+}

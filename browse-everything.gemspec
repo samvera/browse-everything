@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'aws-sdk-s3'
   spec.add_dependency 'dropbox_api', '>= 0.1.10'
   spec.add_dependency 'fast_jsonapi'
+  spec.add_dependency 'foreman'
   spec.add_dependency 'google-api-client', '~> 0.23'
   spec.add_dependency 'google_drive', '~> 2.1'
   spec.add_dependency 'googleauth', '0.6.6'

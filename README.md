@@ -39,14 +39,15 @@ what this means can be found
 
 ## Supported Ruby Releases
 Currently, the following releases of Ruby are supported:
-- 2.6.3
-- 2.5.5
-- 2.4.6
+- 2.7.0
+- 2.6.5
+- 2.5.7
 
 ## Supported Rails Releases
 The supported Rail releases follow those specified by [the security policy of the Rails Community](https://rubyonrails.org/security/).  As is the case with the supported Ruby releases, it is recommended that one upgrades from any Rails release no longer receiving security updates.
-- 6.0.0
-- 5.2.3
+- 6.0.2
+- 5.2.4
+- 5.1.7
 
 _Support for Rails releases earlier than 5.2.z are dropped from 2.0.0 onwards in
 order to maintain core compatibility with [Webpacker]()._
@@ -77,17 +78,6 @@ This generator will set up the _config/browse_everything_providers.yml_ file and
 If you prefer not to use the generator, or need info on how to set up providers 
 in the browse_everything_providers.yml, use the info on [Configuring browse-everything](https://github.com/samvera/browse-everything/wiki/Configuring-browse-everything).
 
-## Configuring Providers (Storage Drivers)
-
-Vendor-specific cloud storage providers require a certain workflow in order to
-grant authorization to the Rails app.  Currently, the following Providers have
-documentation:
-
-- [File System]()
-- [Amazon S3 Storage]()
-- [Dropbox]()
-- [Google Drive]()
-
 ## Architecture
 
 From release 2.0.0 onwards, BrowseEverything relies upon a RESTful API to 
@@ -96,17 +86,17 @@ Specification](https://swagger.io/specification/) by means of [Swagger](https://
 
 ### JSON-API
 
-Server responses are serialized using the JSON-API(https://jsonapi.org/)
+Server responses are serialized using the [JSON-API](https://jsonapi.org/)
 specification. As such, there are a number of options available when looking to
 select client libraries for consuming and parsing this data at
-[https://jsonapi.org/implementations/#client-libraries]
+https://jsonapi.org/implementations/#client-libraries
 
 ### Javascript and User Interfaces
 
-As BrowseEverything is now a web API-driven application, it is not currently
+As BrowseEverything is now a web API-driven application, it is not yet
 bundled with any specific front-end for usage within a Rails application.
-However, we would please recommend that you explore the forthcoming (React and
-Redux user interface)[https://github.com/jrgriffiniii/browse-everything-redux-react/pull/1], along with the (Web Components)[https://github.com/jrgriffiniii/browse-everything-components] for usage or reference in implementing a custom front-end.
+However, we would please recommend that you explore the forthcoming [React and
+Redux user interface](https://github.com/samvera-labs/browse-everything-redux-react).
 
 # Development
 
@@ -118,6 +108,85 @@ Test suites may be executed with the following invocation:
 ```bash
 bundle exec rake
 ```
+
+### Testing with the User Interface
+BrowseEverything *does* currently ship with a default test configuration for the 
+[React user interface](https://github.com/samvera-labs/browse-everything-redux-react).
+ The most straightforward approach to this is to invoke the following:
+
+```bash
+bundle exec rake engine_cart:generate
+```
+
+This will ensure that a new test app. is built which imports the React UI. This
+can then be deployed using [foreman](https://rubygems.org/gems/foreman) with:
+
+```bash
+cd .internal_test_app
+bundle exec foreman up
+```
+
+One need only access http://localhost:3000 in order to then use the UI with the
+Rails API mounted from the Engine.
+
+#### Working with a new UI branch
+
+The UI version used for testing is the `master` branch of the GitHub repository
+in the `.internal_test_app/package.json` file. This could be changed in order to
+use your own fork instead. Simply change the following line in `package.json`:
+
+```json
+"browse-everything-react": "https://github.com/samvera-labs/browse-everything-redux-react",
+```
+
+...to something which follows the structure of:
+
+```json
+"browse-everything-react": "https://github.com/my-user/browse-everything-redux-react#my-branch",
+```
+
+After modifying the `package.json`, from within `.internal_test_app`, please invoke:
+
+```bash
+yarn install
+```
+
+If you wish to use a directory on your local environment, one must instead use
+one of the following approaches:
+
+##### [yarn link](https://classic.yarnpkg.com/en/docs/cli/link/#toc-yarn-link-in-package-you-want-to-link):
+```bash
+cd /Users/me/src/my-browse-everything-react
+yarn link
+cd /Users/me/src/browse-everything/.internal_test_app
+yarn link "browse-everything-react"
+```
+_Note: Following this, please do *not* issue a `yarn install`, as this can break
+the build._
+
+In order to restore the `master` branch from from `samvera-labs`, one simple
+invokes:
+```bash
+cd .internal_test_app
+yarn unlink "browse-everything-react"
+yarn install --force
+```
+
+##### Symbolic Links
+However, there can be errors which arise when using `yarn link`. When these
+occur, please instead invoke:
+```bash
+cd .internal_test_app/node_modules
+rm -fr browse-everything-react
+git clone https://github.com/me/my-browse-everything-react-fork.git browse-everything-react
+cd ..
+```
+
+_Shouldn't one be able to use [yarn link](https://classic.yarnpkg.com/en/docs/cli/link/#toc-yarn-link-in-package-you-want-to-link) for this?_
+
+Attempting to support this has led to bugs similar to what is detailed on
+https://github.com/facebook/create-react-app/issues/3547#issuecomment-549372163.
+ There is currently an [open issue for this](http://github.com/samvera/browse-everything/issues/329).
 
 ### Testing Problems
 Should you attempt to execute the test suite and encounter the following error:
