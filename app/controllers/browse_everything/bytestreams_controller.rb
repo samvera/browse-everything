@@ -3,7 +3,7 @@
 module BrowseEverything
   class BytestreamsController < ActionController::Base
     include BrowseEverything::Controller::Authorizable
-    skip_before_action :verify_authenticity_token
+    skip_before_action :verify_authenticity_token if respond_to?(:verify_authenticity_token)
 
     def show
       decoded_id = CGI.unescape(id)

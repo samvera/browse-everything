@@ -1,0 +1,17 @@
+<div class="modal fade" id="browse-everything-modal" tabindex="-1" role="dialog" aria-labelledby="browse-everything-modal-title" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="browse-everything-modal-title">Select Your Files</h4>
+      </div>
+      <div class="modal-body">
+        <%= render 'browse_everything/javascript_app' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% render 'browse_everything/javascript_app' %>

@@ -14,13 +14,17 @@ module BrowseEverything
         gdrive_file.mime_type == 'application/vnd.google-apps.folder'
       end
 
+      def self.client_authorization?
+        true
+      end
+
       def find_bytestream(id:)
         gdrive_file = drive_service.get_file(id, fields: 'id, name, modifiedTime, size, mimeType')
         build_bytestream(gdrive_file)
       end
 
       def find_container(id:)
-        gdrive_container = drive_service.get_file(id, fields: 'id, name, modifiedTime')
+        gdrive_container = drive_service.get_file(id, fields: 'id, name, modifiedTime, parents')
         build_container(gdrive_container)
       end
 
@@ -49,6 +53,7 @@ module BrowseEverything
           containers = @resources.select { |child| child.is_a?(Container) }
           Container.new(
             id: '/',
+            parent_id: 'root',
             bytestreams: bytestreams,
             containers: containers,
             location: '',
@@ -60,12 +65,17 @@ module BrowseEverything
         def build_container(gdrive_container)
           location = "key:#{gdrive_container.id}"
           modified_time = gdrive_container.modified_time || Time.new.utc
+          # This should account for multiple parents, but a tree is needed
+          parent_ids = gdrive_container.parents
+          parent_id = parent_ids.first
+
           batch_request_path(gdrive_container.id)
           bytestreams = @resources.select { |child| child.is_a?(Bytestream) }
           containers = @resources.select { |child| child.is_a?(Container) }
 
           Container.new(
             id: gdrive_container.id,
+            parent_id: parent_id,
             bytestreams: bytestreams,
             containers: containers,
             location: location,
@@ -103,9 +113,15 @@ module BrowseEverything
 
             bytestream_ids = bytestream_tree[gdrive_file.id] if bytestream_tree.key?(gdrive_file.id)
             container_ids = container_tree[gdrive_file.id] if container_tree.key?(gdrive_file.id)
+
+            # This should account for multiple parents, but a tree is needed
+            parent_ids = gdrive_file.parents
+            parent_id = parent_ids.first
+
             # @todo this should invoke #build_container
             BrowseEverything::Container.new(
               id: gdrive_file.id,
+              parent_id: parent_id,
               bytestream_ids: bytestream_ids,
               container_ids: container_ids,
               location: location,
@@ -248,23 +264,32 @@ module BrowseEverything
           'browse_everything'
         end
 
+        def build_credentials(access_token)
+          overridden_credentials = Auth::Google::Credentials.new
+          overridden_credentials.client_id = client_id.id
+          overridden_credentials.client_secret = client_id.secret
+          overridden_credentials.update_token!('access_token' => access_token)
+        end
+
         # The authorization code is retrieved from the session
         # @raise [Signet::AuthorizationError] this error is raised if the authorization is invalid
         def credentials
           @credentials = authorizer.get_credentials(user_id)
+
           # Renew the access token if the credentials are non-existent or expired
           if @credentials.nil? || @credentials.expired?
-            @credentials = authorizer.get_and_store_credentials_from_code(user_id: user_id, code: @auth_code)
+            @credentials = if self.class.client_authorization?
+                             build_credentials(@auth_code)
+                           else
+                             authorizer.get_and_store_credentials_from_code(user_id: user_id, code: @auth_code)
+                           end
+
             return @credentials
           end
 
           # This should work with simply redeeming the code with @credentials
           # Why this is needed should be further explored
-          overridden_credentials = Auth::Google::Credentials.new
-          overridden_credentials.client_id = client_id.id
-          overridden_credentials.client_secret = client_id.secret
-          overridden_credentials.update_token!('access_token' => @credentials.access_token)
-          @credentials = overridden_credentials
+          @credentials = build_credentials(@credentials.access_token)
         end
         delegate :access_token, to: :credentials
         alias auth_token access_token

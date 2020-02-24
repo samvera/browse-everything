@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'swagger_helper'
-require 'pry-byebug'
 require 'jwt'
 
 # Please see https://github.com/rswag/rswag/issues/60#issuecomment-304457567

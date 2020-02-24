@@ -14,7 +14,7 @@ BrowseEverything::Engine.routes.draw do
     #
     # :index would also be useful here
   end
-  resources :authorizations, controller: 'browse_everything/authorizations', only: %i[create show]
+  resources :authorizations, controller: 'browse_everything/authorizations', only: %i[create show update]
   resources :providers, controller: 'browse_everything/providers', only: %i[show index]
   resources :uploads, controller: 'browse_everything/uploads', only: %i[create show]
 

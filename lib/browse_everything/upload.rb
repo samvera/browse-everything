@@ -2,7 +2,8 @@
 
 module BrowseEverything
   class Upload
-    attr_accessor :uuid, :session, :session_id, :bytestreams, :bytestream_ids, :containers, :container_ids, :file_ids
+    attr_accessor :uuid, :bytestreams, :bytestream_ids, :file_ids, :processed
+    attr_writer :session, :session_id, :containers, :container_ids
     include ActiveModel::Serialization
 
     # Define the ORM persister Class
@@ -21,14 +22,68 @@ module BrowseEverything
       UploadJob
     end
 
+    def find_child_containers(container, cache)
+      values = []
+      return values if container.container_ids.empty?
+
+      container.container_ids.each do |child_id|
+        unless cache.key?(child_id)
+          child = driver.find_container(id: child_id)
+          values << child
+        end
+      end
+
+      nested_children = values.map { |child| find_child_containers(child, cache) }
+      values + nested_children.flatten
+    end
+
+    def containers
+      return @cached_containers unless @cached_containers.nil?
+
+      values = []
+      cached = {}
+
+      @containers.each do |container|
+        cached[container.id] = container
+      end
+
+      @container_ids.each do |container_id|
+        unless cached.key?(container_id)
+          container = driver.find_container(id: container_id)
+          cached[container_id] = container
+        end
+      end
+
+      cached.values.each do |container|
+        values << container
+        values += find_child_containers(container, cached)
+      end
+
+      values.sort! { |u, v| (u.name <=> v.name) + (u.id.length <=> v.id.length) }
+
+      @cached_containers = values
+    end
+
+    def container_ids
+      @cached_container_ids ||= @container_ids = containers.map(&:id)
+    end
+
+    def initialize(processed: false)
+      @processed = processed
+    end
+
     # For Upload Objects to be serializable, they must have a zero-argument constructor
     # @param session_id
     # @return [Session]
-    def self.build(session_id: nil, session: nil, bytestream_ids: [],
-                   bytestreams: [], container_ids: [], containers: [],
-                   file_ids: [], id: SecureRandom.uuid)
+    def self.build(id: SecureRandom.uuid,
+                   processed: false,
+                   session_id: nil, session: nil,
+                   bytestream_ids: [], bytestreams: [],
+                   container_ids: [], containers: [],
+                   file_ids: [])
       browse_everything_upload = Upload.new
       browse_everything_upload.uuid = id
+      browse_everything_upload.processed = processed
       browse_everything_upload.session = session
       browse_everything_upload.session_id = if session.nil?
                                               session_id
@@ -89,7 +144,8 @@ module BrowseEverything
         'session_id' => session_id,
         'bytestream_ids' => bytestream_ids,
         'container_ids' => container_ids,
-        'file_ids' => file_ids
+        'file_ids' => file_ids,
+        'processed' => processed
       }
     end
 
@@ -122,6 +178,20 @@ module BrowseEverything
         UploadFile.find(file_id)
       end
     end
+
+    def session_id
+      @cached_sesson_id ||= @session_id = session.id
+    end
+
+    def session
+      return if @session_id.blank?
+
+      @cached_session ||= begin
+                            sessions = BrowseEverything::Session.find_by(uuid: @session_id)
+                            @session = sessions.first
+                          end
+    end
+    delegate :driver, :provider, to: :session
 
     private
 

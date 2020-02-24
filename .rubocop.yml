@@ -15,6 +15,7 @@ Metrics/ClassLength:
   Exclude:
     - 'lib/browse_everything/v1/driver/google_drive.rb'
     - 'lib/browse_everything/provider/google_drive.rb'
+    - 'lib/browse_everything/upload.rb'
 Layout/LineLength:
   Max: 400
   Exclude:
@@ -76,6 +77,10 @@ Naming/FileName:
     - 'browse-everything.gemspec'
     - 'Gemfile'
     - 'lib/browse-everything.rb'
+
+Naming/MemoizedInstanceVariableName:
+  Exclude:
+    - 'lib/browse_everything/upload.rb'
 
 Style/MixinUsage:
   Exclude:

@@ -35,11 +35,25 @@ module BrowseEverything
         authorization_models = orm_class.where(**arguments)
         models = authorization_models
         models.map do |model|
-          new_attributes = JSON.parse(model.authorization)
-          build(**new_attributes.symbolize_keys)
+          existing_attributes = JSON.parse(model.authorization)
+          build(**existing_attributes.symbolize_keys)
         end
       end
       alias find_by where
+    end
+
+    def update(**new_attributes)
+      model = orm
+      existing_attributes = JSON.parse(model.authorization)
+      existing_attributes.symbolize_keys!
+      updated_attributes = existing_attributes.merge(new_attributes.symbolize_keys)
+
+      self.code = updated_attributes[:code]
+      model.authorization = JSON.generate(updated_attributes)
+      model.save
+      model.reload
+
+      self
     end
 
     # Generate the attributes used for serialization

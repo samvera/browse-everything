@@ -27,8 +27,11 @@ module BrowseEverything
         build_container(directory)
       end
 
+      def root_id
+        config[:home]
+      end
+
       def root_container
-        root_id = config[:home]
         find_container(id: root_id)
       end
 
@@ -36,6 +39,12 @@ module BrowseEverything
 
         def build_container(dir)
           absolute_path = File.absolute_path(dir.path)
+          parent_path = File.expand_path('..', absolute_path)
+          parent_id = if parent_path == root_id
+                        'root'
+                      else
+                        parent_path
+                      end
           uri = "file://#{absolute_path}"
           name = File.basename(absolute_path)
 
@@ -44,6 +53,7 @@ module BrowseEverything
 
           Container.new(
             id: absolute_path,
+            parent_id: parent_id,
             bytestreams: bytestreams,
             containers: containers,
             location: uri,

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'swagger_helper'
-require 'pry-byebug'
 require 'jwt'
 
 RSpec.describe 'Authorizations resources', type: :request do

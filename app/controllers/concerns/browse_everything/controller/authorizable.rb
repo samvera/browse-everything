@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'jwt'
-require 'pry-byebug'
 
 module BrowseEverything
   module Controller
@@ -32,7 +31,7 @@ module BrowseEverything
         def json_web_tokens
           return [] unless token_data
 
-          @json_web_tokens ||= JWT.decode(token_data, nil, false)
+          @json_web_tokens ||= JWT.decode(token_data, Rails.application.secrets.secret_key_base, false, { algorithm: 'HS256' })
         end
 
         # @return [Array<Hash>] the set of serialized Authorizations transmitted

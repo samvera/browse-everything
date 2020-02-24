@@ -4,7 +4,7 @@ require 'jwt'
 
 module BrowseEverything
   class ProvidersController < ActionController::Base
-    skip_before_action :verify_authenticity_token
+    skip_before_action :verify_authenticity_token if respond_to?(:verify_authenticity_token)
 
     def index
       # This is similar to ActiveRecord::Base.all
@@ -81,7 +81,8 @@ module BrowseEverything
           data: authorization.serializable_hash
         }
 
-        JWT.encode(payload, nil, 'none')
+        # @todo This needs to be shared with the client
+        JWT.encode(payload, Rails.application.secrets.secret_key_base, 'HS256')
       end
   end
 end

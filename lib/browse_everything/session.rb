@@ -104,6 +104,7 @@ module BrowseEverything
     def driver
       @driver ||= Provider.build(id: provider_id, auth_code: auth_code, host: host, port: port)
     end
+    alias provider driver
 
     delegate :root_container, to: :driver
     delegate :authorization_url, to: :driver

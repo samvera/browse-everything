@@ -15,6 +15,8 @@ module BrowseEverything
     end
   end
 
+  class ResourceNotFound < StandardError; end
+
   autoload :Browser,   'browse_everything/browser'
   autoload :FileEntry, 'browse_everything/file_entry'
 
