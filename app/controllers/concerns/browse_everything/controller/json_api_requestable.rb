@@ -16,7 +16,9 @@ module BrowseEverything
         def json_api_params
           return unless json_api_request?
 
-          payload = JSON.parse(request.body.string)
+          request.body.rewind
+          body_content = request.body.read
+          payload = JSON.parse(body_content)
           ActionController::Parameters.new(payload)
         end
 

@@ -2,7 +2,7 @@
 
 module BrowseEverything
   class Container
-    attr_accessor :id, :bytestreams, :bytestream_ids, :containers, :container_ids, :location, :name, :mtime
+    attr_accessor :id, :parent_id, :bytestreams, :bytestream_ids, :containers, :container_ids, :location, :name, :mtime
 
     # Constructor
     # @param id
@@ -11,8 +11,12 @@ module BrowseEverything
     # @param location
     # @param name
     # @param mtime
-    def initialize(id:, bytestreams: [], bytestream_ids: [], containers: [], container_ids: [], location:, name:, mtime:)
+    def initialize(id:, parent_id:,
+                   bytestreams: [], bytestream_ids: [],
+                   containers: [], container_ids: [],
+                   location:, name:, mtime:)
       @id = id
+      @parent_id = parent_id
 
       @bytestreams = bytestreams
       @bytestream_ids = if @bytestreams.empty?

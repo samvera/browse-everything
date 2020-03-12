@@ -5,7 +5,7 @@ module BrowseEverything
     include BrowseEverything::Controller::JsonApiRequestable
     include BrowseEverything::Controller::Authorizable
 
-    skip_before_action :verify_authenticity_token
+    skip_before_action :verify_authenticity_token if respond_to?(:verify_authenticity_token)
     before_action :validate_authorization_ids
 
     def create
