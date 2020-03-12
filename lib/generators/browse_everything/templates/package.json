@@ -1,7 +1,7 @@
 {
   "name": "browse-everything",
   "description": "Rails engine file browser for cloud storage services",
-  "version": "2.0.0",
+  "version": "2.0.0.pre.alpha1",
   "license": "Apache-2.0",
   "main": "index.js",
   "private": true,
