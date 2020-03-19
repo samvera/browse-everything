@@ -16,14 +16,14 @@ module BrowseEverything
         class << self
           private
 
-          def klass_for(metadata)
-            case metadata
-            when DropboxApi::Metadata::File
-              FileFactory
-            else
-              ResourceFactory
+            def klass_for(metadata)
+              case metadata
+              when DropboxApi::Metadata::File
+                FileFactory
+              else
+                ResourceFactory
+              end
             end
-          end
         end
       end
 
