@@ -1,4 +1,5 @@
 gem 'jquery-rails'
+gem 'puma', '~> 3.11'
 gem 'puma-rails'
 
 if ENV['TEST_BOOTSTRAP'] == "3"
