@@ -83,6 +83,11 @@ module BrowserConfigHelper
                                  client_id: 'GoogleClientId',
                                  client_secret: 'GoogleClientSecret'
                                },
+                                'one_drive' => {
+                                 client_id: 'OneClientId',
+                                 client_secret: 'OneClientSecret'
+                                 client_scope: 'OneClientScope'
+                               },
                                's3' => {
                                  app_key: 'S3AppKey',
                                  app_secret: 'S3AppSecret',
