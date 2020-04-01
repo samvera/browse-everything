@@ -30,7 +30,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'signet', '~> 0.8'
   spec.add_dependency 'sprockets', '~> 3.7'
-  spec.add_dependency 'thor', ">= 0.18.1", "< 2.0" # This matches the lower bounds of Rails 4.2.0 and upper bounds of Rails 5.2.4
   spec.add_dependency 'typhoeus'
 
   spec.add_development_dependency 'bixby', '>= 1.0'
