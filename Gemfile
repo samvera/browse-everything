@@ -7,6 +7,10 @@ gemspec
 
 group :development, :test do
   gem 'pry-byebug' unless ENV['CI']
+
+  # While our gemspec allows sprockets 4, our generator and CI aren't currently working
+  # with it, so we restrict to sprockets 3 for CI here.
+  gem 'sprockets', '~> 3.7'
 end
 
 # BEGIN ENGINE_CART BLOCK
