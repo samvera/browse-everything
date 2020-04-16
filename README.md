@@ -75,6 +75,11 @@ If you prefer not to use the generator, or need info on how to set up providers 
 
 Browse-everything depends on bootstrap, it can work with bootstrap 3 or bootstrap 4.
 
+* **NOTE**: The `browse_everything:install` generator will inject a requirement to use sprockets
+3 (instead of 4) into your app's Gemfile. `browse_everything` can work with sprockets 4, if you
+configure your app to use sprockets 4 to serve javascript. But the install generator is not
+currently capable of doing that, so for the moment instead configures your app to use sprockets 3.
+
 ### CSS
 
 **For bootstrap3 support**, your app should include the [bootstrap-sass](https://github.com/twbs/bootstrap-sass) gem in it's Gemfile, and following the install directions for bootstrap-sass, should have `@import 'bootstrap-sprockets'` and `@import 'bootstrap'` in it's application.scss. After those lines, add `@import "browse_everything/browse_everything_bootstrap3";` to your application.scss.
