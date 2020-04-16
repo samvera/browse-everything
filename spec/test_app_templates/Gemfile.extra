@@ -16,3 +16,7 @@ else
   # bootstrap 4
   gem "bootstrap"
 end
+
+# Can't explain why this is necessary
+gem 'puma', "~> 3.11"
+gem 'sprockets', "~> 3.7"
