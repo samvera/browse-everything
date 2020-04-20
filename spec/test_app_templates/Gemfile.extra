@@ -8,6 +8,7 @@ else
   gem "bootstrap"
 end
 
-# Can't explain why this is necessary
+# Can't explain why these restrictions are necessary for circle-ci to pass, they
+# should not be, and do not seem required to have tests pass locally.
 gem 'puma', "~> 3.11"
 gem 'sprockets', "~> 3.7"
