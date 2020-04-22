@@ -57,14 +57,6 @@ module BrowseEverything
         StringIO.new(response.body)
       end
 
-      # This should only be necessary for activestorage 0.1
-      def mint_new_id
-        last = UploadFile.last
-        return 0 unless last
-
-        last.id + 1
-      end
-
       def create_upload_file(bytestream:)
         io = if bytestream.file_uri?
                file_path = bytestream.uri.gsub('file://', '')
@@ -73,7 +65,7 @@ module BrowseEverything
                build_download(bytestream.uri, request_headers)
              end
 
-        upload_file = UploadFile.new(id: mint_new_id, name: bytestream.name)
+        upload_file = UploadFile.new(name: bytestream.name)
         upload_file.bytestream.attach(io: io, filename: bytestream.name, content_type: bytestream.media_type)
         upload_file.save
         upload_file.reload
