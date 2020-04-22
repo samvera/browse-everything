@@ -1,4 +1,6 @@
 # frozen_string_literal: true
 
-class BrowseEverything::AuthorizationModel < ApplicationRecord
+module BrowseEverything
+  class AuthorizationModel < ApplicationRecord
+  end
 end
