@@ -1,4 +1,6 @@
 # frozen_string_literal: true
 
-class BrowseEverything::UploadModel < ApplicationRecord
+module BrowseEverything
+  class UploadModel < ApplicationRecord
+  end
 end

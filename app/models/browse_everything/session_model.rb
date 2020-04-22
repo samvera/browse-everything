@@ -1,4 +1,6 @@
 # frozen_string_literal: true
 
-class BrowseEverything::SessionModel < ApplicationRecord
+module BrowseEverything
+  class SessionModel < ApplicationRecord
+  end
 end
