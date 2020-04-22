@@ -8,13 +8,13 @@ module BrowseEverything
     # Define the ORM persister Class
     # @return [Class]
     def self.orm_class
-      BrowseEverything::AuthorizationModel
+      AuthorizationModel
     end
 
     # Define the JSON-API persister Class
     # @return [Class]
     def self.serializer_class
-      BrowseEverything::AuthorizationSerializer
+      AuthorizationSerializer
     end
 
     # For Session Objects to be serializable, they must have a 0-argument
