@@ -47,7 +47,6 @@ Currently, the following releases of Ruby are supported:
 The supported Rail releases follow those specified by [the security policy of the Rails Community](https://rubyonrails.org/security/).  As is the case with the supported Ruby releases, it is recommended that one upgrades from any Rails release no longer receiving security updates.
 - 6.0.2
 - 5.2.4
-- 5.1.7
 
 _Support for Rails releases earlier than 5.2.z are dropped from 2.0.0 onwards in
 order to maintain core compatibility with [Webpacker]()._
