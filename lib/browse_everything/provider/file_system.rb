@@ -75,8 +75,8 @@ module BrowseEverything
           end
         end
 
-        def build_bytestream(file)
-          absolute_path = File.absolute_path(file.path)
+        def build_bytestream(path)
+          absolute_path = File.absolute_path(path)
           uri = "file://#{absolute_path}"
           name = File.basename(absolute_path)
           extname = File.extname(absolute_path)
@@ -86,8 +86,8 @@ module BrowseEverything
             id: absolute_path,
             location: uri,
             name: name,
-            size: file.size.to_i,
-            mtime: file.mtime,
+            size: 0,
+            mtime: 0,
             media_type: mime_type,
             uri: uri
           )
@@ -101,8 +101,7 @@ module BrowseEverything
           end
 
           file_children_paths.map do |path|
-            file = File.new(parent_path.join(path))
-            build_bytestream(file)
+            build_bytestream(parent_path.join(path))
           end
         end
 
