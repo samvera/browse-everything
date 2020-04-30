@@ -28,8 +28,7 @@ module BrowseEverything
 
       # This will be the job which asynchronously downloads the files in
       # ActiveStorage Models
-      upload_job = upload.job
-      upload_job.perform_now
+      upload.perform_job
       respond_to do |format|
         format.json_api { render status: :created, json: @serializer.serialized_json }
       end

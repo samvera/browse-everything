@@ -162,13 +162,8 @@ module BrowseEverything
     # Sessions are responsible for managing the relationships to authorizations
     delegate :authorizations, :auth_code, to: :session
 
-    # Create a new ActiveJob object for supporting asynchronous uploads
-    # Maybe what could be done is that there is an UploadedFile Model with
-    # ActiveStorage which is retrieved?
-    # If that is the preferred approach, blocking until the ActiveJob completes
-    # needs to be supported...
-    def job
-      self.class.job_class.new(**default_job_args)
+    def perform_job
+      job.perform(upload_id: id)
     end
 
     # These are the ActiveStorage files retrieved from the server and saved on
@@ -194,6 +189,15 @@ module BrowseEverything
     delegate :driver, :provider, to: :session
 
     private
+
+      # Create a new ActiveJob object for supporting asynchronous uploads
+      # Maybe what could be done is that there is an UploadedFile Model with
+      # ActiveStorage which is retrieved?
+      # If that is the preferred approach, blocking until the ActiveJob completes
+      # needs to be supported...
+      def job
+        self.class.job_class.new(**default_job_args)
+      end
 
       # There should be a BrowseEverything.metadata_adapter layer here for
       # providing closer Valkyrie integration

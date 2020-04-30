@@ -66,7 +66,13 @@ module BrowseEverything
              end
 
         upload_file = UploadFile.new(name: bytestream.name)
-        upload_file.bytestream.attach(io: io, filename: bytestream.name, content_type: bytestream.media_type)
+        if bytestream.file_uri?
+          upload_file.file_path = file_path
+          upload_file.file_name = bytestream.name
+          upload_file.file_content_type = bytestream.media_type
+        else
+          upload_file.bytestream.attach(io: io, filename: bytestream.name, content_type: bytestream.media_type)
+        end
         upload_file.save
         upload_file.reload
       end
