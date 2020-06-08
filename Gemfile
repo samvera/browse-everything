@@ -33,7 +33,7 @@ else
     end
   end
 
-  case ENV['RAILS_VERSION'] 
+  case ENV['RAILS_VERSION']
   when /^6\./
     gem 'puma', '~> 4.1'
   when /^5\./

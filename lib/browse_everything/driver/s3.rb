@@ -79,79 +79,79 @@ module BrowseEverything
 
       private
 
-        def strip(path)
-          path.sub %r{^/?(.+?)/?$}, '\1'
-        end
+      def strip(path)
+        path.sub %r{^/?(.+?)/?$}, '\1'
+      end
 
-        def from_base(key)
-          Pathname.new(key).relative_path_from(Pathname.new(config[:base].to_s)).to_s
-        end
+      def from_base(key)
+        Pathname.new(key).relative_path_from(Pathname.new(config[:base].to_s)).to_s
+      end
 
-        def full_path(path)
-          config[:base].present? ? File.join(config[:base], path) : path
-        end
+      def full_path(path)
+        config[:base].present? ? File.join(config[:base], path) : path
+      end
 
-        def aws_config
-          result = {}
-          result[:credentials] = Aws::Credentials.new(config[:app_key], config[:app_secret]) if config[:app_key].present?
-          result[:region] = config[:region] if config.key?(:region)
-          result
-        end
+      def aws_config
+        result = {}
+        result[:credentials] = Aws::Credentials.new(config[:app_key], config[:app_secret]) if config[:app_key].present?
+        result[:region] = config[:region] if config.key?(:region)
+        result
+      end
 
-        def session
-          AuthenticationFactory.new(
-            self.class.authentication_klass,
-            aws_config
-          )
-        end
+      def session
+        AuthenticationFactory.new(
+          self.class.authentication_klass,
+          aws_config
+        )
+      end
 
-        def authenticate
-          session.authenticate
-        end
+      def authenticate
+        session.authenticate
+      end
 
-        def client
-          @client ||= authenticate
-        end
+      def client
+        @client ||= authenticate
+      end
 
-        # Construct a BrowseEverything::FileEntry object
-        # @param name [String]
-        # @param size [String]
-        # @param date [DateTime]
-        # @param dir [String]
-        # @return [BrowseEverything::FileEntry]
-        def entry_for(name, size, date, dir)
-          BrowseEverything::FileEntry.new(name, [key, name].join(':'), File.basename(name), size, date, dir)
-        end
+      # Construct a BrowseEverything::FileEntry object
+      # @param name [String]
+      # @param size [String]
+      # @param date [DateTime]
+      # @param dir [String]
+      # @return [BrowseEverything::FileEntry]
+      def entry_for(name, size, date, dir)
+        BrowseEverything::FileEntry.new(name, [key, name].join(':'), File.basename(name), size, date, dir)
+      end
 
-        # Populate the entries with FileEntry objects from an S3 listing
-        # @param listing [Seahorse::Client::Response]
-        def add_directories(listing)
-          listing.common_prefixes.each do |prefix|
-            new_entry = entry_for(from_base(prefix.prefix), 0, Time.current, true)
-            @entries << new_entry unless new_entry.nil?
-          end
+      # Populate the entries with FileEntry objects from an S3 listing
+      # @param listing [Seahorse::Client::Response]
+      def add_directories(listing)
+        listing.common_prefixes.each do |prefix|
+          new_entry = entry_for(from_base(prefix.prefix), 0, Time.current, true)
+          @entries << new_entry unless new_entry.nil?
         end
+      end
 
-        # Given a listing and a S3 listing and path, populate the entries
-        # @param listing [Seahorse::Client::Response]
-        # @param path [String]
-        def add_files(listing, path)
-          listing.contents.each do |entry|
-            key = from_base(entry.key)
-            new_entry = entry_for(key, entry.size, entry.last_modified, false)
-            @entries << new_entry unless strip(key) == strip(path) || new_entry.nil?
-          end
+      # Given a listing and a S3 listing and path, populate the entries
+      # @param listing [Seahorse::Client::Response]
+      # @param path [String]
+      def add_files(listing, path)
+        listing.contents.each do |entry|
+          key = from_base(entry.key)
+          new_entry = entry_for(key, entry.size, entry.last_modified, false)
+          @entries << new_entry unless strip(key) == strip(path) || new_entry.nil?
         end
+      end
 
-        # For a given path to a S3 resource, retrieve the listing object and
-        # construct the file entries
-        # @param path [String]
-        def generate_listing(path)
-          client
-          listing = client.list_objects(bucket: config[:bucket], delimiter: '/', prefix: full_path(path))
-          add_directories(listing)
-          add_files(listing, path)
-        end
+      # For a given path to a S3 resource, retrieve the listing object and
+      # construct the file entries
+      # @param path [String]
+      def generate_listing(path)
+        client
+        listing = client.list_objects(bucket: config[:bucket], delimiter: '/', prefix: full_path(path))
+        add_directories(listing)
+        add_files(listing, path)
+      end
     end
   end
 end

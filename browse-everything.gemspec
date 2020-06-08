@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sprockets', '~> 3.7'
   spec.add_dependency 'typhoeus'
 
-  spec.add_development_dependency 'bixby', '>= 1.0'
+  spec.add_development_dependency 'bixby', '~> 3.0'
   spec.add_development_dependency 'bundler', '>= 1.3'
   spec.add_development_dependency 'capybara'
   spec.add_development_dependency 'coveralls'

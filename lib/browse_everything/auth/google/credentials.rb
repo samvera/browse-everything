@@ -17,11 +17,11 @@ module BrowseEverything
 
         private
 
-          # Structure a hash from existing access token values (usually cached within a Cookie)
-          # @return [Hash]
-          def build_token_hash
-            { 'access_token' => access_token }
-          end
+        # Structure a hash from existing access token values (usually cached within a Cookie)
+        # @return [Hash]
+        def build_token_hash
+          { 'access_token' => access_token }
+        end
       end
     end
   end

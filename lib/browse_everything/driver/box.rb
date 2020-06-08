@@ -77,72 +77,72 @@ module BrowseEverything
 
       private
 
-        def token_expired?
-          return true if expiration_time.nil?
-          Time.now.to_i > expiration_time
-        end
+      def token_expired?
+        return true if expiration_time.nil?
+        Time.now.to_i > expiration_time
+      end
 
-        def box_client
-          if token_expired?
-            session = box_session
-            register_access_token(session.refresh_token(box_refresh_token))
-          end
-          RubyBox::Client.new(box_session)
+      def box_client
+        if token_expired?
+          session = box_session
+          register_access_token(session.refresh_token(box_refresh_token))
         end
+        RubyBox::Client.new(box_session)
+      end
 
-        def session
-          AuthenticationFactory.new(
-            self.class.authentication_klass,
-            client_id: config[:client_id],
-            client_secret: config[:client_secret],
-            access_token: box_token,
-            refresh_token: box_refresh_token
-          )
-        end
+      def session
+        AuthenticationFactory.new(
+          self.class.authentication_klass,
+          client_id: config[:client_id],
+          client_secret: config[:client_secret],
+          access_token: box_token,
+          refresh_token: box_refresh_token
+        )
+      end
 
-        def authenticate
-          session.authenticate
-        end
+      def authenticate
+        session.authenticate
+      end
 
-        def box_session
-          authenticate
-        end
+      def box_session
+        authenticate
+      end
 
-        # If there is an active session, {@token} will be set by {BrowseEverythingController} using data stored in the
-        # session. However, if there is no prior session, or the token has expired, we reset it here using # a new
-        # access_token received from {#box_session}.
-        #
-        # @param [OAuth2::AccessToken] access_token
-        def register_access_token(access_token)
-          @token = {
-            'token' => access_token.token,
-            'refresh_token' => access_token.refresh_token,
-            'expires_at' => access_token.expires_at
-          }
-        end
+      # If there is an active session, {@token} will be set by {BrowseEverythingController} using data stored in the
+      # session. However, if there is no prior session, or the token has expired, we reset it here using # a new
+      # access_token received from {#box_session}.
+      #
+      # @param [OAuth2::AccessToken] access_token
+      def register_access_token(access_token)
+        @token = {
+          'token' => access_token.token,
+          'refresh_token' => access_token.refresh_token,
+          'expires_at' => access_token.expires_at
+        }
+      end
 
-        def box_token
-          return unless @token
-          @token.fetch('token', nil)
-        end
+      def box_token
+        return unless @token
+        @token.fetch('token', nil)
+      end
 
-        def box_refresh_token
-          return unless @token
-          @token.fetch('refresh_token', nil)
-        end
+      def box_refresh_token
+        return unless @token
+        @token.fetch('refresh_token', nil)
+      end
 
-        def expiration_time
-          return unless @token
-          @token.fetch('expires_at', nil).to_i
-        end
+      def expiration_time
+        return unless @token
+        @token.fetch('expires_at', nil).to_i
+      end
 
-        # Constructs a BrowseEverything::FileEntry object for a Box file
-        # resource
-        # @param file [String] ID to the file resource
-        # @return [BrowseEverything::File]
-        def directory_entry(file)
-          BrowseEverything::FileEntry.new(file.id, "#{key}:#{file.id}", file.name, file.size, file.created_at, file.type == 'folder')
-        end
+      # Constructs a BrowseEverything::FileEntry object for a Box file
+      # resource
+      # @param file [String] ID to the file resource
+      # @return [BrowseEverything::File]
+      def directory_entry(file)
+        BrowseEverything::FileEntry.new(file.id, "#{key}:#{file.id}", file.name, file.size, file.created_at, file.type == 'folder')
+      end
     end
   end
 end

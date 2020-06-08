@@ -89,81 +89,81 @@ module BrowseEverything
 
     private
 
-      # Extract and parse options used to download a file or resource from an HTTP API
-      # @param options [Hash]
-      # @return [Hash]
-      def extract_download_options(options)
-        url = options.fetch('url')
+    # Extract and parse options used to download a file or resource from an HTTP API
+    # @param options [Hash]
+    # @return [Hash]
+    def extract_download_options(options)
+      url = options.fetch('url')
 
-        # This avoids the potential for a KeyError
-        headers = options.fetch('headers', {}) || {}
+      # This avoids the potential for a KeyError
+      headers = options.fetch('headers', {}) || {}
 
-        file_size_value = options.fetch('file_size', 0)
-        file_size = file_size_value.to_i
+      file_size_value = options.fetch('file_size', 0)
+      file_size = file_size_value.to_i
 
-        output = {
-          url: ::Addressable::URI.parse(url),
-          headers: headers,
-          file_size: file_size
-        }
+      output = {
+        url: ::Addressable::URI.parse(url),
+        headers: headers,
+        file_size: file_size
+      }
 
-        output[:file_size] = get_file_size(output) if output[:file_size] < 1
-        output
-      end
+      output[:file_size] = get_file_size(output) if output[:file_size] < 1
+      output
+    end
 
-      # Retrieve the file from the file system
-      # @param options [Hash]
-      def retrieve_file(options)
-        file_uri = options.fetch(:url)
-        file_size = options.fetch(:file_size)
+    # Retrieve the file from the file system
+    # @param options [Hash]
+    def retrieve_file(options)
+      file_uri = options.fetch(:url)
+      file_size = options.fetch(:file_size)
 
-        retrieved = 0
-        File.open(file_uri.path, 'rb') do |f|
-          until f.eof?
-            chunk = f.read(chunk_size)
-            retrieved += chunk.length
-            yield(chunk, retrieved, file_size)
-          end
-        end
-      end
-
-      # Retrieve a resource over the HTTP
-      # @param options [Hash]
-      def retrieve_http(options)
-        file_size = options.fetch(:file_size)
-        headers = options.fetch(:headers)
-        url = options.fetch(:url)
-        retrieved = 0
-
-        request = Typhoeus::Request.new(url.to_s, method: :get, headers: headers)
-        request.on_headers do |response|
-          raise DownloadError.new("#{self.class}: Failed to download #{url}: Status Code: #{response.code}", response) unless response.code == 200
-        end
-        request.on_body do |chunk|
-          retrieved += chunk.bytesize
+      retrieved = 0
+      File.open(file_uri.path, 'rb') do |f|
+        until f.eof?
+          chunk = f.read(chunk_size)
+          retrieved += chunk.length
           yield(chunk, retrieved, file_size)
         end
-        request.run
       end
+    end
 
-      # Retrieve the file size
-      # @param options [Hash]
-      # @return [Integer] the size of the requested file
-      def get_file_size(options)
-        url = options.fetch(:url)
-        headers = options.fetch(:headers)
-        file_size = options.fetch(:file_size)
+    # Retrieve a resource over the HTTP
+    # @param options [Hash]
+    def retrieve_http(options)
+      file_size = options.fetch(:file_size)
+      headers = options.fetch(:headers)
+      url = options.fetch(:url)
+      retrieved = 0
 
-        case url.scheme
-        when 'file'
-          File.size(url.path)
-        when /https?/
-          response = Typhoeus.head(url.to_s, headers: headers)
-          length_value = response.headers['Content-Length'] || file_size
-          length_value.to_i
-        else
-          raise URI::BadURIError, "Unknown URI scheme: #{url.scheme}"
-        end
+      request = Typhoeus::Request.new(url.to_s, method: :get, headers: headers)
+      request.on_headers do |response|
+        raise DownloadError.new("#{self.class}: Failed to download #{url}: Status Code: #{response.code}", response) unless response.code == 200
       end
+      request.on_body do |chunk|
+        retrieved += chunk.bytesize
+        yield(chunk, retrieved, file_size)
+      end
+      request.run
+    end
+
+    # Retrieve the file size
+    # @param options [Hash]
+    # @return [Integer] the size of the requested file
+    def get_file_size(options)
+      url = options.fetch(:url)
+      headers = options.fetch(:headers)
+      file_size = options.fetch(:file_size)
+
+      case url.scheme
+      when 'file'
+        File.size(url.path)
+      when /https?/
+        response = Typhoeus.head(url.to_s, headers: headers)
+        length_value = response.headers['Content-Length'] || file_size
+        length_value.to_i
+      else
+        raise URI::BadURIError, "Unknown URI scheme: #{url.scheme}"
+      end
+    end
   end
 end

@@ -14,47 +14,47 @@ module BrowseEverything
 
         private
 
-          # The default query parameters for the Google Drive API
-          # @return [Hash]
-          def default_params
-            {
-              q: default_query,
-              order_by: 'modifiedTime desc,folder,name',
-              fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,web_content_link)',
-              supports_team_drives: true,
-              include_team_drive_items: true,
-              corpora: 'user,allTeamDrives',
-              page_size: 1000
-            }
-          end
+        # The default query parameters for the Google Drive API
+        # @return [Hash]
+        def default_params
+          {
+            q: default_query,
+            order_by: 'modifiedTime desc,folder,name',
+            fields: 'nextPageToken,files(name,id,mimeType,size,modifiedTime,parents,web_content_link)',
+            supports_team_drives: true,
+            include_team_drive_items: true,
+            corpora: 'user,allTeamDrives',
+            page_size: 1000
+          }
+        end
 
-          def default_query
-            field_queries = []
-            contraints.each_pair do |field, constraints|
-              field_constraint = constraints.join(" and #{field} ")
-              field_queries << "#{field} #{field_constraint}"
-            end
-            field_queries.join(' ')
+        def default_query
+          field_queries = []
+          contraints.each_pair do |field, constraints|
+            field_constraint = constraints.join(" and #{field} ")
+            field_queries << "#{field} #{field_constraint}"
           end
+          field_queries.join(' ')
+        end
 
-          def contraints
-            {
-              'mimeType' => [
-                '!= \'application/vnd.google-apps.audio\'',
-                '!= \'application/vnd.google-apps.document\'',
-                '!= \'application/vnd.google-apps.drawing\'',
-                '!= \'application/vnd.google-apps.form\'',
-                '!= \'application/vnd.google-apps.fusiontable\'',
-                '!= \'application/vnd.google-apps.map\'',
-                '!= \'application/vnd.google-apps.photo\'',
-                '!= \'application/vnd.google-apps.presentation\'',
-                '!= \'application/vnd.google-apps.script\'',
-                '!= \'application/vnd.google-apps.site\'',
-                '!= \'application/vnd.google-apps.spreadsheet\'',
-                '!= \'application/vnd.google-apps.video\''
-              ]
-            }
-          end
+        def contraints
+          {
+            'mimeType' => [
+              '!= \'application/vnd.google-apps.audio\'',
+              '!= \'application/vnd.google-apps.document\'',
+              '!= \'application/vnd.google-apps.drawing\'',
+              '!= \'application/vnd.google-apps.form\'',
+              '!= \'application/vnd.google-apps.fusiontable\'',
+              '!= \'application/vnd.google-apps.map\'',
+              '!= \'application/vnd.google-apps.photo\'',
+              '!= \'application/vnd.google-apps.presentation\'',
+              '!= \'application/vnd.google-apps.script\'',
+              '!= \'application/vnd.google-apps.site\'',
+              '!= \'application/vnd.google-apps.spreadsheet\'',
+              '!= \'application/vnd.google-apps.video\''
+            ]
+          }
+        end
       end
     end
   end

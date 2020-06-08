@@ -55,25 +55,25 @@ module BrowseEverything
 
       private
 
-        # Construct an array of FileEntry objects for the contents of a
-        # directory
-        # @param real_path [String] path to the file system directory
-        # @return [Array<BrowseEverything::FileEntry>]
-        def make_directory_entry(real_path)
-          entries = []
-          entries + Dir[File.join(real_path, '*')].collect { |f| details(f) }
-        end
+      # Construct an array of FileEntry objects for the contents of a
+      # directory
+      # @param real_path [String] path to the file system directory
+      # @return [Array<BrowseEverything::FileEntry>]
+      def make_directory_entry(real_path)
+        entries = []
+        entries + Dir[File.join(real_path, '*')].collect { |f| details(f) }
+      end
 
-        def make_pathname(path)
-          Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(config[:home]))
-        end
+      def make_pathname(path)
+        Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(config[:home]))
+      end
 
-        def file_size(path)
-          File.size(path).to_i
-        rescue StandardError => error
-          Rails.logger.error "Failed to find the file size for #{path}: #{error}"
-          0
-        end
+      def file_size(path)
+        File.size(path).to_i
+      rescue StandardError => error
+        Rails.logger.error "Failed to find the file size for #{path}: #{error}"
+        0
+      end
     end
   end
 end
