@@ -28,11 +28,62 @@ class TestAppGenerator < Rails::Generators::Base
   end
 
   def inject_javascript
-    insert_into_file 'app/assets/javascripts/application.js', after: '//= require_tree .' do
-      %(
+    if /^6\./.match?(Rails.version)
+      # Both jQuery and Twitter Bootstrap 3.x need to be added for legacy JavaScript
+      system('yarn add jquery@3.3.1')
+      system('yarn add bootstrap@3.4.1')
+      system('yarn install')
+
+      # Adding the JavaScript module dependencies
+      insert_into_file 'app/javascript/packs/application.js', after: 'require("channels")' do
+        %(
+          require("jquery")
+          require("bootstrap")
+        )
+      end
+
+      # Here the JavaScript needs to be injected for Webpacker
+      insert_into_file 'config/webpack/environment.js', after: "const { environment } = require('@rails/webpacker')" do
+        %(
+          const webpack = require('webpack')
+
+          environment.plugins.prepend('Provide',
+            new webpack.ProvidePlugin({
+              $: 'jquery/src/jquery',
+              jQuery: 'jquery/src/jquery'
+            })
+          )
+        )
+      end
+
+      # Copy the TreeTable JavaScript
+      copy_file('../../app/assets/javascripts/treetable.webpack.js', 'app/javascript/packs/treetable.js')
+
+      # Copy the browse_everything JavaScript
+      copy_file('../../app/assets/javascripts/browse_everything/behavior.js', 'app/javascript/packs/browse-everything.js')
+
+      # Adding the JavaScript module dependencies
+      insert_into_file 'app/javascript/packs/browse-everything.js', before: "'use strict';" do
+        %(
+          require("bootstrap")
+          require("./treetable")
+        )
+      end
+
+      # Load the new packs into the view
+      insert_into_file 'app/views/layouts/application.html.erb', before: '</head>' do
+        %(
+          <%= javascript_pack_tag 'treetable', 'data-turbolinks-track': 'reload' %>
+          <%= javascript_pack_tag 'browse-everything', 'data-turbolinks-track': 'reload' %>
+        )
+      end
+    else
+      insert_into_file 'app/assets/javascripts/application.js', after: '//= require_tree .' do
+        %(
         //= require jquery
         //= require browse_everything
-      )
+        )
+      end
     end
   end
 

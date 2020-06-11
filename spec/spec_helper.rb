@@ -87,7 +87,7 @@ module BrowserConfigHelper
                                  app_key: 'S3AppKey',
                                  app_secret: 'S3AppSecret',
                                  bucket: 's3.bucket',
-                                 region: 's3.region'
+                                 region: 'us-east-1'
                                })
   end
 

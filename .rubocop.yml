@@ -28,6 +28,10 @@ Metrics/ClassLength:
   Exclude:
     - 'lib/browse_everything/driver/google_drive.rb'
 
+Metrics/MethodLength:
+  Exclude:
+    - 'spec/test_app_templates/lib/generators/test_app_generator.rb'
+
 Naming/FileName:
   Exclude:
     - 'browse-everything.gemspec'
@@ -72,3 +76,6 @@ Style/MixinUsage:
 Style/NumericLiterals:
   MinDigits: 7
 
+Style/RedundantBegin:
+  Exclude:
+    - 'lib/browse_everything/browser.rb'

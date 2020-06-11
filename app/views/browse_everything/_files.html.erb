@@ -16,6 +16,7 @@
          <% disabled = false %>
       <% else %>
          <% max_size = provider.config[:max_upload_file_size].to_i %>
+         <% max_human_size = file_size_to_human_size(max_size) %>
          <% disabled = file.size > max_size %>
       <% end %>
 
@@ -28,7 +29,7 @@
 
         <td role="gridcell" title="<%= file.name %>" class="<%=file.container? ? 'ev-container' : 'ev-file'%> ev-file-name">
           <% if disabled %>
-            <span title="<%= t('browse_everything.size_disabled', max_size: number_to_human_size(max_size)) %>"
+            <span title="<%= t('browse_everything.size_disabled', max_size: max_human_size) %>"
                   class="<%=file.container? ? 'folder' : 'file'%>" aria-hidden="true">
               <%= file.name %>
             </span>
@@ -53,7 +54,7 @@
 
         <% if file.size %>
           <td role="gridcell" class="ev-file-size">
-            <%= number_to_human_size(file.size).sub(/Bytes/,'bytes') %>
+            <%= file_size_to_human_size(file.size) %>
           </td>
         <% else %>
           <td role="gridcell" class="ev-file-size">Unknown</td>
