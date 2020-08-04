@@ -1,5 +1,9 @@
 gem 'jquery-rails'
 gem 'puma-rails'
+# Pin puma to 3.x because rails's default Gemfile comes with puma ~> 3.x
+# This is only needed because of how CI caches the bumdle install before
+# engine_cart generation and then restores it leading to a version conflict
+gem 'puma', '~> 3.7'
 
 if ENV['TEST_BOOTSTRAP'] == "3"
   gem "bootstrap-sass"
