@@ -191,50 +191,50 @@ module BrowseEverything
 
       private
 
-        def client_secrets
-          {
-            Google::Auth::ClientId::WEB_APP => {
-              Google::Auth::ClientId::CLIENT_ID => config[:client_id],
-              Google::Auth::ClientId::CLIENT_SECRET => config[:client_secret]
-            }
+      def client_secrets
+        {
+          Google::Auth::ClientId::WEB_APP => {
+            Google::Auth::ClientId::CLIENT_ID => config[:client_id],
+            Google::Auth::ClientId::CLIENT_SECRET => config[:client_secret]
           }
-        end
+        }
+      end
 
-        # This is required for using the googleauth Gem
-        # @see http://www.rubydoc.info/gems/googleauth/Google/Auth/Stores/FileTokenStore FileTokenStore for googleauth
-        # @return [Tempfile] temporary file within which to cache credentials
-        def file_token_store_path
-          Tempfile.new('gdrive.yaml')
-        end
+      # This is required for using the googleauth Gem
+      # @see http://www.rubydoc.info/gems/googleauth/Google/Auth/Stores/FileTokenStore FileTokenStore for googleauth
+      # @return [Tempfile] temporary file within which to cache credentials
+      def file_token_store_path
+        Tempfile.new('gdrive.yaml')
+      end
 
-        def scope
-          Google::Apis::DriveV3::AUTH_DRIVE
-        end
+      def scope
+        Google::Apis::DriveV3::AUTH_DRIVE
+      end
 
-        # Provides the user ID for caching access tokens
-        # (This is a hack which attempts to anonymize the access tokens)
-        # @return [String] the ID for the user
-        def user_id
-          'current_user'
-        end
+      # Provides the user ID for caching access tokens
+      # (This is a hack which attempts to anonymize the access tokens)
+      # @return [String] the ID for the user
+      def user_id
+        'current_user'
+      end
 
-        # Please see https://developers.google.com/drive/v3/web/manage-downloads
-        # @param id [String] the ID for the Google Drive File
-        # @return [String] the URL for the file download
-        def download_url(id)
-          "https://www.googleapis.com/drive/v3/files/#{id}?alt=media"
-        end
+      # Please see https://developers.google.com/drive/v3/web/manage-downloads
+      # @param id [String] the ID for the Google Drive File
+      # @return [String] the URL for the file download
+      def download_url(id)
+        "https://www.googleapis.com/drive/v3/files/#{id}?alt=media"
+      end
 
-        # Restore the credentials for the Google API
-        # @param access_token [String] the access token redeemed using an authorization code
-        # @return Credentials credentials restored from a cached access token
-        def restore_credentials(access_token)
-          client = Auth::Google::Credentials.new
-          client.client_id = client_id.id
-          client.client_secret = client_id.secret
-          client.update_token!('access_token' => access_token)
-          @credentials = client
-        end
+      # Restore the credentials for the Google API
+      # @param access_token [String] the access token redeemed using an authorization code
+      # @return Credentials credentials restored from a cached access token
+      def restore_credentials(access_token)
+        client = Auth::Google::Credentials.new
+        client.client_id = client_id.id
+        client.client_secret = client_id.secret
+        client.update_token!('access_token' => access_token)
+        @credentials = client
+      end
     end
   end
 end

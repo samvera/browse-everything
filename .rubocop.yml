@@ -3,52 +3,34 @@ inherit_gem:
   bixby: bixby_default.yml
 
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.6
   DisplayCopNames: true
   Exclude:
     - 'vendor/**/*'
 
-Rails:
-  Enabled: true
-Rails/FilePath:
+Bundler/DuplicatedGem:
   Exclude:
-    - 'lib/generators/browse_everything/config_generator.rb'
+    - 'Gemfile'
 
-Metrics/ClassLength:
-  Max: 130
-  Exclude:
-    - 'lib/browse_everything/driver/google_drive.rb'
-Metrics/LineLength:
+Layout/LineLength:
   Max: 400
   Exclude:
     - 'spec/lib/browse_everything/driver/box_spec.rb'
     - 'spec/lib/browse_everything/driver/dropbox_spec.rb'
+
 Metrics/BlockLength:
   Exclude:
     - '*.gemspec'
     - 'spec/**/*'
 
-RSpec/NestedGroups:
-  Enabled: false
-
-RSpec/DescribeClass:
+Metrics/ClassLength:
+  Max: 130
   Exclude:
-    - 'spec/javascripts/**/*'
-    
-RSpec/LeadingSubject:
-  Enabled: false
+    - 'lib/browse_everything/driver/google_drive.rb'
 
-RSpec/ExampleLength:
-  Enabled: false
-
-RSpec/MultipleExpectations:
-  Enabled: false
-
-Style/NumericLiterals:
-  MinDigits: 7
-
-Layout/IndentationConsistency:
-  EnforcedStyle: rails
+Metrics/MethodLength:
+  Exclude:
+    - 'spec/test_app_templates/lib/generators/test_app_generator.rb'
 
 Naming/FileName:
   Exclude:
@@ -56,18 +38,44 @@ Naming/FileName:
     - 'Gemfile'
     - 'lib/browse-everything.rb'
 
+Rails:
+  Enabled: true
+
+Rails/FilePath:
+  Exclude:
+    - 'lib/generators/browse_everything/config_generator.rb'
+
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/javascripts/**/*'
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/LeadingSubject:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
 Style/MixinUsage:
   Exclude:
-    - 'spec/lib/browse_everything/driver/s3_spec.rb'
-    - 'spec/lib/browse_everything/driver/google_drive_spec.rb'
-    - 'spec/lib/browse_everything/driver/file_system_spec.rb'
-    - 'spec/lib/browse_everything/driver/dropbox_spec.rb'
-    - 'spec/lib/browse_everything/driver/box_spec.rb'
-    - 'spec/lib/browse_everything/driver/base_spec.rb'
-    - 'spec/lib/browse_everything/browser_spec.rb'
-    - 'spec/services/browser_factory_spec.rb'
     - 'spec/helper/browse_everything_controller_helper_spec.rb'
+    - 'spec/lib/browse_everything/browser_spec.rb'
+    - 'spec/lib/browse_everything/driver/base_spec.rb'
+    - 'spec/lib/browse_everything/driver/box_spec.rb'
+    - 'spec/lib/browse_everything/driver/dropbox_spec.rb'
+    - 'spec/lib/browse_everything/driver/file_system_spec.rb'
+    - 'spec/lib/browse_everything/driver/google_drive_spec.rb'
+    - 'spec/lib/browse_everything/driver/s3_spec.rb'
+    - 'spec/services/browser_factory_spec.rb'
 
-Bundler/DuplicatedGem:
+Style/NumericLiterals:
+  MinDigits: 7
+
+Style/RedundantBegin:
   Exclude:
-    - 'Gemfile'
+    - 'lib/browse_everything/browser.rb'

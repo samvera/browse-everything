@@ -262,20 +262,28 @@ $(function () {
 
   $.fn.browseEverything = function (options) {
     var ctx = $(this).data('ev-state');
+
+    // Try and load the options from the HTML data attributes
     if (ctx == null && options == null) {
       options = $(this).data();
     }
+
     if (options != null) {
       ctx = initialize(this[0], options);
-      $(this).click(function () {
-        dialog.data('ev-state', ctx);
-        return dialog.load(ctx.opts.route, function () {
-          setTimeout(refreshFiles, 500);
-          ctx.callbacks.show.fire();
-          return dialog.modal('show');
-        });
-      });
     }
+
+    $(this).click(function () {
+      dialog.data('ev-state', ctx);
+      return dialog.load(ctx.opts.route, function () {
+        setTimeout(refreshFiles, 50);
+        ctx.callbacks.show.fire();
+        dialog.removeClass('fade')
+          .removeClass('in')
+          .addClass('show');
+
+        return dialog.modal('show');
+      });
+    });
 
     if (ctx) {
       return ctx.callback_proxy;

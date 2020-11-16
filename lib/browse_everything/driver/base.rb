@@ -100,21 +100,21 @@ module BrowseEverything
 
       private
 
-        # Generate the options for the Rails URL generation for API callbacks
-        # remove the script_name parameter from the url_options since that is causing issues
-        #   with the route not containing the engine path in rails 4.2.0
-        # @return [Hash]
-        def callback_options
-          options = config.to_hash
-          options.deep_symbolize_keys!
-          options[:url_options].reject { |k, _v| k == :script_name }
-        end
+      # Generate the options for the Rails URL generation for API callbacks
+      # remove the script_name parameter from the url_options since that is causing issues
+      #   with the route not containing the engine path in rails 4.2.0
+      # @return [Hash]
+      def callback_options
+        options = config.to_hash
+        options.deep_symbolize_keys!
+        options[:url_options].reject { |k, _v| k == :script_name }
+      end
 
-        # Generate the URL for the API callback
-        # @return [String]
-        def callback
-          connector_response_url(callback_options)
-        end
+      # Generate the URL for the API callback
+      # @return [String]
+      def callback
+        connector_response_url(callback_options)
+      end
     end
   end
 end

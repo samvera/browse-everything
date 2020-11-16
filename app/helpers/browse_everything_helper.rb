@@ -20,4 +20,8 @@ module BrowseEverythingHelper
     acceptable_types << 'application/x-directory'
     acceptable_types.any? { |type| mime_match?(file.type, type) }
   end
+
+  def file_size_to_human_size(file_size)
+    "#{file_size} bytes"
+  end
 end
