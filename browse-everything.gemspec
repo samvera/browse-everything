@@ -28,7 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rails', '>= 4.2', '< 7.0'
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'signet', '~> 0.8'
-  spec.add_dependency 'sprockets', '~> 3.7'
   spec.add_dependency 'typhoeus'
 
   spec.add_development_dependency 'bixby', '~> 3.0'
