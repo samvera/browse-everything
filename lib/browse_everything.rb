@@ -34,7 +34,6 @@ module BrowseEverything
 
   module Auth
     module Google
-      autoload :Credentials,        'browse_everything/auth/google/credentials'
       autoload :RequestParameters,  'browse_everything/auth/google/request_parameters'
     end
   end
