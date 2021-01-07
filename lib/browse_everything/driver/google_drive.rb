@@ -108,7 +108,7 @@ module BrowseEverything
       # @param id [String] identifier for the resource
       # @return [Array<String, Hash>] authorized link to the resource
       def link_for(id)
-        file = drive_service.get_file(id, fields: 'id, name, size')
+        file = drive_service.get_file(id, supports_all_drives: true, fields: 'id, name, size')
         auth_header = { 'Authorization' => "Bearer #{credentials.access_token}" }
         extras = {
           auth_header: auth_header,
