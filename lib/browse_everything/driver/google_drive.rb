@@ -90,17 +90,62 @@ module BrowseEverything
         @entries += list_files(drive, request_params, path: path) if request_params.page_token.present?
       end
 
-      # Retrieve the files for any given resource on Google Drive
+      # Retrieve the drive details
+      # @param drive [Google::Apis::DriveV3::Drive] the Google Drive File
+      # @param path [String] path for the resource details (unused)
+      # @return [BrowseEverything::FileEntry] file entry for the resource node
+      def drive_details(drive)
+        BrowseEverything::FileEntry.new(
+          drive.id,
+          "#{key}:#{drive.id}",
+          drive.name,
+          0,
+          Time.new,
+          true,
+          'drive'
+        )
+      end
+
+      # Lists the drives accessible by a Google Drive context
+      # @param drive [Google::Apis::DriveV3::DriveService] the Google Drive context
+      # @return [Array<BrowseEverything::FileEntry>] file entries for the drives
+      def list_drives(drive)
+        page_token = nil
+        drive.list_drives(:fields=>"nextPageToken,drives(name,id)", :page_size=>100) do |drive_list, error|
+          # Raise an exception if there was an error Google API's
+          if error.present?
+            # In order to properly trigger reauthentication, the token must be cleared
+            # Additionally, the error is not automatically raised from the Google Client
+            @token = nil
+            raise error
+          end
+
+          @entries += drive_list.drives.map do |gdrive_file|
+            drive_details(gdrive_file)
+          end
+
+          page_token = drive_list.next_page_token
+        end
+
+        @entries += list_drives(drive) if page_token.present?
+    end
+
+      # Retrieve the drives or files for any given resource on Google Drive
       # @param path [String] the root or Folder path for which to list contents
       # @return [Array<BrowseEverything::FileEntry>] file entries for the path
       def contents(path = '')
         @entries = []
-        drive_service.batch do |drive|
-          request_params = Auth::Google::RequestParameters.new
-          request_params.q += " and '#{path}' in parents " if path.present?
-          list_files(drive, request_params, path: path)
+        if path.empty?
+          drive_service.batch do |drive|
+            list_drives(drive)
+          end
+        else
+          drive_service.batch do |drive|
+            request_params = Auth::Google::RequestParameters.new
+            request_params.q += " and '#{path}' in parents "
+            list_files(drive, request_params, path: path)
+          end
         end
-
         @sorter.call(@entries)
       end
 
