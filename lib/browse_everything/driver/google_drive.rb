@@ -137,6 +137,7 @@ module BrowseEverything
         @entries = []
         if path.empty?
           drive_service.batch do |drive|
+            @entries << drive_details(Google::Apis::DriveV3::Drive.new(id: "root", name: "My Drive" ))
             list_drives(drive)
           end
         else
