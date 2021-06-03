@@ -1,3 +1,3 @@
 //= require jquery.treetable
-//= require bootstrap-sprockets
+//= require bootstrap
 //= require browse_everything/behavior
