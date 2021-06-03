@@ -14,5 +14,5 @@ if ENV['TEST_BOOTSTRAP'] == "3"
   gem "bootstrap-sass"
 else
   # bootstrap 4
-  gem "bootstrap"
+  gem "bootstrap", "~> 4.0"
 end
