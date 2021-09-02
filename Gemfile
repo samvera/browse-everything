@@ -31,6 +31,8 @@ else
     else
       gem 'rails', ENV['RAILS_VERSION']
     end
+  else
+    gem 'rails', '5.2.6'
   end
 
   case ENV['RAILS_VERSION']
