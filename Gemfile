@@ -15,6 +15,9 @@ end
 # the below comes from engine_cart, a gem used to test this Rails engine gem in the context of a Rails app.
 file = File.expand_path('Gemfile', ENV['ENGINE_CART_DESTINATION'] || ENV['RAILS_ROOT'] || File.expand_path('.internal_test_app', File.dirname(__FILE__)))
 if File.exist?(file)
+  Bundler.ui.warn "[EngineCart] here"
+  exit(1)
+
   begin
     eval_gemfile file
   rescue Bundler::GemfileError => e
@@ -25,6 +28,8 @@ else
   Bundler.ui.warn "[EngineCart] Unable to find test application dependencies in #{file}, using placeholder dependencies"
 
   if ENV['RAILS_VERSION']
+    Bundler.ui.info "Installing Rails release #{ENV['RAILS_VERSION']}..."
+
     if ENV['RAILS_VERSION'] == 'edge'
       gem 'rails', github: 'rails/rails'
       ENV['ENGINE_CART_RAILS_OPTIONS'] = '--edge --skip-turbolinks'
