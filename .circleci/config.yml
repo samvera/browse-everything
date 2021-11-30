@@ -51,7 +51,7 @@ workflows:
     jobs:
       - build:
           name: "ruby2-7_rails6-1"
-          ruby_version: 2.7.5
+          ruby_version: 2.7.4
           rails_version: 6.1.4.1
       - build:
           name: "ruby2-6_rails6-1"
@@ -64,7 +64,7 @@ workflows:
 
       - build:
           name: "ruby2-7_rails6-0"
-          ruby_version: 2.7.5
+          ruby_version: 2.7.4
           rails_version: 6.0.3.1
       - build:
           name: "ruby2-6_rails6-0"
@@ -77,7 +77,7 @@ workflows:
 
       - build:
           name: "ruby2-7_rails5-2"
-          ruby_version: 2.7.5
+          ruby_version: 2.7.4
           rails_version: 5.2.4.3
       - build:
           name: "ruby2-6_rails5-2"
