@@ -16,7 +16,6 @@ end
 file = File.expand_path('Gemfile', ENV['ENGINE_CART_DESTINATION'] || ENV['RAILS_ROOT'] || File.expand_path('.internal_test_app', File.dirname(__FILE__)))
 if File.exist?(file)
   Bundler.ui.warn "[EngineCart] here"
-  exit(1)
 
   begin
     eval_gemfile file
