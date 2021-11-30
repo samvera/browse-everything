@@ -3,7 +3,7 @@ gem 'puma-rails'
 
 if ENV['RAILS_VERSION']
   case ENV['RAILS_VERSION']
-  when /6\./
+  when /6\.1\./
     gem 'webpacker', '~> 5.0'
   when /6\./
     gem 'webpacker', '~> 4.0'
