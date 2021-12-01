@@ -5,7 +5,7 @@ require 'open3'
 # Run karma and parse the output for failures.
 # The spec will fail if any karma test fails.
 describe 'Karma' do
-  let(:runner)  { Open3.capture3('karma', 'start') }
+  let(:runner)  { Open3.capture3('/usr/bin/env', 'yarn', 'run', 'karma', 'start') }
   let(:output)  { runner[0] + runner[1] }
   let(:status)  { runner[2].exitstatus }
 

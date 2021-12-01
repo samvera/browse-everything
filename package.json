@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "karma": "^6.3.9",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-jasmine": "^4.0.1"
+  }
+}
