@@ -12,9 +12,10 @@ namespace :browse_everything do
       Rake::Task['engine_cart:inject_gemfile_extras'].invoke
 
       within_test_app do
+        bundle_install_status = system("bundle install --quiet") || system("bundle update --quiet")
         bundle_webpacker = system("bundle exec rails webpacker:install")
 
-        unless bundle_webpacker
+        unless bundle_install_status && bundle_webpacker
           raise("EngineCart failed on with: #{$?}")
         end
       end
