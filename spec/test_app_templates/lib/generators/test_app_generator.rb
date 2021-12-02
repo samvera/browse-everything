@@ -2,6 +2,8 @@
 
 require 'rails/generators'
 
+require 'pry-byebug'
+
 class TestAppGenerator < Rails::Generators::Base
   source_root File.expand_path('../../../spec/test_app_templates', __dir__)
 
@@ -80,23 +82,26 @@ class TestAppGenerator < Rails::Generators::Base
     else
       insert_into_file 'app/assets/javascripts/application.js', after: '//= require_tree .' do
         %(
-        //= require jquery
-        //= require browse_everything
+          //= require jquery
+          //= require browse_everything
         )
       end
     end
   end
 
   def inject_application
+    #binding.pry
+
     insert_into_file 'config/application.rb', after: 'Rails::Application' do
       "\nconfig.autoload_paths+=[File.join(Rails.root,'../../lib')]"
     end
   end
 
   def inject_routes
+    #binding.pry
+
     insert_into_file 'config/routes.rb', after: '.draw do' do
       %(
-
         root :to => "file_handler#index"
         get '/main', :to => "file_handler#main"
         post '/file', :to => "file_handler#update"
@@ -105,6 +110,8 @@ class TestAppGenerator < Rails::Generators::Base
   end
 
   def create_test_route
+    #binding.pry
+
     copy_file '../support/app/controllers/file_handler_controller.rb', 'app/controllers/file_handler_controller.rb'
     copy_file '../support/app/views/file_handler/main.html.erb', 'app/views/file_handler/main.html.erb'
     copy_file '../support/app/views/file_handler/index.html.erb', 'app/views/file_handler/index.html.erb'

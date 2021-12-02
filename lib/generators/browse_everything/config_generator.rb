@@ -13,12 +13,14 @@ class BrowseEverything::ConfigGenerator < Rails::Generators::Base
   def inject_routes
     insert_into_file 'config/routes.rb', after: '.draw do' do
       %(
-        mount BrowseEverything::Engine => '/browse')
+        mount BrowseEverything::Engine => '/browse'
+      )
     end
   end
 
   def copy_example_config
     FileUtils.rm 'config/browse_everything_providers.yml', force: true if File.exist? 'config/browse_everything_providers.yml'
+
     copy_file 'browse_everything_providers.yml.example', 'config/browse_everything_providers.yml', force: true
   end
 
