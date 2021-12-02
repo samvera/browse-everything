@@ -32,7 +32,7 @@ jobs:
       - run:
          name: Generate test app
          command: |
-           [ -e ./.internal_test_app ] || bundle exec rake browse_everything:create_test_rails_app
+           [ -e ./.internal_test_app ] || bundle exec rake browse_everything:generate_test_app
 
       - save_cache:
          name: Generate test app
