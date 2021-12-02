@@ -22,6 +22,7 @@ Metrics/BlockLength:
   Exclude:
     - '*.gemspec'
     - 'spec/**/*'
+    - 'tasks/browse_everything.rake'
 
 Metrics/ClassLength:
   Max: 130

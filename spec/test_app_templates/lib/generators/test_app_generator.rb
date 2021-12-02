@@ -90,7 +90,7 @@ class TestAppGenerator < Rails::Generators::Base
   end
 
   def inject_application
-    #binding.pry
+    # binding.pry
 
     insert_into_file 'config/application.rb', after: 'Rails::Application' do
       "\nconfig.autoload_paths+=[File.join(Rails.root,'../../lib')]"
@@ -98,7 +98,7 @@ class TestAppGenerator < Rails::Generators::Base
   end
 
   def inject_routes
-    #binding.pry
+    # binding.pry
 
     insert_into_file 'config/routes.rb', after: '.draw do' do
       %(
@@ -110,7 +110,7 @@ class TestAppGenerator < Rails::Generators::Base
   end
 
   def create_test_route
-    #binding.pry
+    # binding.pry
 
     copy_file '../support/app/controllers/file_handler_controller.rb', 'app/controllers/file_handler_controller.rb'
     copy_file '../support/app/views/file_handler/main.html.erb', 'app/views/file_handler/main.html.erb'
