@@ -51,10 +51,6 @@ jobs:
 
       - samvera/rubocop
 
-      #      #- run:
-      #    name: Install Karma for JavaScript and functional tests
-      #    command: sudo npm install -g karma karma-jasmine karma-chrome-launcher
-
       - run:
           name: yarn install
           command: yarn install
@@ -70,7 +66,6 @@ jobs:
       - run:
           name: Run rspec in parallel
           command: |
-            mkdir /tmp/test-results
             bundle exec rspec $(circleci tests glob "spec/features/*_spec.rb" | circleci tests split --split-by=timings)
 
 workflows:
