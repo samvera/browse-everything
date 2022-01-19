@@ -111,7 +111,7 @@ module BrowseEverything
       # @return [Array<BrowseEverything::FileEntry>] file entries for the drives
       def list_drives(drive)
         page_token = nil
-        drive.list_drives(:fields=>"nextPageToken,drives(name,id)", :page_size=>100) do |drive_list, error|
+        drive.list_drives(fields: "nextPageToken,drives(name,id)", page_size: 100) do |drive_list, error|
           # Raise an exception if there was an error Google API's
           if error.present?
             # In order to properly trigger reauthentication, the token must be cleared
@@ -128,7 +128,7 @@ module BrowseEverything
         end
 
         @entries += list_drives(drive) if page_token.present?
-    end
+      end
 
       # Retrieve the drives or files for any given resource on Google Drive
       # @param path [String] the root or Folder path for which to list contents
@@ -137,7 +137,7 @@ module BrowseEverything
         @entries = []
         if path.empty?
           drive_service.batch do |drive|
-            @entries << drive_details(Google::Apis::DriveV3::Drive.new(id: "root", name: "My Drive" ))
+            @entries << drive_details(Google::Apis::DriveV3::Drive.new(id: "root", name: "My Drive"))
             list_drives(drive)
           end
         else

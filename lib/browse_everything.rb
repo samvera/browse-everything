@@ -34,7 +34,7 @@ module BrowseEverything
 
   module Auth
     module Google
-      autoload :RequestParameters,  'browse_everything/auth/google/request_parameters'
+      autoload :RequestParameters, 'browse_everything/auth/google/request_parameters'
     end
   end
 
