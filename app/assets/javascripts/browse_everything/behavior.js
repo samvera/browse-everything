@@ -317,6 +317,7 @@ $(function () {
   $(document).on('click', 'button.ev-cancel', function (event) {
     event.preventDefault();
     dialog.data('ev-state').callbacks.cancel.fire();
+    selected_files.clear();
     return $('.ev-browser').modal('hide');
   });
 
