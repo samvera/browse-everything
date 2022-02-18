@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rswag', '2.0.6' # Blocked until 2.1.z resolved https://github.com/rswag/rswag/issues/248
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'signet', '~> 0.8'
-  spec.add_dependency 'thor', '~> 0.19'
+  spec.add_dependency 'thor', '>= 0.19'
   spec.add_dependency 'typhoeus'
 
   spec.add_development_dependency 'bundler', '>= 1.3.0' # This is needed for Rails 6.y.z
