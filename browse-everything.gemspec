@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '>= 1.3'
   spec.add_development_dependency 'capybara'
   spec.add_development_dependency 'coveralls'
-  spec.add_development_dependency 'engine_cart', '~> 2.0'
+  spec.add_development_dependency 'engine_cart', '~> 2.2'
   spec.add_development_dependency 'factory_bot_rails'
   spec.add_development_dependency 'jasmine', '~> 2.3'
   spec.add_development_dependency 'pry-byebug'
