@@ -124,11 +124,11 @@ module BrowseEverything
       end
 
       def auth_link(url_options)
-        authenticator.authorize_url redirect_uri: redirect_uri(url_options)
+        authenticator.auth_code.authorize_url redirect_uri: redirect_uri(url_options)
       end
 
       def connect(params, _data, url_options)
-        auth_bearer = authenticator.get_token params[:code], redirect_uri: redirect_uri(url_options)
+        auth_bearer = authenticator.auth_code.get_token params[:code], redirect_uri: redirect_uri(url_options)
         self.token = auth_bearer.token
       end
 
