@@ -10,8 +10,7 @@ group :development, :test do
 end
 
 # BEGIN ENGINE_CART BLOCK
-# engine_cart: 0.10.0
-# engine_cart stanza: 0.10.0
+# engine_cart: 2.3.0
 # the below comes from engine_cart, a gem used to test this Rails engine gem in the context of a Rails app.
 file = File.expand_path('Gemfile', ENV['ENGINE_CART_DESTINATION'] || ENV['RAILS_ROOT'] || File.expand_path('.internal_test_app', File.dirname(__FILE__)))
 if File.exist?(file)
@@ -31,14 +30,18 @@ else
     else
       gem 'rails', ENV['RAILS_VERSION']
     end
-  end
 
-  case ENV['RAILS_VERSION']
-  when /^6\./
-    gem 'puma', '~> 4.1'
-  when /^5\./
-    gem 'capybara', '~> 2.18.0'
+    case ENV['RAILS_VERSION']
+    when /^6\./
+      gem 'puma', '~> 4.1'
+    when /^5\./
+      gem 'puma', '~> 3.11'
+      gem 'sprockets', '~> 3.7'
+    end
+  else
     gem 'puma', '~> 3.11'
+    gem 'rails', '5.2.7'
+    gem 'sprockets', '~> 3.7'
   end
 end
 # END ENGINE_CART BLOCK
