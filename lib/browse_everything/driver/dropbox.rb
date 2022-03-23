@@ -128,7 +128,10 @@ module BrowseEverything
       end
 
       def connect(params, _data, url_options)
-        auth_bearer = authenticator.auth_code.get_token params[:code], redirect_uri: redirect_uri(url_options)
+        built_redirect_uri = redirect_uri(url_options)
+        token_code = params[:code]
+
+        auth_bearer = authenticator.auth_code.get_token(token_code, redirect_uri: built_redirect_uri)
         self.token = auth_bearer.token
       end
 
