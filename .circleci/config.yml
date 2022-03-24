@@ -1,7 +1,7 @@
 ---
 version: 2.1
 orbs:
-  samvera: samvera/circleci-orb@dev:e8de1b1
+  samvera: samvera/circleci-orb@1.0
 
 jobs:
   build:
