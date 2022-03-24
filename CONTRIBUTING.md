@@ -22,6 +22,28 @@ https://wiki.duraspace.org/display/samvera/Samvera+Community+Intellectual+Proper
 
 You should also add yourself to the `CONTRIBUTORS.md` file in the root of the project.
 
+## Language
+
+The language we use matters.  Today, tomorrow, and for years to come
+people will read the code we write.  They will judge us for our
+design, logic, and the words we use to describe the system.
+
+Our words should be accessible.  Favor descriptive words that give
+meaning while avoiding reinforcing systemic inequities.  For example,
+in the Samvera community, we should favor using allowed\_list instead
+of whitelist, denied\_list instead of blacklist, or source/copy
+instead of master/slave.
+
+We're going to get it wrong, but this is a call to keep working to
+make it right.  View our code and the words we choose as a chance to
+have a conversation. A chance to grow an understanding of the systems
+we develop as well as the systems in which we live.
+
+See [“Blacklists” and “whitelists”: a salutary warning concerning the
+prevalence of racist language in discussions of predatory
+publishing](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6148600/) for
+further details.
+
 ## Contribution Tasks
 
 * Reporting Issues
