@@ -33,12 +33,14 @@ what this means can be found
 
 ### Product Owner
 
-[mbklein](https://github.com/mbklein)
+[jrgriffiniii](https://github.com/jrgriffiniii)
 
 # Getting Started
 
 ## Supported Ruby Releases
+
 Currently, the following releases of Ruby are tested:
+
 - 2.7.3
 - 2.6.6
 - 2.5.8
