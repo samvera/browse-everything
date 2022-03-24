@@ -2,6 +2,7 @@
 
 $(function () {
   var dialog = $('div#browse-everything');
+  var selected_files = new Map(); // { url: input element object }
 
   var initialize = function initialize(obj, options) {
     if ($('div#browse-everything').length === 0) {
@@ -46,25 +47,21 @@ $(function () {
       return t.replace(/\+/g, ' ').split('=', 2);
     });
     var elements = $(fields).map(function () {
-      return $("<input type='hidden'/>").attr('name', decodeURIComponent(this[0])).val(decodeURIComponent(this[1]))[0].outerHTML;
+      return $("<input type='hidden'/>").attr('name', decodeURIComponent(this[0])).val(decodeURIComponent(this[1]))[0];
     });
-    return $(elements.toArray().join("\n"));
+    return $(elements.toArray());
   };
 
   var indicateSelected = function indicateSelected() {
-    return $('input.ev-url').each(function () {
-      return $('*[data-ev-location=\'' + $(this).val() + '\']').addClass('ev-selected');
+    return selected_files.forEach(function (value, key) {
+      var row = $('*[data-ev-location=\'' + key + '\']');
+      row.find('.ev-select-file').prop('checked', true);
+      return row.addClass('ev-selected');
     });
   };
 
   var fileIsSelected = function fileIsSelected(row) {
-    var result = false;
-    $('input.ev-url').each(function () {
-      if (this.value === $(row).data('ev-location')) {
-        return result = true;
-      }
-    });
-    return result;
+    return selected_files.has(row.data('ev-location'));
   };
 
   var toggleFileSelect = function toggleFileSelect(row) {
@@ -77,27 +74,26 @@ $(function () {
     return updateFileCount();
   };
 
+  var hidden_input_prototype = $("<input type='hidden' class='ev-url' name='selected_files[]'/>");
   var selectFile = function selectFile(row) {
-    var target_form = $('form.ev-submit-form');
     var file_location = row.data('ev-location');
-    var hidden_input = $("<input type='hidden' class='ev-url' name='selected_files[]'/>").val(file_location);
-    target_form.append(hidden_input);
+    var hidden_input = hidden_input_prototype.clone().val(file_location);
+    selected_files.set(file_location, hidden_input);
     if (!$(row).find('.ev-select-file').prop('checked')) {
       return $(row).find('.ev-select-file').prop('checked', true);
     }
   };
 
   var unselectFile = function unselectFile(row) {
-    var target_form = $('form.ev-submit-form');
     var file_location = row.data('ev-location');
-    $('form.ev-submit-form input[value=\'' + file_location + '\']').remove();
+    selected_files.delete(file_location);
     if ($(row).find('.ev-select-file').prop('checked')) {
       return $(row).find('.ev-select-file').prop('checked', false);
     }
   };
 
   var updateFileCount = function updateFileCount() {
-    var count = $('input.ev-url').length;
+    var count = selected_files.size;
     var files = count === 1 ? "file" : "files";
     return $('.ev-status').html(count + ' ' + files + ' selected');
   };
@@ -125,7 +121,7 @@ $(function () {
   };
 
   var selectChildRows = function selectChildRows(row, action) {
-    return $('table#file-list tr').each(function () {
+    var returned_rows = $('table#file-list tr').each(function () {
       if ($(this).data('tt-parent-id')) {
         var re = RegExp($(row).data('tt-id'), 'i');
         if ($(this).data('tt-parent-id').match(re)) {
@@ -149,11 +145,12 @@ $(function () {
               $(this).removeClass('ev-selected');
               unselectFile($(this));
             }
-            return updateFileCount();
           }
         }
       }
     });
+    updateFileCount();
+    return returned_rows;
   };
 
   var tableSetup = function tableSetup(table) {
@@ -320,6 +317,7 @@ $(function () {
   $(document).on('click', 'button.ev-cancel', function (event) {
     event.preventDefault();
     dialog.data('ev-state').callbacks.cancel.fire();
+    selected_files.clear();
     return $('.ev-browser').modal('hide');
   });
 
@@ -327,6 +325,7 @@ $(function () {
     event.preventDefault();
     $(this).button('loading');
     startWait();
+    $('form.ev-submit-form').append(Array.from(selected_files.values()));
     var main_form = $(this).closest('form');
     var resolver_url = main_form.data('resolver');
     var ctx = dialog.data('ev-state');
@@ -338,12 +337,13 @@ $(function () {
     }).done(function (data) {
       if (ctx.opts.target != null) {
         var fields = toHiddenFields({ selected_files: data });
-        $(ctx.opts.target).append($(fields));
+        $(ctx.opts.target).append(fields);
       }
       return ctx.callbacks.done.fire(data);
     }).fail(function (xhr, status, error) {
       return ctx.callbacks.fail.fire(status, error, xhr.responseText);
     }).always(function () {
+      selected_files.clear();
       $('body').css('cursor', 'default');
       $('.ev-browser').modal('hide');
       return $('#browse-btn').focus();
