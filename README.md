@@ -41,15 +41,17 @@ what this means can be found
 
 Currently, the following releases of Ruby are tested:
 
+- 3.0.3
 - 2.7.3
-- 2.6.6
+- 2.6.9
 - 2.5.8
-- 2.4.10
 
 ## Supported Rails Releases
+
 The supported Rail releases follow those specified by [the security policy of the Rails Community](https://rubyonrails.org/security/).  As is the case with the supported Ruby releases, it is recommended that one upgrades from any Rails release no longer receiving security updates.
-- 6.0.3
-- 5.2.3
+
+- 6.0.3.1
+- 5.2.7
 - 5.1.7
 
 ## Installation

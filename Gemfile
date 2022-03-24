@@ -43,4 +43,8 @@ else
 end
 # END ENGINE_CART BLOCK
 
+group :test, :development do
+  gem 'bixby', git: 'https://github.com/samvera/bixby', branch: 'main'
+end
+
 eval_gemfile File.expand_path('spec/test_app_templates/Gemfile.extra', File.dirname(__FILE__)) unless File.exist?(file)

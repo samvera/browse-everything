@@ -32,6 +32,7 @@ module BrowseEverything
         # @param subclass [Class] the class inheriting from BrowseEverything::Driver::Base
         def inherited(subclass)
           subclass.sorter = sorter
+          super(subclass)
         end
       end
 

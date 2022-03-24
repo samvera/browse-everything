@@ -1,7 +1,7 @@
 ---
 version: 2.1
 orbs:
-  samvera: samvera/circleci-orb@0
+  samvera: samvera/circleci-orb@dev:e8de1b1
 
 jobs:
   build:
@@ -31,6 +31,12 @@ jobs:
             fi
             [[ -z "$(git branch --all --list master */master)" ]]
 
+      - run:
+          name: Install package dependencies
+          command: |
+            sudo apt update -y
+            sudo apt-get install -y libsqlite3-dev
+
       - samvera/bundle_for_gem:
           bundler_version: << parameters.bundler_version >>
           ruby_version: << parameters.ruby_version >>
@@ -59,39 +65,46 @@ jobs:
 workflows:
   ci:
     jobs:
+      # Rails 6.0.z releases
+      - build:
+          name: "ruby3-0_rails6-0"
+          ruby_version: 3.0.3
+          rails_version: 6.0.3.1
       - build:
           name: "ruby2-7_rails6-0"
           ruby_version: 2.7.3
           rails_version: 6.0.3.1
       - build:
           name: "ruby2-6_rails6-0"
-          ruby_version: 2.6.6
+          ruby_version: 2.6.9
           rails_version: 6.0.3.1
       - build:
           name: "ruby2-5_rails6-0"
           ruby_version: 2.5.8
           rails_version: 6.0.3.1
 
+      # Rails 5.2.z releases
       - build:
           name: "ruby2-7_rails5-2"
-          ruby_version: 2.7.1
-          rails_version: 5.2.4.3
+          ruby_version: 2.7.3
+          rails_version: 5.2.7
       - build:
           name: "ruby2-6_rails5-2"
-          ruby_version: 2.6.6
-          rails_version: 5.2.4.3
+          ruby_version: 2.6.9
+          rails_version: 5.2.7
       - build:
           name: "ruby2-5_rails5-2"
           ruby_version: 2.5.8
-          rails_version: 5.2.4.3
+          rails_version: 5.2.7
 
+      # Rails 5.1.z releases
       - build:
           name: "ruby2-7_rails5-1"
           ruby_version: 2.7.3
           rails_version: 5.1.7
       - build:
           name: "ruby2-6_rails5-1"
-          ruby_version: 2.6.6
+          ruby_version: 2.6.9
           rails_version: 5.1.7
       - build:
           name: "ruby2-5_rails5-1"
@@ -107,44 +120,49 @@ workflows:
               only:
                 - main
     jobs:
+      # Rails 6.0.z releases
+      - build:
+          name: "ruby3-0_rails6-0"
+          ruby_version: 3.0.3
+          rails_version: 6.0.3.1
       - build:
           name: "ruby2-7_rails6-0"
           ruby_version: 2.7.3
           rails_version: 6.0.3.1
       - build:
           name: "ruby2-6_rails6-0"
-          ruby_version: 2.6.6
+          ruby_version: 2.6.9
           rails_version: 6.0.3.1
       - build:
           name: "ruby2-5_rails6-0"
           ruby_version: 2.5.8
           rails_version: 6.0.3.1
 
+      # Rails 5.2.z releases
       - build:
           name: "ruby2-7_rails5-2"
-          ruby_version: 2.7.1
-          rails_version: 5.2.4.3
+          ruby_version: 2.7.3
+          rails_version: 5.2.7
       - build:
           name: "ruby2-6_rails5-2"
-          ruby_version: 2.6.6
-          rails_version: 5.2.4.3
+          ruby_version: 2.6.9
+          rails_version: 5.2.7
       - build:
           name: "ruby2-5_rails5-2"
           ruby_version: 2.5.8
-          rails_version: 5.2.4.3
+          rails_version: 5.2.7
 
+      # Rails 5.1.z releases
       - build:
           name: "ruby2-7_rails5-1"
           ruby_version: 2.7.3
           rails_version: 5.1.7
       - build:
           name: "ruby2-6_rails5-1"
-          ruby_version: 2.6.6
+          ruby_version: 2.6.9
           rails_version: 5.1.7
       - build:
           name: "ruby2-5_rails5-1"
           ruby_version: 2.5.8
           rails_version: 5.1.7
-
-
 
