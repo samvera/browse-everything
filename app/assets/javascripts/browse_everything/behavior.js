@@ -1,6 +1,6 @@
 'use strict';
 
-$(function () {
+var setupBrowseEverything = function setupBrowseEverything() {
   var dialog = $('div#browse-everything');
   var selected_files = new Map(); // { url: input element object }
 
@@ -187,7 +187,7 @@ $(function () {
         }, 10);
       }
     });
-    $("#file-list tr:first").focus();
+    $("#file-list tr:first").trigger('focus');
     return sizeColumns(table);
   };
 
@@ -234,7 +234,7 @@ $(function () {
   };
 
   var refreshFiles = function refreshFiles() {
-    return $('.ev-providers select').change();
+    return $('.ev-providers select').trigger('change');
   };
 
   var startWait = function startWait() {
@@ -253,6 +253,22 @@ $(function () {
     return $('.ev-submit').attr('disabled', false);
   };
 
+  var auto_toggle = function auto_toggle() {
+    var triggers = $('*[data-toggle=browse-everything]');
+    if (typeof Rails !== 'undefined' && Rails !== null) {
+      $.ajaxSetup({
+        headers: { 'X-CSRF-TOKEN': (Rails || $.rails).csrfToken() || '' }
+      });
+    }
+
+    return triggers.each(function () {
+      var ctx = $(this).data('ev-state');
+      if (ctx == null) {
+        return $(this).browseEverything($(this).data());
+      }
+    });
+  };
+
   $(window).on('resize', function () {
     return sizeColumns($('table#file-list'));
   });
@@ -269,7 +285,7 @@ $(function () {
       ctx = initialize(this[0], options);
     }
 
-    $(this).click(function () {
+    $(this).on('click', function () {
       dialog.data('ev-state', ctx);
       return dialog.load(ctx.opts.route, function () {
         setTimeout(refreshFiles, 50);
@@ -346,7 +362,7 @@ $(function () {
       selected_files.clear();
       $('body').css('cursor', 'default');
       $('.ev-browser').modal('hide');
-      return $('#browse-btn').focus();
+      return $('#browse-btn').trigger('focus');
     });
   });
 
@@ -370,7 +386,7 @@ $(function () {
       } }).done(function (data) {
       $('.ev-files').html(data);
       indicateSelected();
-      $('#provider_auth').focus();
+      $('#provider_auth').trigger('focus');
       return tableSetup($('table#file-list'));
     }).fail(function (xhr, status, error) {
       if (xhr.responseText.indexOf("Refresh token has expired") > -1) {
@@ -421,36 +437,17 @@ $(function () {
     }
   });
 
+  auto_toggle();
+
   return $(document).on('change', 'input.ev-select-file', function (event) {
     event.stopPropagation();
     event.preventDefault();
     return toggleFileSelect($(this).closest('tr'));
   });
-});
-
-var auto_toggle = function auto_toggle() {
-  var triggers = $('*[data-toggle=browse-everything]');
-  if (typeof Rails !== 'undefined' && Rails !== null) {
-    $.ajaxSetup({
-      headers: { 'X-CSRF-TOKEN': (Rails || $.rails).csrfToken() || '' }
-    });
-  }
-
-  return triggers.each(function () {
-    var ctx = $(this).data('ev-state');
-    if (ctx == null) {
-      return $(this).browseEverything($(this).data());
-    }
-  });
-};
+}
 
 if (typeof Turbolinks !== 'undefined' && Turbolinks !== null && Turbolinks.supported) {
-  // Use turbolinks:load for Turbolinks 5, otherwise use the old way
-  if (Turbolinks.BrowserAdapter) {
-    $(document).on('turbolinks:load', auto_toggle);
-  } else {
-    $(document).on('page:change', auto_toggle);
-  }
+  $(document).one('turbolinks:load', setupBrowseEverything);
 } else {
-  $(document).ready(auto_toggle);
+  $(document).one('ready', setupBrowseEverything);
 }
