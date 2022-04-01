@@ -118,7 +118,7 @@ workflows:
           rails_version: 5.2.7
       - build:
           name: "ruby2-6_rails5-2"
-          ruby_version: 2.6.6
+          ruby_version: 2.6.9
           rails_version: 5.2.7
       - build:
           name: "ruby2-5_rails5-2"
