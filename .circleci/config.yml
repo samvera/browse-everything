@@ -31,10 +31,10 @@ jobs:
             fi
             [[ -z "$(git branch --all --list master */master)" ]]
 
-      - samvera/bundle_for_gem:
+      - samvera/bundle:
           bundler_version: << parameters.bundler_version >>
           ruby_version: << parameters.ruby_version >>
-          project: 'browse-everything'
+          cache_version: 1
 
       - samvera/engine_cart_generate:
           cache_key: v1-internal-test-app-{{ checksum "browse-everything.gemspec" }}-{{ checksum "Gemfile" }}-{{ checksum "spec/test_app_templates/lib/generators/test_app_generator.rb" }}-{{ checksum "lib/generators/browse_everything/install_generator.rb" }}-{{ checksum "lib/generators/browse_everything/config_generator.rb" }}--<< parameters.rails_version >>-<< parameters.ruby_version >>
