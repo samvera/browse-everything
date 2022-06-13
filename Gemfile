@@ -44,3 +44,11 @@ else
   end
 end
 # END ENGINE_CART BLOCK
+
+# rspec-rails 6.0 is required for Rails 7 support, it's currently only in pre-release,
+# opt into it here. This should not be required when rspec-rails 6.0.0 final is released.
+# Note rspec-rails 6.0.0 does not support rails before 6.1, so different versions of
+# rspec-rails will be needed for different jobs, but that should happen automatically.
+if ENV['RAILS_VERSION'] && ENV['RAILS_VERSION'] =~ /^7\.0\./
+  gem "rspec-rails", ">= 6.0.0.rc1"
+end
