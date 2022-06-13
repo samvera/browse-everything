@@ -36,7 +36,7 @@ jobs:
           ruby_version: << parameters.ruby_version >>
 
       - samvera/engine_cart_generate:
-          cache_key: v1-internal-test-app-{{ checksum "browse-everything.gemspec" }}-{{ checksum "Gemfile" }}-{{ checksum "spec/test_app_templates/lib/generators/test_app_generator.rb" }}-{{ checksum "lib/generators/browse_everything/install_generator.rb" }}-{{ checksum "lib/generators/browse_everything/config_generator.rb" }}--<< parameters.rails_version >>-<< parameters.ruby_version >>
+          cache_key: v1-internal-test-app-{{ checksum "browse-everything.gemspec" }}-{{ checksum "Gemfile" }}--{{ checksum "spec/test_app_templates/Gemfile.extra" }}-{{ checksum "spec/test_app_templates/lib/generators/test_app_generator.rb" }}-{{ checksum "lib/generators/browse_everything/install_generator.rb" }}-{{ checksum "lib/generators/browse_everything/config_generator.rb" }}--<< parameters.rails_version >>-<< parameters.ruby_version >>
 
       - run:
          name: Update sprockets to fix version incompatibilities between internal test app and initial bundle install
