@@ -42,11 +42,6 @@ jobs:
          name: Update sprockets to fix version incompatibilities between internal test app and initial bundle install
          command: bundle update sprockets
 
-      - samvera/bundle_for_gem:
-          ruby_version: << parameters.ruby_version >>
-          bundler_version: << parameters.bundler_version >>
-          project: 'browse-everything'
-
       - samvera/rubocop
 
       - run:
