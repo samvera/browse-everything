@@ -39,6 +39,7 @@ what this means can be found
 
 ## Supported Ruby Releases
 Currently, the following releases of Ruby are tested:
+- 3.1
 - 3.0
 - 2.7
 - 2.6

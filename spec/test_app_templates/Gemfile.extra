@@ -1,0 +1,9 @@
+# Only necessary until mail 2.8.0 is released, allow us to build with engine_cart
+# under Rails 6.1 and ruby 3.1, by opting into using pre-release version of mail
+# 2.8.0.rc1
+#
+# https://github.com/mikel/mail/pull/1472
+
+if ENV['RAILS_VERSION'] && ENV['RAILS_VERSION'] =~ /^6\.1\./ && RUBY_VERSION =~ /^3\.1\./
+  gem "mail", ">= 2.8.0.rc1"
+end
