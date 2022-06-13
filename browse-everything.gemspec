@@ -49,4 +49,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'webdrivers'
   spec.add_development_dependency 'webmock'
+  spec.add_development_dependency "bootstrap-sass"
+  spec.add_development_dependency "bootstrap", "~> 4.0"
 end

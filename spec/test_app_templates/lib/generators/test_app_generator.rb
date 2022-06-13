@@ -16,6 +16,14 @@ class TestAppGenerator < Rails::Generators::Base
   def inject_css
     copy_file File.expand_path('app/assets/stylesheets/application.css', ENV['RAILS_ROOT']), 'app/assets/stylesheets/application.css.scss'
     remove_file 'app/assets/stylesheets/application.css'
+
+    # Add gem for bootstrap 3 or 4 so we can get sprockets .scss source from it.
+    if ENV['TEST_BOOTSTRAP'] == "3"
+      gem "bootstrap-sass"
+    else
+      gem "bootstrap", "~> 4.0"
+    end
+
     insert_into_file 'app/assets/stylesheets/application.css.scss', after: '*/' do
       if ENV['TEST_BOOTSTRAP'] == "3"
         # bootstrap 3 from bootstrap-sass gem
