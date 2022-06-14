@@ -44,10 +44,6 @@ jobs:
 
       - samvera/rubocop
 
-      - run:
-          name: Install Karma for JavaScript and functional tests
-          command: sudo npm install -g karma karma-jasmine karma-chrome-launcher
-
       - samvera/parallel_rspec
 
 workflows:
