@@ -31,11 +31,6 @@ Metrics/MethodLength:
 Metrics/ParameterLists:
   Max: 7
 
-# Offense count: 1
-RSpec/DescribeClass:
-  Exclude:
-    - 'spec/javascripts/jasmine_spec.rb'
-
 # Offense count: 2
 RSpec/MultipleExpectations:
   Max: 2
