@@ -452,5 +452,5 @@ if (typeof Turbolinks !== 'undefined' && Turbolinks !== null && Turbolinks.suppo
     $(document).on('page:change', auto_toggle);
   }
 } else {
-  $(document).ready(auto_toggle);
+  $(auto_toggle);
 }
