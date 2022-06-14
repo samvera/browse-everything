@@ -3,7 +3,6 @@
 Code:
 [![Gem Version](https://badge.fury.io/rb/browse-everything.png)](http://badge.fury.io/rb/browse-everything)
 [![CircleCI](https://circleci.com/gh/samvera/browse-everything.svg?style=svg)](https://circleci.com/gh/samvera/browse-everything)
-[![Coverage Status](https://coveralls.io/repos/samvera/browse-everything/badge.svg?branch=master&service=github)](https://coveralls.io/github/samvera/browse-everything?branch=master)
 
 Docs:
 [![Contribution Guidelines](http://img.shields.io/badge/CONTRIBUTING-Guidelines-blue.svg)](./CONTRIBUTING.md)

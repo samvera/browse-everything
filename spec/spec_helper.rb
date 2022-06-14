@@ -3,30 +3,6 @@
 ENV['RAILS_ENV'] ||= 'test'
 require 'bundler/setup'
 
-def coverage_needed?
-  ENV['COVERAGE'] || ENV['CI']
-end
-
-if coverage_needed?
-  require 'simplecov'
-  require 'coveralls'
-  SimpleCov.root(File.expand_path('..', __dir__))
-  SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
-    [
-      SimpleCov::Formatter::HTMLFormatter,
-      Coveralls::SimpleCov::Formatter
-    ]
-  )
-  SimpleCov.start('rails') do
-    add_filter '/.internal_test_app'
-    add_filter '/lib/browse_everything/engine.rb'
-    add_filter '/lib/browse_everything/version.rb'
-    add_filter '/lib/generators'
-    add_filter '/spec'
-    add_filter '/tasks'
-  end
-end
-
 require 'engine_cart'
 require File.expand_path('config/environment', EngineCart.destination)
 EngineCart.load_application!
