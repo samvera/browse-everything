@@ -447,9 +447,15 @@ var auto_toggle = function auto_toggle() {
 if (typeof Turbolinks !== 'undefined' && Turbolinks !== null && Turbolinks.supported) {
   // Use turbolinks:load for Turbolinks 5, otherwise use the old way
   if (Turbolinks.BrowserAdapter) {
-    $(document).on('turbolinks:load', auto_toggle);
+    $(document).on('turbolinks:load', function() {
+      // make sure turbolinks:load AND jquery onReady have BOTH happened,
+      // they could come in any order.
+      $(auto_toggle);
+    });
   } else {
-    $(document).on('page:change', auto_toggle);
+    $(document).on('page:change', function() {
+      $(auto_toggle);
+    });
   }
 } else {
   $(auto_toggle);
