@@ -79,3 +79,7 @@ Style/NumericLiterals:
 Style/RedundantBegin:
   Exclude:
     - 'lib/browse_everything/browser.rb'
+
+Style/IfUnlessModifier:
+  Exclude:
+    - 'Gemfile'
