@@ -24,6 +24,36 @@ download the files.
 
 **This gem does not depend on hydra-head**
 
+## Technical Debt/Legacy warning
+
+This is code with a long history that has a number of known problems;
+we are trying to keep it alive for existing projects using it. But caution is
+advised in introducing it, in it's present form, to new projects.
+
+A significant overhaul of this gem may be desirable (with backwards-breaking
+changes), to better accomplish gem goals. But there has not been the
+interest/resources in the community to accomplish that at present.
+
+Some known current issues (Jun 2022):
+
+* The S3 adapter is known working; but it's not clear if other adapters using
+OAuth2 (main use case for this gem) are in fact working reliably. And there
+is some concern that the current browse-everything integration API may not be
+compatible with proper OAuth/OAuth2 flows to support OAuth integrations --
+originally the main use case of this gem.
+
+* The CSS and Javascript were both written for use with the sprockets Rails
+asset pipeline.  Recent versions of Rails may require custom configuration
+to use sprockets (especially for JS), which is not currently covered in
+instructions here. Using other means of including CSS and JS may require
+confusing customization also not fully covered here.
+
+* Javascript depends on JQuery, bootstrap (3 or 4; 5 untested), as well as a
+vendored copy of a jquery.treetable plugin.
+
+* CSS is provided for compatibilty with bootstrap 3 or bootstrap 4, but not
+bootstrap 5 (or no bootstrap at all)
+
 ## Product Owner & Maintenance
 
 BrowseEverything is a Core Component of the Samvera community. The documentation for
@@ -32,7 +62,7 @@ what this means can be found
 
 ### Product Owner
 
-[mbklein](https://github.com/mbklein)
+[jrgriffiniii](https://github.com/jrgriffiniii)
 
 # Getting Started
 
