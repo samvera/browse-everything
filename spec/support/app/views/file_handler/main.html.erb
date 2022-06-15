@@ -14,9 +14,12 @@
 
   <script>
     $(document).on('turbolinks:load', function() {
-      $('#browse-btn').browseEverything()
-        .done(function(data) { $('#status').html(data.length.toString() + " items selected") })
-        .cancel(function()   { window.alert('Canceled!') });
+      // Have to make sure onReady is ALSO passed, in case it's first load.
+      $(function() {
+        $('#browse-btn').browseEverything()
+          .done(function(data) { $('#status').html(data.length.toString() + " items selected") })
+          .cancel(function()   { window.alert('Canceled!') });
+      });
     });
   </script>
 </div>

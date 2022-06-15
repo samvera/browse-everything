@@ -1,6 +1,10 @@
 <div class="panel panel-default">
   <div class="panel-body">
     <a href="main" class="btn btn-large btn-primary" role="button">Enter Test App (Turbolinks)</a>
-    <a href="main" class="btn btn-large btn-primary" role="button" data-no-turbolink>Enter Test App (No Turbolinks)</a>
+
+    <%# this doesn't REALLY test no Turbolinks, as there will still be a `window.Turbolinks` object,
+        and a `turbolinks:load` event. It just tests as if the page we are navigating to were the FIRST
+        page loaded under turbolinks %>
+    <a href="main" class="btn btn-large btn-primary" role="button" data-turbolinks="false" data-no-turbolink>Enter Test App (No Turbolinks)</a>
   </div>
 </div>

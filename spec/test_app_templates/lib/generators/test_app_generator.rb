@@ -65,6 +65,7 @@ class TestAppGenerator < Rails::Generators::Base
       # Adding the JavaScript module dependencies
       insert_into_file 'app/javascript/packs/browse-everything.js', before: "'use strict';" do
         %(
+          import Rails from '@rails/ujs'
           require("bootstrap")
           require("./treetable")
         )
