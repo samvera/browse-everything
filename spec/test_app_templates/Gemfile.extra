@@ -7,3 +7,11 @@
 if ENV['RAILS_VERSION'] && ENV['RAILS_VERSION'] =~ /^6\.1\./ && RUBY_VERSION =~ /^3\.1\./
   gem "mail", ">= 2.8.0.rc1"
 end
+
+# We need bootstrap gem dependencies to build our CSS under sprockets
+
+if ENV['TEST_BOOTSTRAP'] == "3"
+  gem "bootstrap-sprockets"
+else # bootstrap 4. We don't yet support bootstrap 5.
+  gem "bootstrap", "~> 4.0"
+end
