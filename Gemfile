@@ -24,6 +24,20 @@ if ENV['RAILS_VERSION']
   end
 
   case ENV['RAILS_VERSION']
+  when /^7\.0\./
+    # rspec-rails 6.0 is required for Rails 7 support, it's currently only in pre-release,
+    # opt into it here. This should not be required when rspec-rails 6.0.0 final is released.
+    # Note rspec-rails 6.0.0 does not support rails before 6.1, so different versions of
+    # rspec-rails will be needed for different jobs, but that should happen automatically.
+    gem "rspec-rails", ">= 6.0.0.rc1"
+
+    # sprockets is optional for rails 7, but we currently require it, and test with it.
+    gem "sprockets-rails"
+  when /^6\.1\./
+    # opt into mail 2.8.0.rc1 so we get extra dependencies required for rails 6.1
+    # Once mail 2.8.0 final is released this will not be required.
+    # https://github.com/mikel/mail/pull/1472
+    gem "mail", ">= 2.8.0.rc1"
   when /^6\.0\./
     gem 'sass-rails', '>= 6'
     gem 'webpacker', '~> 4.0'
@@ -31,11 +45,5 @@ if ENV['RAILS_VERSION']
     gem 'sass-rails', '~> 5.0'
     gem 'sprockets', '~> 3.7'
     gem 'thor', '~> 0.20'
-  when /^7\.0\./
-    # rspec-rails 6.0 is required for Rails 7 support, it's currently only in pre-release,
-    # opt into it here. This should not be required when rspec-rails 6.0.0 final is released.
-    # Note rspec-rails 6.0.0 does not support rails before 6.1, so different versions of
-    # rspec-rails will be needed for different jobs, but that should happen automatically.
-    gem "rspec-rails", ">= 6.0.0.rc1"
   end
 end
