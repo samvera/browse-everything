@@ -17,5 +17,7 @@ spec/fixtures/Getting Started.pdf
 test/tmp
 test/version_tmp
 .internal_test_app
-.gitignore
+spec/dummy_test_app/tmp
+spec/dummy_test_app/db
+spec/dummy_test_app/log
 !spec/dummy_test_app/tmp/.gitkeep
