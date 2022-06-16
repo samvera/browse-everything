@@ -9,13 +9,17 @@ module BrowseEverything
 
       def validate_config
         raise BrowseEverything::InitializationError, 'FileSystem driver requires a :home argument' if config[:home].blank?
+
+        unless config[:home].start_with?("/") || config[:allow_relative_home] == true
+          raise BrowseEverything::InitializationError, 'FileSystem driver :home argument must be absolute unless :allow_relative_home is set'
+        end
       end
 
       # Retrieve the contents of a directory
       # @param path [String] the path to a file system resource
       # @return [Array<BrowseEverything::FileEntry>]
       def contents(path = '')
-        real_path = File.join(config[:home], path)
+        real_path = File.join(home_path, path)
         values = if File.directory?(real_path)
                    make_directory_entry real_path
                  else
@@ -55,6 +59,15 @@ module BrowseEverything
 
       private
 
+      def home_path
+        @home_path ||= if config[:allow_relative_home] == true
+                         # expand relative to Rails.root, mainly test CI use-case
+                         File.expand_path(config[:home], Rails.root)
+                       else
+                         config[:home]
+                       end
+      end
+
       # Construct an array of FileEntry objects for the contents of a
       # directory
       # @param real_path [String] path to the file system directory
@@ -65,7 +78,7 @@ module BrowseEverything
       end
 
       def make_pathname(path)
-        Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(config[:home]))
+        Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(home_path))
       end
 
       def file_size(path)
