@@ -10,4 +10,16 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
+
+// We want to test with turbolinks, which our code also requires rails-ujs to deal with:
+
+//= require rails-ujs
+//= require turbolinks
+
+// Actual stack required for current browse-everything JS
+
+//= require jquery3
+//= require bootstrap
+//= require browse_everything
+
 //= require_tree .

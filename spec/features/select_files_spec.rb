@@ -7,7 +7,7 @@ describe 'Choosing files', type: :feature, js: true do
 
   shared_examples 'browseable files' do
     # This is a work-around until the support for Webpacker is resolved
-    xit 'selects files from the filesystem' do
+    it 'selects files from the filesystem' do
       click_button('Browse')
       wait_for_ajax
 

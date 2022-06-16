@@ -29,11 +29,17 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'signet', '~> 0.8'
   spec.add_dependency 'typhoeus'
 
+  # Development dependencies include dependencies necessary for running
+  # the dummy test app at ./spec/dummy_test_app
+
   spec.add_development_dependency 'bixby', '~> 5.0'
+  spec.add_development_dependency 'bootstrap', "~> 4.0" # we do not support bootstrap 5
   spec.add_development_dependency 'bundler', '>= 1.3'
   spec.add_development_dependency 'capybara'
   spec.add_development_dependency 'factory_bot_rails'
+  spec.add_development_dependency 'jquery-rails'
   spec.add_development_dependency 'pry-byebug'
+  spec.add_development_dependency 'puma'
   spec.add_development_dependency 'rails-controller-testing'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '~> 3.0'
@@ -41,8 +47,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-rails'
   spec.add_development_dependency 'rspec_junit_formatter'
   spec.add_development_dependency 'rubocop-rspec'
+  spec.add_development_dependency 'sass-rails'
   spec.add_development_dependency 'selenium-webdriver'
   spec.add_development_dependency 'sqlite3'
+  spec.add_development_dependency 'turbolinks'
   spec.add_development_dependency 'webdrivers'
   spec.add_development_dependency 'webmock'
 end

@@ -284,9 +284,7 @@ Or individually, `bundle exec rubocop`, `bundle exec rspec`.
 
 You can test with different versions of rails by setting ENV variable `RAILS_VERSION` to a specific version like `"6.1.2"` or `"7.0.0"`, perhaps by `export RAILS_ENV=7.0.0` to set it in your shell session.
 
-Tests by default will be run with bootstrap-4 integration. You can test with bootstrap-3 by setting ENV varaible `TEST_BOOTSTRAP=3`.
-
-After changing `RAILS_VERSION` or `TEST_BOOTSTRAP` you may have to run `rm Gemfile.lock` and `bundle install` again. If you get a `Bundler could not find compatible versions...` error, for instance.
+After changing `RAILS_VERSION` you may have to run `rm Gemfile.lock` and `bundle install` again. If you get a `Bundler could not find compatible versions...` error, for instance.
 
 # Help
 
