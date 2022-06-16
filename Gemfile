@@ -16,6 +16,10 @@ end
 # TODO switch to use appraisal gem instead, encapsulating these different additional
 # dependencies per Rails version, as well as method of choosing operative rails version.
 
+# Set a default RAILS_VERSION so we make sure to get extra dependencies for it...
+
+ENV['RAILS_VERSION'] ||= "7.0.3"
+
 if ENV['RAILS_VERSION']
   if ENV['RAILS_VERSION'] == 'edge'
     gem 'rails', github: 'rails/rails'
