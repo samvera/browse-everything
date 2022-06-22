@@ -8,7 +8,7 @@ RuboCop::RakeTask.new(:rubocop) do |task|
 end
 
 desc 'Run all RSpec tests.'
-task ci: [:rubocop, 'engine_cart:generate'] do
+task ci: [:rubocop] do
   RSpec::Core::RakeTask.new(:spec)
   Rake::Task['spec'].invoke
 end

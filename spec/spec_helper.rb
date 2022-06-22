@@ -3,9 +3,8 @@
 ENV['RAILS_ENV'] ||= 'test'
 require 'bundler/setup'
 
-require 'engine_cart'
-require File.expand_path('config/environment', EngineCart.destination)
-EngineCart.load_application!
+dummy_app_path = File.expand_path("../dummy_test_app", __FILE__)
+require File.join(dummy_app_path, "config/environment")
 
 require 'capybara/rails'
 require 'capybara/rspec'

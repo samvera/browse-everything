@@ -7,6 +7,8 @@ AllCops:
   DisplayCopNames: true
   Exclude:
     - 'vendor/**/*'
+    - 'spec/dummy_test_app/**/*'
+    - 'bin/rails'
 
 Bundler/DuplicatedGem:
   Exclude:
