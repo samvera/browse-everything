@@ -9,12 +9,17 @@ group :development, :test do
   gem 'pry-byebug' unless ENV['CI']
 end
 
-# We allow testing under multiple versions of Rails by setting ENV RAILS_VERSION,
-# used in CI, can be used locally too. Make sure to delete your Gemfile.lock after
-# changing a local RAILS_VERSION
+# == Extra dependencies for dummy test app ==
+#
+# Extra dependencies for dummy test app are in .gemspec as a development dependency
+# where possible. But when  dependencies vary for different versions
+# of Rails, rails-version-specific dependencies are here, behind conditionals, for now.
 #
 # TODO switch to use appraisal gem instead, encapsulating these different additional
 # dependencies per Rails version, as well as method of choosing operative rails version.
+#
+# We allow testing under multiple versions of Rails by setting ENV RAILS_VERSION,
+# used in CI, can be used locally too.
 
 # Set a default RAILS_VERSION so we make sure to get extra dependencies for it...
 
@@ -44,7 +49,6 @@ if ENV['RAILS_VERSION']
     gem "mail", ">= 2.8.0.rc1"
   when /^6\.0\./
     gem 'sass-rails', '>= 6'
-    gem 'webpacker', '~> 4.0'
   when /^5\.[12]\./
     gem 'sass-rails', '~> 5.0'
     gem 'sprockets', '~> 3.7'

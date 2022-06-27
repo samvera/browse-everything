@@ -2,6 +2,7 @@
 version: 2.1
 orbs:
   samvera: samvera/circleci-orb@1.0
+  browser-tools: circleci/browser-tools@1.1
 
 jobs:
   build:
@@ -19,6 +20,8 @@ jobs:
     environment:
       RAILS_VERSION: << parameters.rails_version >>
     steps:
+      - browser-tools/install-chrome
+
       - samvera/cached_checkout
 
       - run:

@@ -3,7 +3,8 @@
 # The file_system provider can be a path to any directory on the server where your application is running.
 #
 file_system:
-  home: /Users/jrochkind/code/browse-everything/.internal_test_app
+  allow_relative_home: true
+  home: ./
 # dropbox:
 #   client_id: YOUR_DROPBOX_APP_KEY
 #   client_secret: YOUR_DROPBOX_APP_SECRET

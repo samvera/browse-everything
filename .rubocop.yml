@@ -10,6 +10,12 @@ AllCops:
     - 'spec/dummy_test_app/**/*'
     - 'bin/rails'
 
+Style/GuardClause:
+  Enabled: false
+
+StyleI/IfUnlessModifier:
+  Enabled: false
+
 Bundler/DuplicatedGem:
   Exclude:
     - 'Gemfile'
