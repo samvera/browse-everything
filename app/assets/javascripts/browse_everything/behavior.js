@@ -197,10 +197,8 @@ $(function () {
     var set_size = function set_size(selector, pct) {
       return $(selector, table).width(full_width * pct).css('width', full_width * pct).css('max-width', full_width * pct);
     };
-    set_size('.ev-file', 0.4);
-    set_size('.ev-container', 0.4);
     set_size('.ev-size', 0.1);
-    set_size('.ev-kind', 0.3);
+    set_size('.ev-kind', 0.2);
     return set_size('.ev-date', 0.2);
   };
 

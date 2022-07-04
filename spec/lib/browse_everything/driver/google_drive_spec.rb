@@ -101,56 +101,120 @@ describe BrowseEverything::Driver::GoogleDrive do
 
       let(:drive_service_class) { class_double(Google::Apis::DriveV3::DriveService).as_stubbed_const(transfer_nested_constants: true) }
       let(:drive_service) { instance_double(Google::Apis::DriveV3::DriveService) }
-      let(:file_list) { instance_double(Google::Apis::DriveV3::FileList) }
-      let(:file1) { instance_double(Google::Apis::DriveV3::File) }
-      let(:file2) { instance_double(Google::Apis::DriveV3::File) }
-      let(:files) { [file1, file2] }
 
       before do
-        allow(file1).to receive(:id).and_return('asset-id2')
-        allow(file2).to receive(:id).and_return('directory-id1')
-        allow(file1).to receive(:name).and_return('asset-name2.pdf')
-        allow(file2).to receive(:name).and_return('directory-name1')
-        allow(file1).to receive(:size).and_return('891764')
-        allow(file2).to receive(:size).and_return('0')
-        allow(file1).to receive(:modified_time).and_return(Time.current)
-        allow(file2).to receive(:modified_time).and_return(Time.current)
-        allow(file1).to receive(:mime_type).and_return('application/pdf')
-        allow(file2).to receive(:mime_type).and_return('application/vnd.google-apps.folder')
-        allow(file_list).to receive(:files).and_return(files)
-        allow(file_list).to receive(:next_page_token).and_return(nil)
-        allow(drive_service).to receive(:list_files).and_yield(file_list, nil)
         allow(drive_service).to receive(:batch).and_yield(drive_service)
         allow(drive_service).to receive(:authorization=)
         allow(drive_service).to receive(:tap).and_yield(drive_service).and_return(drive_service)
         allow(drive_service_class).to receive(:new).and_return(drive_service)
       end
 
-      it 'retrieves files' do
-        expect(contents).not_to be_empty
+      context 'drives' do
+        let(:drive_list) { instance_double(Google::Apis::DriveV3::DriveList) }
+        let(:drive1) { instance_double(Google::Apis::DriveV3::Drive) }
+        let(:drive2) { instance_double(Google::Apis::DriveV3::Drive) }
+        let(:drives) { [drive1, drive2] }
 
-        expect(contents.first).to be_a BrowseEverything::FileEntry
-        expect(contents.first.location).to eq 'google_drive:directory-id1'
-        expect(contents.first.mtime).to be_a Time
-        expect(contents.first.name).to eq 'directory-name1'
-        expect(contents.first.size).to eq 0
-        expect(contents.first.type).to eq 'directory'
-
-        expect(contents.last).to be_a BrowseEverything::FileEntry
-        expect(contents.last.location).to eq 'google_drive:asset-id2'
-        expect(contents.last.mtime).to be_a Time
-        expect(contents.last.name).to eq 'asset-name2.pdf'
-        expect(contents.last.size).to eq 891764
-        expect(contents.last.type).to eq 'application/pdf'
-      end
-
-      context 'when an error is encountered while authenticating' do
         before do
-          allow(drive_service).to receive(:list_files).and_yield(file_list, Google::Apis::Error.new('test error'))
+          allow(drive1).to receive(:id).and_return('drive-id1')
+          allow(drive2).to receive(:id).and_return('drive-id2')
+          allow(drive1).to receive(:name).and_return('drive-name1')
+          allow(drive2).to receive(:name).and_return('drive-name2')
+          allow(drive_list).to receive(:drives).and_return(drives)
+          allow(drive_list).to receive(:next_page_token).and_return(nil)
+          allow(drive_service).to receive(:list_drives).and_return(drive_list)
+          allow(drive_service).to receive(:list_drives).with({ fields: "nextPageToken,drives(name,id)", page_size: 100 }).and_yield(drive_list, nil)
         end
 
-        it 'raises an exception' do
-          expect { driver.contents.to_a }.to raise_error(Google::Apis::Error, 'test error')
+        it 'creates top level "My Drives" and "Shared Drives" directories' do
+          expect(contents).not_to be_empty
+
+          expect(contents.first).to be_a BrowseEverything::FileEntry
+          expect(contents.first.id).to eq 'root'
+          expect(contents.first.name).to eq 'My Drive'
+
+          expect(contents.second).to be_a BrowseEverything::FileEntry
+          expect(contents.second.id).to eq 'shared_drives'
+          expect(contents.second.name).to eq 'Shared drives'
+        end
+
+        context 'Shared Drives' do
+          subject(:contents) { driver.contents('shared_drives').to_a }
+
+          it 'retrieves a user\'s shared drives' do
+            expect(contents).not_to be_empty
+
+            expect(contents.first).to be_a BrowseEverything::FileEntry
+            expect(contents.first.id).to eq 'drive-id1'
+            expect(contents.first.name).to eq 'drive-name1'
+
+            expect(contents.second).to be_a BrowseEverything::FileEntry
+            expect(contents.second.id).to eq 'drive-id2'
+            expect(contents.second.name).to eq 'drive-name2'
+          end
+        end
+
+        context 'when an error is encountered while authenticating' do
+          before do
+            allow(drive_service).to receive(:list_drives).and_yield(drive_list, Google::Apis::Error.new('test error'))
+          end
+
+          it 'raises an exception' do
+            expect { driver.contents('shared_drives').to_a }.to raise_error(Google::Apis::Error, 'test error')
+          end
+        end
+      end
+
+      context 'files' do
+        subject(:contents) { driver.contents('files').to_a }
+
+        let(:file_list) { instance_double(Google::Apis::DriveV3::FileList) }
+        let(:file1) { instance_double(Google::Apis::DriveV3::File) }
+        let(:file2) { instance_double(Google::Apis::DriveV3::File) }
+        let(:files) { [file1, file2] }
+
+        before do
+          allow(file1).to receive(:id).and_return('asset-id2')
+          allow(file2).to receive(:id).and_return('directory-id1')
+          allow(file1).to receive(:name).and_return('asset-name2.pdf')
+          allow(file2).to receive(:name).and_return('directory-name1')
+          allow(file1).to receive(:size).and_return('891764')
+          allow(file2).to receive(:size).and_return('0')
+          allow(file1).to receive(:modified_time).and_return(Time.current)
+          allow(file2).to receive(:modified_time).and_return(Time.current)
+          allow(file1).to receive(:mime_type).and_return('application/pdf')
+          allow(file2).to receive(:mime_type).and_return('application/vnd.google-apps.folder')
+          allow(file_list).to receive(:files).and_return(files)
+          allow(file_list).to receive(:next_page_token).and_return(nil)
+          allow(drive_service).to receive(:list_files).and_yield(file_list, nil)
+        end
+
+        it 'retrieves files' do
+          expect(contents).not_to be_empty
+
+          expect(contents.first).to be_a BrowseEverything::FileEntry
+          expect(contents.first.location).to eq 'google_drive:directory-id1'
+          expect(contents.first.mtime).to be_a Time
+          expect(contents.first.name).to eq 'directory-name1'
+          expect(contents.first.size).to eq 0
+          expect(contents.first.type).to eq 'directory'
+
+          expect(contents.last).to be_a BrowseEverything::FileEntry
+          expect(contents.last.location).to eq 'google_drive:asset-id2'
+          expect(contents.last.mtime).to be_a Time
+          expect(contents.last.name).to eq 'asset-name2.pdf'
+          expect(contents.last.size).to eq 891764
+          expect(contents.last.type).to eq 'application/pdf'
+        end
+
+        context 'when an error is encountered while authenticating' do
+          before do
+            allow(drive_service).to receive(:list_files).and_yield(file_list, Google::Apis::Error.new('test error'))
+          end
+
+          it 'raises an exception' do
+            expect { driver.contents('files').to_a }.to raise_error(Google::Apis::Error, 'test error')
+          end
         end
       end
     end
@@ -167,7 +231,7 @@ describe BrowseEverything::Driver::GoogleDrive do
 
       before do
         stub_request(
-          :get, "https://www.googleapis.com/drive/v3/files/asset-id2?fields=id,%20name,%20size"
+          :get, "https://www.googleapis.com/drive/v3/files/asset-id2?supportsAllDrives=true&fields=id,%20name,%20size"
         ).to_return(
           body: file_response_body,
           status: 200,

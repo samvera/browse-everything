@@ -15,7 +15,12 @@
         <div class="col-xs-12 col-12 ev-files list">
           <% if provider.present? %>
             <% if provider.authorized? %>
-              <%= render :partial => 'files' %>
+              <% begin %>
+                <%= render :partial => 'files' %>
+              <% rescue StandardError %>
+                <% reset_provider_session! %>
+                <%= render :partial => 'auth' %>
+              <% end %>
             <% else %>
               <%= render :partial => 'auth' %>
             <% end %>
