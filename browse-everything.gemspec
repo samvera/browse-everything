@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'jsonapi-resources'
   spec.add_dependency 'puma', '>= 3.11'
   spec.add_dependency 'rails', '>= 5.1' # We're going to need to require support for webpacker given the usage of rswag-ui to generate Swagger documentation
-  spec.add_dependency 'rswag', '2.0.6' # Blocked until 2.1.z resolved https://github.com/rswag/rswag/issues/248
+  spec.add_dependency 'rswag'
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'signet', '~> 0.8'
   spec.add_dependency 'thor', '>= 0.19'
@@ -50,6 +50,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-its'
   spec.add_development_dependency 'rspec-rails'
   spec.add_development_dependency 'rspec_junit_formatter'
+  spec.add_development_dependency 'rubocop-rails'
   spec.add_development_dependency 'rubocop-rspec'
   spec.add_development_dependency 'selenium-webdriver'
   spec.add_development_dependency 'simplecov'

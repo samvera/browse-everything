@@ -1,4 +1,7 @@
 inherit_from: .rubocop_todo.yml
+require:
+  - rubocop-rails
+  - rubocop-rspec
 
 AllCops:
   TargetRubyVersion: 2.7
@@ -97,3 +100,12 @@ Style/MixinUsage:
 Bundler/DuplicatedGem:
   Exclude:
     - 'Gemfile'
+
+RSpec/EmptyExampleGroup:
+  Enabled: false
+Style/NumericPredicate:
+  Enabled: false
+Style/MixinUsage:
+  Enabled: false
+Layout/LineLength:
+  Enabled: false
