@@ -1,0 +1,11 @@
+{
+  "name": "browse-everything",
+  "version": "1.2.0",
+  "main": "index.js",
+  "repository": "https://github.com/samvera/browse-everything.git",
+  "author": "jrgriffiniii <jrg5@princeton.edu>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "prettier-eslint": "^15.0.1"
+  }
+}
