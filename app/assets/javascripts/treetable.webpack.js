@@ -9,242 +9,254 @@
 /**
  * Callback defining the Node Class
  */
-var defineNode = function() {
+var defineNode = function () {
+  function Node(row, tree, settings) {
+    var parentId;
 
-    function Node(row, tree, settings) {
-      var parentId;
+    this.row = row;
+    this.tree = tree;
+    this.settings = settings;
 
-      this.row = row;
-      this.tree = tree;
-      this.settings = settings;
+    // TODO Ensure id/parentId is always a string (not int)
+    this.id = this.row.data(this.settings.nodeIdAttr);
 
-      // TODO Ensure id/parentId is always a string (not int)
-      this.id = this.row.data(this.settings.nodeIdAttr);
-
-      // TODO Move this to a setParentId function?
-      parentId = this.row.data(this.settings.parentIdAttr);
-      if (parentId != null && parentId !== "") {
-        this.parentId = parentId;
-      }
-
-      this.treeCell = jQuery(this.row.children(this.settings.columnElType)[this.settings.column]);
-      this.expander = jQuery(this.settings.expanderTemplate);
-      this.indenter = jQuery(this.settings.indenterTemplate);
-      this.children = [];
-      this.initialized = false;
-      this.treeCell.prepend(this.indenter);
+    // TODO Move this to a setParentId function?
+    parentId = this.row.data(this.settings.parentIdAttr);
+    if (parentId != null && parentId !== "") {
+      this.parentId = parentId;
     }
 
-    Node.prototype.addChild = function(child) {
-      return this.children.push(child);
-    };
+    this.treeCell = jQuery(
+      this.row.children(this.settings.columnElType)[this.settings.column]
+    );
+    this.expander = jQuery(this.settings.expanderTemplate);
+    this.indenter = jQuery(this.settings.indenterTemplate);
+    this.children = [];
+    this.initialized = false;
+    this.treeCell.prepend(this.indenter);
+  }
 
-    Node.prototype.ancestors = function() {
-      var ancestors, node;
-      node = this;
-      ancestors = [];
-      while (node = node.parentNode()) {
-        ancestors.push(node);
-      }
-      return ancestors;
-    };
+  Node.prototype.addChild = function (child) {
+    return this.children.push(child);
+  };
 
-    Node.prototype.collapse = function() {
-      if (this.collapsed()) {
-        return this;
-      }
+  Node.prototype.ancestors = function () {
+    var ancestors, node;
+    node = this;
+    ancestors = [];
+    while ((node = node.parentNode())) {
+      ancestors.push(node);
+    }
+    return ancestors;
+  };
 
-      this.row.removeClass("expanded").addClass("collapsed");
-
-      this._hideChildren();
-      this.expander.attr("title", this.settings.stringExpand);
-
-      if (this.initialized && this.settings.onNodeCollapse != null) {
-        this.settings.onNodeCollapse.apply(this);
-      }
-
+  Node.prototype.collapse = function () {
+    if (this.collapsed()) {
       return this;
-    };
+    }
 
-    Node.prototype.collapsed = function() {
-      return this.row.hasClass("collapsed");
-    };
+    this.row.removeClass("expanded").addClass("collapsed");
 
-    // TODO destroy: remove event handlers, expander, indenter, etc.
+    this._hideChildren();
+    this.expander.attr("title", this.settings.stringExpand);
 
-    Node.prototype.expand = function() {
-      if (this.expanded()) {
-        return this;
-      }
+    if (this.initialized && this.settings.onNodeCollapse != null) {
+      this.settings.onNodeCollapse.apply(this);
+    }
 
-      this.row.removeClass("collapsed").addClass("expanded");
+    return this;
+  };
 
-      if (this.initialized && this.settings.onNodeExpand != null) {
-        this.settings.onNodeExpand.apply(this);
-      }
+  Node.prototype.collapsed = function () {
+    return this.row.hasClass("collapsed");
+  };
 
-      if (jQuery(this.row).is(":visible")) {
-        this._showChildren();
-      }
+  // TODO destroy: remove event handlers, expander, indenter, etc.
 
-      this.expander.attr("title", this.settings.stringCollapse);
-
+  Node.prototype.expand = function () {
+    if (this.expanded()) {
       return this;
-    };
+    }
 
-    Node.prototype.expanded = function() {
-      return this.row.hasClass("expanded");
-    };
+    this.row.removeClass("collapsed").addClass("expanded");
 
-    Node.prototype.hide = function() {
-      this._hideChildren();
-      this.row.hide();
-      return this;
-    };
+    if (this.initialized && this.settings.onNodeExpand != null) {
+      this.settings.onNodeExpand.apply(this);
+    }
 
-    Node.prototype.isBranchNode = function() {
-      if(this.children.length > 0 || this.row.data(this.settings.branchAttr) === true) {
-        return true;
-      } else {
-        return false;
-      }
-    };
+    if (jQuery(this.row).is(":visible")) {
+      this._showChildren();
+    }
 
-    Node.prototype.updateBranchLeafClass = function(){
-      this.row.removeClass('branch');
-      this.row.removeClass('leaf');
-      this.row.addClass(this.isBranchNode() ? 'branch' : 'leaf');
-    };
+    this.expander.attr("title", this.settings.stringCollapse);
 
-    Node.prototype.level = function() {
-      return this.ancestors().length;
-    };
+    return this;
+  };
 
-    Node.prototype.parentNode = function() {
-      if (this.parentId != null) {
-        return this.tree[this.parentId];
-      } else {
-        return null;
-      }
-    };
+  Node.prototype.expanded = function () {
+    return this.row.hasClass("expanded");
+  };
 
-    Node.prototype.removeChild = function(child) {
-      var i = jQuery.inArray(child, this.children);
-      return this.children.splice(i, 1)
-    };
+  Node.prototype.hide = function () {
+    this._hideChildren();
+    this.row.hide();
+    return this;
+  };
 
-    Node.prototype.render = function() {
-      var handler,
-          settings = this.settings,
-          target;
+  Node.prototype.isBranchNode = function () {
+    if (
+      this.children.length > 0 ||
+      this.row.data(this.settings.branchAttr) === true
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
-      if (settings.expandable === true && this.isBranchNode()) {
-        handler = function(e) {
-          jQuery(this).parents("table").treetable("node", jQuery(this).parents("tr").data(settings.nodeIdAttr)).toggle();
-          return e.preventDefault();
-        };
+  Node.prototype.updateBranchLeafClass = function () {
+    this.row.removeClass("branch");
+    this.row.removeClass("leaf");
+    this.row.addClass(this.isBranchNode() ? "branch" : "leaf");
+  };
 
-        this.indenter.html(this.expander);
-        target = settings.clickableNodeNames === true ? this.treeCell : this.expander;
+  Node.prototype.level = function () {
+    return this.ancestors().length;
+  };
 
-        target.off("click.treetable").on("click.treetable", handler);
-        target.off("keydown.treetable").on("keydown.treetable", function(e) {
-          if (e.keyCode == 13) {
-            handler.apply(this, [e]);
-          }
-        });
-      }
+  Node.prototype.parentNode = function () {
+    if (this.parentId != null) {
+      return this.tree[this.parentId];
+    } else {
+      return null;
+    }
+  };
 
-      this.indenter[0].style.paddingLeft = "" + (this.level() * settings.indent) + "px";
+  Node.prototype.removeChild = function (child) {
+    var i = jQuery.inArray(child, this.children);
+    return this.children.splice(i, 1);
+  };
 
-      return this;
-    };
+  Node.prototype.render = function () {
+    var handler,
+      settings = this.settings,
+      target;
 
-    Node.prototype.reveal = function() {
-      if (this.parentId != null) {
-        this.parentNode().reveal();
-      }
-      return this.expand();
-    };
+    if (settings.expandable === true && this.isBranchNode()) {
+      handler = function (e) {
+        jQuery(this)
+          .parents("table")
+          .treetable(
+            "node",
+            jQuery(this).parents("tr").data(settings.nodeIdAttr)
+          )
+          .toggle();
+        return e.preventDefault();
+      };
 
-    Node.prototype.setParent = function(node) {
-      if (this.parentId != null) {
-        this.tree[this.parentId].removeChild(this);
-      }
-      this.parentId = node.id;
-      this.row.data(this.settings.parentIdAttr, node.id);
-      return node.addChild(this);
-    };
+      this.indenter.html(this.expander);
+      target =
+        settings.clickableNodeNames === true ? this.treeCell : this.expander;
 
-    Node.prototype.show = function() {
-      if (!this.initialized) {
-        this._initialize();
-      }
-      this.row.show();
-      if (this.expanded()) {
-        this._showChildren();
-      }
-      return this;
-    };
+      target.off("click.treetable").on("click.treetable", handler);
+      target.off("keydown.treetable").on("keydown.treetable", function (e) {
+        if (e.keyCode == 13) {
+          handler.apply(this, [e]);
+        }
+      });
+    }
 
-    Node.prototype.toggle = function() {
-      if (this.expanded()) {
-        this.collapse();
-      } else {
-        this.expand();
-      }
-      return this;
-    };
+    this.indenter[0].style.paddingLeft =
+      "" + this.level() * settings.indent + "px";
 
-    Node.prototype._hideChildren = function() {
-      var child, _i, _len, _ref, _results;
-      _ref = this.children;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        child = _ref[_i];
-        _results.push(child.hide());
-      }
-      return _results;
-    };
+    return this;
+  };
 
-    Node.prototype._initialize = function() {
-      var settings = this.settings;
+  Node.prototype.reveal = function () {
+    if (this.parentId != null) {
+      this.parentNode().reveal();
+    }
+    return this.expand();
+  };
 
-      this.render();
+  Node.prototype.setParent = function (node) {
+    if (this.parentId != null) {
+      this.tree[this.parentId].removeChild(this);
+    }
+    this.parentId = node.id;
+    this.row.data(this.settings.parentIdAttr, node.id);
+    return node.addChild(this);
+  };
 
-      if (settings.expandable === true && settings.initialState === "collapsed") {
-        this.collapse();
-      } else {
-        this.expand();
-      }
+  Node.prototype.show = function () {
+    if (!this.initialized) {
+      this._initialize();
+    }
+    this.row.show();
+    if (this.expanded()) {
+      this._showChildren();
+    }
+    return this;
+  };
 
-      if (settings.onNodeInitialized != null) {
-        settings.onNodeInitialized.apply(this);
-      }
+  Node.prototype.toggle = function () {
+    if (this.expanded()) {
+      this.collapse();
+    } else {
+      this.expand();
+    }
+    return this;
+  };
 
-      return this.initialized = true;
-    };
+  Node.prototype._hideChildren = function () {
+    var child, _i, _len, _ref, _results;
+    _ref = this.children;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      child = _ref[_i];
+      _results.push(child.hide());
+    }
+    return _results;
+  };
 
-    Node.prototype._showChildren = function() {
-      var child, _i, _len, _ref, _results;
-      _ref = this.children;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        child = _ref[_i];
-        _results.push(child.show());
-      }
-      return _results;
-    };
+  Node.prototype._initialize = function () {
+    var settings = this.settings;
 
-    return Node;
-}
+    this.render();
 
-var Node = defineNode()
+    if (settings.expandable === true && settings.initialState === "collapsed") {
+      this.collapse();
+    } else {
+      this.expand();
+    }
+
+    if (settings.onNodeInitialized != null) {
+      settings.onNodeInitialized.apply(this);
+    }
+
+    return (this.initialized = true);
+  };
+
+  Node.prototype._showChildren = function () {
+    var child, _i, _len, _ref, _results;
+    _ref = this.children;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      child = _ref[_i];
+      _results.push(child.show());
+    }
+    return _results;
+  };
+
+  return Node;
+};
+
+var Node = defineNode();
 
 /**
  * Callback defining the Tree Class
  */
-var defineTree = function() {
+var defineTree = function () {
   /**
    * Class modeling trees of nodes
    */
@@ -259,7 +271,7 @@ var defineTree = function() {
     this.roots = [];
   }
 
-  Tree.prototype.collapseAll = function() {
+  Tree.prototype.collapseAll = function () {
     var node, _i, _len, _ref, _results;
     _ref = this.nodes;
     _results = [];
@@ -270,7 +282,7 @@ var defineTree = function() {
     return _results;
   };
 
-  Tree.prototype.expandAll = function() {
+  Tree.prototype.expandAll = function () {
     var node, _i, _len, _ref, _results;
     _ref = this.nodes;
     _results = [];
@@ -289,7 +301,7 @@ var defineTree = function() {
     }
   };
 
-  Tree.prototype.loadRows = function(rows) {
+  Tree.prototype.loadRows = function (rows) {
     var node, row, i;
 
     if (rows != null) {
@@ -317,7 +329,7 @@ var defineTree = function() {
     return this;
   };
 
-  Tree.prototype.move = function(node, destination) {
+  Tree.prototype.move = function (node, destination) {
     // Conditions:
     // 1: +node+ should not be inserted as a child of +node+ itself.
     // 2: +destination+ should not be the same as +node+'s current parent (this
@@ -326,7 +338,11 @@ var defineTree = function() {
     // 3: +node+ should not be inserted in a location in a branch if this would
     //    result in +node+ being an ancestor of itself.
     var nodeParent = node.parentNode();
-    if (node !== destination && destination.id !== node.parentId && jQuery.inArray(node, destination.ancestors()) === -1) {
+    if (
+      node !== destination &&
+      destination.id !== node.parentId &&
+      jQuery.inArray(node, destination.ancestors()) === -1
+    ) {
       node.setParent(destination);
       this._moveRows(node, destination);
 
@@ -337,17 +353,17 @@ var defineTree = function() {
       }
     }
 
-    if(nodeParent){
+    if (nodeParent) {
       nodeParent.updateBranchLeafClass();
     }
-    if(node.parentNode()){
+    if (node.parentNode()) {
       node.parentNode().updateBranchLeafClass();
     }
     node.updateBranchLeafClass();
     return this;
   };
 
-  Tree.prototype.removeNode = function(node) {
+  Tree.prototype.removeNode = function (node) {
     // Recursively remove all descendants of +node+
     this.unloadBranch(node);
 
@@ -364,9 +380,9 @@ var defineTree = function() {
     this.nodes.splice(jQuery.inArray(node, this.nodes), 1);
 
     return this;
-  }
+  };
 
-  Tree.prototype.render = function() {
+  Tree.prototype.render = function () {
     var root, _i, _len, _ref;
     _ref = this.roots;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -379,7 +395,7 @@ var defineTree = function() {
     return this;
   };
 
-  Tree.prototype.sortBranch = function(node, sortFun) {
+  Tree.prototype.sortBranch = function (node, sortFun) {
     // First sort internal array of children
     node.children.sort(sortFun);
 
@@ -389,7 +405,7 @@ var defineTree = function() {
     return this;
   };
 
-  Tree.prototype.unloadBranch = function(node) {
+  Tree.prototype.unloadBranch = function (node) {
     // Use a copy of the children array to not have other functions interfere
     // with this function if they manipulate the children array
     // (eg removeNode).
@@ -408,8 +424,9 @@ var defineTree = function() {
     return this;
   };
 
-  Tree.prototype._moveRows = function(node, destination) {
-    var children = node.children, i;
+  Tree.prototype._moveRows = function (node, destination) {
+    var children = node.children,
+      i;
 
     node.row.insertAfter(destination.row);
     node.render();
@@ -422,14 +439,14 @@ var defineTree = function() {
   };
 
   // Special _moveRows case, move children to itself to force sorting
-  Tree.prototype._sortChildRows = function(parentNode) {
+  Tree.prototype._sortChildRows = function (parentNode) {
     return this._moveRows(parentNode, parentNode);
   };
 
   return Tree;
 };
 
-var Tree = defineTree()
+var Tree = defineTree();
 
 /**
  * Define the methods for the jQuery Plugin
@@ -438,33 +455,37 @@ var methods = {
   /**
    * Constructor
    */
-  init: function(options, force) {
+  init: function (options, force) {
     var settings;
 
-    settings = jQuery.extend({
-      branchAttr: "ttBranch",
-      clickableNodeNames: false,
-      column: 0,
-      columnElType: "td", // i.e. 'td', 'th' or 'td,th'
-      expandable: false,
-      expanderTemplate: "<a href='#'>&nbsp;</a>",
-      indent: 19,
-      indenterTemplate: "<span class='indenter'></span>",
-      initialState: "collapsed",
-      nodeIdAttr: "ttId", // maps to data-tt-id
-      parentIdAttr: "ttParentId", // maps to data-tt-parent-id
-      stringExpand: "Expand",
-      stringCollapse: "Collapse",
+    settings = jQuery.extend(
+      {
+        branchAttr: "ttBranch",
+        clickableNodeNames: false,
+        column: 0,
+        columnElType: "td", // i.e. 'td', 'th' or 'td,th'
+        expandable: false,
+        expanderTemplate: "<a href='#'>&nbsp;</a>",
+        indent: 19,
+        indenterTemplate: "<span class='indenter'></span>",
+        initialState: "collapsed",
+        nodeIdAttr: "ttId", // maps to data-tt-id
+        parentIdAttr: "ttParentId", // maps to data-tt-parent-id
+        stringExpand: "Expand",
+        stringCollapse: "Collapse",
 
-      // Events
-      onInitialized: null,
-      onNodeCollapse: null,
-      onNodeExpand: null,
-      onNodeInitialized: null
-    }, options);
+        // Events
+        onInitialized: null,
+        onNodeCollapse: null,
+        onNodeExpand: null,
+        onNodeInitialized: null,
+      },
+      options
+    );
 
-    return this.each(function() {
-      var el = jQuery(this), tree;
+    return this.each(function () {
+      var el = jQuery(this),
+        tree;
 
       if (force || el.data("treetable") === undefined) {
         tree = new Tree(this, settings);
@@ -484,8 +505,8 @@ var methods = {
   /**
    * Destructor
    */
-  destroy: function() {
-    return this.each(function() {
+  destroy: function () {
+    return this.each(function () {
       return jQuery(this).removeData("treetable").removeClass("treetable");
     });
   },
@@ -493,7 +514,7 @@ var methods = {
   /**
    * Collapsing all tree branches
    */
-  collapseAll: function() {
+  collapseAll: function () {
     this.data("treetable").collapseAll();
     return this;
   },
@@ -501,7 +522,7 @@ var methods = {
   /**
    * Collapsing a single tree branch
    */
-  collapseNode: function(id) {
+  collapseNode: function (id) {
     var node = this.data("treetable").tree[id];
 
     if (node) {
@@ -516,7 +537,7 @@ var methods = {
   /**
    * Expanding all tree branches
    */
-  expandAll: function() {
+  expandAll: function () {
     this.data("treetable").expandAll();
     return this;
   },
@@ -524,7 +545,7 @@ var methods = {
   /**
    * Expanding a single tree branch
    */
-  expandNode: function(id) {
+  expandNode: function (id) {
     var node = this.data("treetable").tree[id];
 
     if (node) {
@@ -543,14 +564,15 @@ var methods = {
   /**
    * Load the markup for a single tree branch
    */
-  loadBranch: function(node, rows) {
+  loadBranch: function (node, rows) {
     var settings = this.data("treetable").settings,
       tree = this.data("treetable").tree;
 
     // TODO Switch to $.parseHTML
     rows = jQuery(rows);
 
-    if (node == null) { // Inserting new root nodes
+    if (node == null) {
+      // Inserting new root nodes
       this.append(rows);
     } else {
       var lastNode = this.data("treetable").findLastNode(node);
@@ -560,7 +582,7 @@ var methods = {
     this.data("treetable").loadRows(rows);
 
     // Make sure nodes are properly initialized
-    rows.filter("tr").each(function() {
+    rows.filter("tr").each(function () {
       tree[jQuery(this).data(settings.nodeIdAttr)].show();
     });
 
@@ -575,7 +597,7 @@ var methods = {
   /**
    *
    */
-  move: function(nodeId, destinationId) {
+  move: function (nodeId, destinationId) {
     var destination, node;
 
     node = this.data("treetable").tree[nodeId];
@@ -588,14 +610,14 @@ var methods = {
   /**
    *
    */
-  node: function(id) {
+  node: function (id) {
     return this.data("treetable").tree[id];
   },
 
   /**
    *
    */
-  removeNode: function(id) {
+  removeNode: function (id) {
     var node = this.data("treetable").tree[id];
 
     if (node) {
@@ -610,7 +632,7 @@ var methods = {
   /**
    *
    */
-  reveal: function(id) {
+  reveal: function (id) {
     var node = this.data("treetable").tree[id];
 
     if (node) {
@@ -625,7 +647,7 @@ var methods = {
   /**
    *
    */
-  sortBranch: function(node, columnOrFunction) {
+  sortBranch: function (node, columnOrFunction) {
     var settings = this.data("treetable").settings,
       prepValue,
       sortFun;
@@ -634,15 +656,15 @@ var methods = {
     sortFun = columnOrFunction;
 
     if (jQuery.isNumeric(columnOrFunction)) {
-      sortFun = function(a, b) {
+      sortFun = function (a, b) {
         var extractValue, valA, valB;
 
-        extractValue = function(node) {
+        extractValue = function (node) {
           var val = node.row.find("td:eq(" + columnOrFunction + ")").text();
           // Ignore trailing/leading whitespace and use uppercase values for
           // case insensitive ordering
           return jQuery.trim(val).toUpperCase();
-        }
+        };
 
         valA = extractValue(a);
         valB = extractValue(b);
@@ -660,23 +682,28 @@ var methods = {
   /**
    *
    */
-  unloadBranch: function(node) {
+  unloadBranch: function (node) {
     this.data("treetable").unloadBranch(node);
     return this;
-  }
+  },
 };
 
 /**
  * Define the jQuery Plugin
  *
  */
-jQuery.fn.treetable = function(method) {
+jQuery.fn.treetable = function (method) {
   if (methods[method]) {
-    return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-  } else if (typeof method === 'object' || !method) {
+    return methods[method].apply(
+      this,
+      Array.prototype.slice.call(arguments, 1)
+    );
+  } else if (typeof method === "object" || !method) {
     return methods.init.apply(this, arguments);
   } else {
-    return jQuery.error("Method " + method + " does not exist on jQuery.treetable");
+    return jQuery.error(
+      "Method " + method + " does not exist on jQuery.treetable"
+    );
   }
 };
 
@@ -684,4 +711,3 @@ jQuery.fn.treetable = function(method) {
 document.TreeTable || (document.TreeTable = {});
 document.TreeTable.Node = Node;
 document.TreeTable.Tree = Tree;
-
