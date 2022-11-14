@@ -8,7 +8,7 @@ Docs:
 [![Contribution Guidelines](http://img.shields.io/badge/CONTRIBUTING-Guidelines-blue.svg)](./CONTRIBUTING.md)
 [![Apache 2.0 License](http://img.shields.io/badge/APACHE2-license-blue.svg)](./LICENSE.txt)
 
-Jump in: [![Slack Status](http://slack.samvera.org/badge.svg)](http://slack.samvera.org/)
+Community Support: [![Samvera Community Slack](https://img.shields.io/badge/samvera-slack-blueviolet)](http://slack.samvera.org/)
 
 # What is BrowseEverything?
 
@@ -56,13 +56,13 @@ bootstrap 5 (or no bootstrap at all)
 
 ## Product Owner & Maintenance
 
-BrowseEverything is a Core Component of the Samvera community. The documentation for
-what this means can be found
-[here](http://samvera.github.io/core_components.html#requirements-for-a-core-component).
+`browse-everything` was a Core Component of the Samvera Community. Given a decline in available labor required for maintenance, this project no longer has a dedicated Product Owner. The documentation for what this means can be found [here](http://samvera.github.io/core_components.html#requirements-for-a-core-component).
 
 ### Product Owner
 
-[jrgriffiniii](https://github.com/jrgriffiniii)
+**Vacant**
+
+_Until a Product Owner has been identified, we ask that you please direct all requests for support, bug reports, and general questions to the [`#dev` Channel on the Samvera Slack](https://samvera.slack.com/app_redirect?channel=dev)._
 
 # Getting Started
 
