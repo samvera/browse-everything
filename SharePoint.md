@@ -1,4 +1,4 @@
-== Sharepoint Provider ==
+==Sharepoint Provider==
 
 This provider will allow browse-everything to access a specific SharePoint location
 
