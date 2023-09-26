@@ -10,11 +10,11 @@ To us the sharepoint provider add the following to config/browse_everything_prov
 
 ```
 sharepoint:
-  client_id: MyAppClientID
-  client_secret: MyAppClientSecret
-  tenant_id: MyAzuerTenantID
+  client_id: [MyAppClientID]
+  client_secret: [MyAppClientSecret]
+  tenant_id: [MyAzuerTenantID]
   grant_type: client_credentials
   scope: https://graph.microsoft.com/.default
   domain: mydomain.sharepoint.com
-  site_name: MySiteName
+  site_name: [MySiteName]
 ```
