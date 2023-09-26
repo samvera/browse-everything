@@ -13,7 +13,7 @@ jobs:
         type: string
       bundler_version:
         type: string
-        default: 2.1.4
+        default: 2.4.3
     executor:
       name: 'samvera/ruby'
       ruby_version: << parameters.ruby_version >>
@@ -46,9 +46,13 @@ workflows:
   ci:
     jobs:
       - build:
+          name: "ruby3-2_rails7-0"
+          ruby_version: 3.2.0
+          rails_version: 7.0.4
+      - build:
           name: "ruby3-1_rails7-0"
           ruby_version: 3.1.2
-          rails_version: 7.0.3
+          rails_version: 7.0.4
 
       - build:
           name: "ruby3-1_rails6-1"
@@ -65,29 +69,17 @@ workflows:
           rails_version: 6.0.4.7
       - build:
           name: "ruby2-7_rails6-0"
-          ruby_version: 2.7.5
-          rails_version: 6.0.4.7
-      - build:
-          name: "ruby2-6_rails6-0"
-          ruby_version: 2.6.9
+          ruby_version: 2.7.7
           rails_version: 6.0.4.7
 
       - build:
           name: "ruby2-7_rails5-2"
-          ruby_version: 2.7.5
-          rails_version: 5.2.7
-      - build:
-          name: "ruby2-6_rails5-2"
-          ruby_version: 2.6.9
+          ruby_version: 2.7.7
           rails_version: 5.2.7
 
       - build:
           name: "ruby2-7_rails5-1"
-          ruby_version: 2.7.5
-          rails_version: 5.1.7
-      - build:
-          name: "ruby2-6_rails5-1"
-          ruby_version: 2.6.9
+          ruby_version: 2.7.7
           rails_version: 5.1.7
 
   nightly:
@@ -100,9 +92,13 @@ workflows:
                 - main
     jobs:
       - build:
+          name: "ruby3-2_rails7-0"
+          ruby_version: 3.2.0
+          rails_version: 7.0.4
+      - build:
           name: "ruby3-1_rails7-0"
           ruby_version: 3.1.2
-          rails_version: 7.0.3
+          rails_version: 7.0.4
 
       - build:
           name: "ruby3-1_rails6-1"
@@ -119,28 +115,16 @@ workflows:
           rails_version: 6.0.4.7
       - build:
           name: "ruby2-7_rails6-0"
-          ruby_version: 2.7.5
-          rails_version: 6.0.4.7
-      - build:
-          name: "ruby2-6_rails6-0"
-          ruby_version: 2.6.9
+          ruby_version: 2.7.7
           rails_version: 6.0.4.7
 
       - build:
           name: "ruby2-7_rails5-2"
-          ruby_version: 2.7.5
-          rails_version: 5.2.7
-      - build:
-          name: "ruby2-6_rails5-2"
-          ruby_version: 2.6.9
+          ruby_version: 2.7.7
           rails_version: 5.2.7
 
       - build:
           name: "ruby2-7_rails5-1"
-          ruby_version: 2.7.5
-          rails_version: 5.1.7
-      - build:
-          name: "ruby2-6_rails5-1"
-          ruby_version: 2.6.9
+          ruby_version: 2.7.7
           rails_version: 5.1.7
 
