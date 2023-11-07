@@ -32,7 +32,7 @@ describe BrowseEverything::Auth::Google::Credentials do
 
     it 'requests a new token from the OAuth provider' do
       expect(credentials.fetch_access_token).to be_a Hash
-      expect(credentials.fetch_access_token).to eq({})
+      expect(credentials.fetch_access_token).to eq({ "granted_scopes" => nil })
     end
 
     after do
