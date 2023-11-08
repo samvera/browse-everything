@@ -23,7 +23,7 @@ end
 
 # Set a default RAILS_VERSION so we make sure to get extra dependencies for it...
 
-ENV['RAILS_VERSION'] ||= "7.0.3"
+ENV['RAILS_VERSION'] ||= "7.1.1"
 
 if ENV['RAILS_VERSION']
   if ENV['RAILS_VERSION'] == 'edge'
@@ -33,13 +33,10 @@ if ENV['RAILS_VERSION']
   end
 
   case ENV['RAILS_VERSION']
+  when /^7\.1\./
+    # sprockets is optional for rails 7, but we currently require it, and test with it.
+    gem "sprockets-rails"
   when /^7\.0\./
-    # rspec-rails 6.0 is required for Rails 7 support, it's currently only in pre-release,
-    # opt into it here. This should not be required when rspec-rails 6.0.0 final is released.
-    # Note rspec-rails 6.0.0 does not support rails before 6.1, so different versions of
-    # rspec-rails will be needed for different jobs, but that should happen automatically.
-    gem "rspec-rails", ">= 6.0.0.rc1"
-
     # sprockets is optional for rails 7, but we currently require it, and test with it.
     gem "sprockets-rails"
   when /^6\.1\./

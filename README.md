@@ -75,6 +75,7 @@ Currently, the following releases of Ruby are tested:
 
 ## Supported Rails Releases
 The supported Rail releases follow those specified by [the security policy of the Rails Community](https://rubyonrails.org/security/).  As is the case with the supported Ruby releases, it is recommended that one upgrades from any Rails release no longer receiving security updates.
+- 7.1
 - 7.0
 - 6.1
 - 6.0
