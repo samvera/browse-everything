@@ -15,7 +15,6 @@ describe 'browse_everything/_files.html.erb', type: :view do
   end
 
   let(:provider) { instance_double(BrowseEverything::Driver::Base) }
-  let(:page) { Capybara::Node::Simple.new(rendered) }
 
   before do
     allow(view).to receive(:browse_everything_engine).and_return(BrowseEverything::Engine.routes.url_helpers)
@@ -41,17 +40,17 @@ describe 'browse_everything/_files.html.erb', type: :view do
       let(:config) { { max_upload_file_size: (5 * 1024 * 1024 * 1024) } }
 
       it 'draws link' do
-        expect(page).to have_selector('a.ev-link')
+        assert_select('a.ev-link')
       end
 
       it 'provides hover text' do
-        expect(page.find('td.ev-file')['title']).to eq(file.name)
+        assert_select('td.ev-file', attributes: { title: file.name })
       end
     end
 
     context 'when a maximum file size is not configured' do
       it 'draws link' do
-        expect(page).to have_selector('a.ev-link')
+        assert_select('a.ev-link')
       end
     end
 
@@ -59,12 +58,14 @@ describe 'browse_everything/_files.html.erb', type: :view do
       let(:config) { { max_upload_file_size: 1024 } }
 
       it 'draws link' do
-        expect(page).not_to have_selector('a.ev-link')
+        # count:0 is like `refute`
+        assert_select('a.ev-link', count: 0)
       end
     end
 
     it 'does not have a checkbox' do
-      expect(page).not_to have_selector('input.ev-select-all')
+      # count:0 is like `refute`
+      assert_select('input.ev-select-all', count: 0)
     end
   end
 
@@ -77,7 +78,7 @@ describe 'browse_everything/_files.html.erb', type: :view do
     end
 
     it 'has the select-all checkbox' do
-      expect(page).to have_selector('input.ev-select-all')
+      assert_select('input.ev-select-all')
     end
   end
 end
