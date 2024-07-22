@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require 'ostruct'
+
 # Manages request parameters for the request to the Google Drive API
 module BrowseEverything
   module Auth
     module Google
-      class RequestParameters < OpenStruct
+      class RequestParameters < ::OpenStruct
         # Overrides the constructor for an OpenStruct instance
         # Provides default parameters
         def initialize(params = {})
