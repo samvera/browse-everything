@@ -69,7 +69,7 @@ module BrowseEverything
       # Generate the name for the driver
       # @return [String]
       def name
-        @name ||= (@config[:name] || self.class.name.split(/::/).last.titleize)
+        @name ||= @config[:name] || self.class.name.split(/::/).last.titleize
       end
 
       # Abstract method
