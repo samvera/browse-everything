@@ -48,7 +48,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop-rspec'
   spec.add_development_dependency 'sass-rails'
   spec.add_development_dependency 'selenium-webdriver'
-  spec.add_development_dependency 'sqlite3'
+  # Rails <= 7.1 can't use sqlite3 gem 2.x yet
+  spec.add_development_dependency 'sqlite3', "~> 1.4"
   spec.add_development_dependency 'turbolinks'
   spec.add_development_dependency 'webdrivers'
   spec.add_development_dependency 'webmock'
