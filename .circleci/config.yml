@@ -46,6 +46,12 @@ workflows:
   ci:
     jobs:
       - build:
+          name: "ruby3-3_rails7-2"
+          ruby_version: 3.3.3
+          rails_version: "7.2.0"
+
+
+      - build:
           name: "ruby3-2_rails7-1"
           ruby_version: 3.2.1
           rails_version: 7.1.1
@@ -95,6 +101,11 @@ workflows:
               only:
                 - main
     jobs:
+      - build:
+          name: "ruby3-3_rails7-2"
+          ruby_version: 3.3.3
+          rails_version: "7.2.0"
+
       - build:
           name: "ruby3-2_rails7-0"
           ruby_version: 3.2.0

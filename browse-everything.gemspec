@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dropbox_api', '>= 0.1.20'
   spec.add_dependency 'google-apis-drive_v3'
   spec.add_dependency 'googleauth', '>= 0.6.6', '< 2.0'
-  spec.add_dependency 'rails', '>= 4.2', '< 7.2'
+  spec.add_dependency 'rails', '>= 4.2', '< 8.0'
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'signet', '~> 0.8'
   spec.add_dependency 'typhoeus'
