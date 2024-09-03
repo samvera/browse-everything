@@ -16,6 +16,8 @@ module BrowseEverything
     autoload :Box,         'browse_everything/driver/box'
     autoload :GoogleDrive, 'browse_everything/driver/google_drive'
     autoload :S3,          'browse_everything/driver/s3'
+    autoload :Sharepoint,  'browse_everything/driver/sharepoint'
+
 
     # Access the sorter set for the base driver class
     # @return [Proc]
@@ -36,6 +38,12 @@ module BrowseEverything
     module Google
       autoload :Credentials,        'browse_everything/auth/google/credentials'
       autoload :RequestParameters,  'browse_everything/auth/google/request_parameters'
+    end
+  end
+
+  module Auth
+    module Sharepoint
+      autoload :Session,        'browse_everything/auth/sharepoint/session'
     end
   end
 
