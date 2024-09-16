@@ -2,6 +2,7 @@
 
 $(function () {
   var dialog = $('div#browse-everything');
+  var dialogModal = null;
   var selected_files = new Map(); // { url: input element object }
 
   var initialize = function initialize(obj, options) {
@@ -11,10 +12,10 @@ $(function () {
       dialog = $('<div tabindex="-1" id="browse-everything" class="ev-browser modal fade" aria-live="polite" role="dialog" aria-labelledby="beModalLabel">' + '<div class="modal-dialog modal-lg" role="document"></div>' + '</div>').hide().appendTo('body');
     }
 
-    dialog.modal({
-      backdrop: 'static',
-      show: false
+    dialogModal = new bootstrap.Modal(dialog, {
+      backdrop: 'static'
     });
+
     var ctx = {
       opts: $.extend(true, {}, options),
       callbacks: {
@@ -276,7 +277,7 @@ $(function () {
           .removeClass('in')
           .addClass('show');
 
-        return dialog.modal('show');
+        return dialogModal.show();
       });
     });
 
@@ -333,9 +334,9 @@ $(function () {
       dataType: 'json',
       data: main_form.serialize()
     }).done(function (data) {
-      if (ctx.opts.target != null) {
+      if (ctx.opts.bsTarget != null) {
         var fields = toHiddenFields({ selected_files: data });
-        $(ctx.opts.target).append(fields);
+        $(ctx.opts.bsTarget).append(fields);
       }
       return ctx.callbacks.done.fire(data);
     }).fail(function (xhr, status, error) {
@@ -427,7 +428,7 @@ $(function () {
 });
 
 var auto_toggle = function auto_toggle() {
-  var triggers = $('*[data-toggle=browse-everything]');
+  var triggers = $('*[data-bs-toggle=browse-everything]');
   if (typeof Rails !== 'undefined' && Rails !== null) {
     $.ajaxSetup({
       headers: { 'X-CSRF-TOKEN': (Rails || $.rails).csrfToken() || '' }

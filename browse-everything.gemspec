@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   # the dummy test app at ./spec/dummy_test_app
 
   spec.add_development_dependency 'bixby', '~> 5.0'
-  spec.add_development_dependency 'bootstrap', "~> 4.0" # we do not support bootstrap 5
+  spec.add_development_dependency 'bootstrap', "~> 5.0"
   spec.add_development_dependency 'bundler', '>= 1.3'
   spec.add_development_dependency 'capybara'
   spec.add_development_dependency 'factory_bot_rails'
