@@ -22,15 +22,14 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activestorage' # Should this be needed for Rails 5.1.x releases?
   spec.add_dependency 'addressable', '~> 2.5'
   spec.add_dependency 'aws-sdk-s3'
-  spec.add_dependency 'dropbox_api', '>= 0.1.10'
+  spec.add_dependency 'dropbox_api', '>= 0.1.20'
   spec.add_dependency 'fast_jsonapi'
   spec.add_dependency 'foreman'
-  spec.add_dependency 'google-api-client', '~> 0.23'
-  spec.add_dependency 'google_drive', '~> 2.1'
-  spec.add_dependency 'googleauth', '0.6.6'
+  spec.add_dependency 'google-apis-drive_v3'
+  spec.add_dependency 'googleauth', '>= 0.6.6', '< 2.0'
   spec.add_dependency 'jsonapi-resources'
   spec.add_dependency 'puma', '>= 3.11'
-  spec.add_dependency 'rails', '>= 5.1' # We're going to need to require support for webpacker given the usage of rswag-ui to generate Swagger documentation
+  spec.add_dependency 'rails', '>= 6.1' # We're going to need to require support for webpacker given the usage of rswag-ui to generate Swagger documentation
   spec.add_dependency 'rswag'
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'signet', '~> 0.8'

@@ -5,6 +5,7 @@ require 'browse_everything/version'
 require 'browse_everything/engine'
 require 'browse_everything/retriever'
 require 'fast_jsonapi'
+require 'ostruct'
 
 module BrowseEverything
   module Auth
@@ -73,7 +74,7 @@ module BrowseEverything
     def parse_config_file(path)
       config_file_content = File.read(path)
       config_file_template = ERB.new(config_file_content)
-      config_values = YAML.safe_load(config_file_template.result, [Symbol])
+      config_values = YAML.safe_load(config_file_template.result, permitted_classes: [Symbol], fallback: {})
       @config = Configuration.new(config_values.deep_symbolize_keys)
     rescue Errno::ENOENT
       raise ConfigurationError, 'Missing browse_everything_providers.yml configuration file'
