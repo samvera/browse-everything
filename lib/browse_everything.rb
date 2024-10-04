@@ -74,7 +74,7 @@ module BrowseEverything
     def parse_config_file(path)
       config_file_content = File.read(path)
       config_file_template = ERB.new(config_file_content)
-      config_values = YAML.safe_load(config_file_template.result, permitted_classes: [Symbol], fallback: {})
+      config_values = YAML.safe_load(config_file_template.result, permitted_classes: [Symbol]) || {}
       @config = Configuration.new(config_values.deep_symbolize_keys)
     rescue Errno::ENOENT
       raise ConfigurationError, 'Missing browse_everything_providers.yml configuration file'
