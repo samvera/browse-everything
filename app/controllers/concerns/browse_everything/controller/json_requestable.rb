@@ -2,7 +2,7 @@
 
 module BrowseEverything
   module Controller
-    module JsonApiRequestable
+    module JsonRequestable
       extend ActiveSupport::Concern
 
       private

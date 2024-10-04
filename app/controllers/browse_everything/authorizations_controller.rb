@@ -2,7 +2,7 @@
 
 module BrowseEverything
   class AuthorizationsController < ActionController::Base
-    include BrowseEverything::Controller::JsonApiRequestable
+    include BrowseEverything::Controller::JsonRequestable
 
     skip_before_action :verify_authenticity_token if respond_to?(:verify_authenticity_token)
 

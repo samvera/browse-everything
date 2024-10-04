@@ -17,7 +17,7 @@ module BrowseEverything
         end
 
         def token_param
-          return json_api_params[:token] if self.class.ancestors.include?(BrowseEverything::Controller::JsonApiRequestable)
+          return json_api_params[:token] if self.class.ancestors.include?(BrowseEverything::Controller::JsonRequestable)
 
           token_header || params[:token]
         end

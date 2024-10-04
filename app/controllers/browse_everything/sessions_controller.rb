@@ -4,7 +4,7 @@ require 'jwt'
 
 module BrowseEverything
   class SessionsController < ActionController::Base
-    include BrowseEverything::Controller::JsonApiRequestable
+    include BrowseEverything::Controller::JsonRequestable
     include BrowseEverything::Controller::Authorizable
 
     skip_before_action :verify_authenticity_token if respond_to?(:verify_authenticity_token)
