@@ -13,7 +13,7 @@ jobs:
         type: string
       bundler_version:
         type: string
-        default: 2.4.3
+        default: 2.5.21
     executor:
       name: 'samvera/ruby'
       ruby_version: << parameters.ruby_version >>
@@ -47,23 +47,23 @@ workflows:
     jobs:
       - build:
           name: "ruby3-3_rails7-2"
-          ruby_version: 3.3.3
+          ruby_version: 3.3.5
           rails_version: 7.2.1
       - build:
           name: "ruby3-2_rails7-1"
-          ruby_version: 3.2.1
+          ruby_version: 3.2.5
           rails_version: 7.1.4
       - build:
           name: "ruby3-2_rails7-0"
-          ruby_version: 3.2.0
+          ruby_version: 3.2.5
           rails_version: 7.0.8.4
       - build:
           name: "ruby3-1_rails7-0"
-          ruby_version: 3.1.2
+          ruby_version: 3.1.6
           rails_version: 7.0.8.4
       - build:
           name: "ruby3-1_rails6-1"
-          ruby_version: 3.1.2
+          ruby_version: 3.1.6
           rails_version: 6.1.7.8
 
   nightly:
