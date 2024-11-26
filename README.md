@@ -26,33 +26,48 @@ download the files.
 
 ## Technical Debt/Legacy warning
 
-This is code with a long history that has a number of known problems;
-we are trying to keep it alive for existing projects using it. But caution is
-advised in introducing it, in it's present form, to new projects.
+This project has been receiving very limited maintenance for at least 2-4 years
+now  -- just enough to keep it working for present users. Caution is indicated in
+considering adoption for new projects.
 
-A significant overhaul of this gem may be desirable (with backwards-breaking
-changes), to better accomplish gem goals. But there has not been the
-interest/resources in the community to accomplish that at present.
+### Known issues (Nov 2024)
 
-Some known current issues (Jun 2022):
+* The S3 local file system adapters are known working. It's not clear if any other
+adapters are working properly -- or if the browse_everything architecture as is
+is sufficient to support OAuth2 integration flows that may be required to get them
+working.
 
-* The S3 adapter is known working; but it's not clear if other adapters using
-OAuth2 (main use case for this gem) are in fact working reliably. And there
-is some concern that the current browse-everything integration API may not be
-compatible with proper OAuth/OAuth2 flows to support OAuth integrations --
-originally the main use case of this gem.
+* CSS and Javascript were both written for use with sprockets asset pipeline, and are
+currently only tested with sprockets -- even in Rails 8, where `rails new` cannot
+generate a sprockets using app.
+  * For use with Rails 8, you could consider adding sprockets to your app manually,
+    or copying browse_everything JS and CSS assets into your local app and including
+    them that way. The browse_everything installer is not capable of doing this
+    in an automated fashion.
 
-* The CSS and Javascript were both written for use with the sprockets Rails
-asset pipeline.  Recent versions of Rails may require custom configuration
-to use sprockets (especially for JS), which is not currently covered in
-instructions here. Using other means of including CSS and JS may require
-confusing customization also not fully covered here.
+* Good news: The `bootstrap4` CSS is tentatively demonstrated working with bootstrap 5
+too.
 
-* Javascript depends on JQuery, bootstrap (3 or 4; 5 untested), as well as a
-vendored copy of a jquery.treetable plugin.
+* JS depends on JQuery, which is unfortunate in 2024. As well as a vendored copy of
+  a jquery.treetable plugin.
 
-* CSS is provided for compatibilty with bootstrap 3 or bootstrap 4, but not
-bootstrap 5 (or no bootstrap at all)
+### Possible path to a revived gem
+
+If there are interest and resources, assuming a major version release.
+
+* Rewrite JS from the ground up to be vanilla JS without JQuery.
+  * And useable by either `importmap-rails` or an npm-based rails JS bundler.
+
+* Figure out what adapters actually work, drop those that don't work from the gem.
+  * Possibly find adapters in PR's or forks that work and can be added.
+
+* Testing overhaul
+  * Adapters have their network communication with cloud mocked for good reason,
+    but that makes them false negative and unreliable at detecting breakage.
+  * Testing is done with an in-repo Rails app instead of engine_cart, which
+    is probably reasonable, but that makes it harder to really test integration
+    with differnet rails versions or test the installer works, as Rails has had
+    churn in JS.  go back to engine_cart, or consider [combustion](https://github.com/pat/combustion)
 
 ## Product Owner & Maintenance
 
