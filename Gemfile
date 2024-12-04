@@ -23,7 +23,7 @@ end
 
 # Set a default RAILS_VERSION so we make sure to get extra dependencies for it...
 
-ENV['RAILS_VERSION'] ||= "7.1.1"
+ENV['RAILS_VERSION'] ||= "8.0.0"
 
 if ENV['RAILS_VERSION']
   if ENV['RAILS_VERSION'] == 'edge'
@@ -33,20 +33,35 @@ if ENV['RAILS_VERSION']
   end
 
   case ENV['RAILS_VERSION']
+  when /^8./
+    # sprockets is not usually included in Rails 8, but we currently require it, and test with it.
+    gem "sprockets-rails"
   when /^7\.1\./
     # sprockets is optional for rails 7, but we currently require it, and test with it.
     gem "sprockets-rails"
   when /^7\.0\./
+    # rails previous to 7.1 can't use sqlite 2
+    gem "sqlite3", "~> 1.4"
+
     # sprockets is optional for rails 7, but we currently require it, and test with it.
     gem "sprockets-rails"
   when /^6\.1\./
+    # rails previous to 7.1 can't use sqlite 2
+    gem "sqlite3", "~> 1.4"
+
     # opt into mail 2.8.0.rc1 so we get extra dependencies required for rails 6.1
     # Once mail 2.8.0 final is released this will not be required.
     # https://github.com/mikel/mail/pull/1472
     gem "mail", ">= 2.8.0.rc1"
   when /^6\.0\./
+    # rails previous to 7.1 can't use sqlite 2
+    gem "sqlite3", "~> 1.4"
+
     gem 'sass-rails', '>= 6'
   when /^5\.[12]\./
+    # rails previous to 7.1 can't use sqlite 2
+    gem "sqlite3", "~> 1.4"
+
     gem 'sass-rails', '~> 5.0'
     gem 'sprockets', '~> 3.7'
     gem 'thor', '~> 0.20'

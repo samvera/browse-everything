@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dropbox_api', '>= 0.1.20'
   spec.add_dependency 'google-apis-drive_v3'
   spec.add_dependency 'googleauth', '>= 0.6.6', '< 2.0'
-  spec.add_dependency 'rails', '>= 4.2', '< 8.0'
+  spec.add_dependency 'rails', '>= 4.2', '< 8.1'
   spec.add_dependency 'ruby-box'
   spec.add_dependency 'signet', '~> 0.8'
   spec.add_dependency 'typhoeus'
@@ -49,7 +49,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'sass-rails'
   spec.add_development_dependency 'selenium-webdriver'
   # Rails <= 7.1 can't use sqlite3 gem 2.x yet
-  spec.add_development_dependency 'sqlite3', "~> 1.4"
+  spec.add_development_dependency 'sqlite3'
   spec.add_development_dependency 'turbolinks'
   spec.add_development_dependency 'webdrivers'
   spec.add_development_dependency 'webmock'
