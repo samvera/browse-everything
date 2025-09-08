@@ -2,25 +2,25 @@
 
 require 'addressable'
 require 'tempfile'
-require 'typhoeus'
+require 'faraday'
 
 module BrowseEverything
   # Class for raising errors when a download is invalid
   class DownloadError < StandardError
-    attr_reader :response
+    attr_accessor :response_body
 
     # Constructor
     # @param msg [String]
-    # @param response [Typhoeus::Response] response from the server
-    def initialize(msg, response)
-      @response = response
+    # @param response [String] response from the server
+    def initialize(msg, response_body)
+      @response_body = response_body
       super(msg)
     end
 
     # Generate the message for the exception
     # @return [String]
     def message
-      "#{super}: #{response.body}"
+      "#{super}: #{response_body}"
     end
   end
 
@@ -36,7 +36,7 @@ module BrowseEverything
       # @param headers [Hash] any custom headers required to transit the request
       def can_retrieve?(uri, headers = {})
         request_headers = headers.merge(Range: 'bytes=0-0')
-        response = Typhoeus.get(uri, headers: request_headers)
+        response = Faraday.get(uri, headers: request_headers)
         response.success?
       end
     end
@@ -133,17 +133,23 @@ module BrowseEverything
       file_size = options.fetch(:file_size)
       headers = options.fetch(:headers)
       url = options.fetch(:url)
-      retrieved = 0
+      error_response = +""
 
-      request = Typhoeus::Request.new(url.to_s, method: :get, headers: headers)
-      request.on_headers do |response|
-        raise DownloadError.new("#{self.class}: Failed to download #{url}: Status Code: #{response.code}", response) unless response.code == 200
+      conn = Faraday.new(url.to_s, headers: headers)
+      response = conn.get do |req|
+        req.options.on_data = proc do |chunk, overall_received_bytes, env|
+          if env.status == 200
+            # will yield to block passed in to outer retrieve_http, amazing.
+            yield(chunk, overall_received_bytes, file_size)
+          else
+            error_response << chunk
+          end
+        end
       end
-      request.on_body do |chunk|
-        retrieved += chunk.bytesize
-        yield(chunk, retrieved, file_size)
+
+      unless response.status == 200
+        raise DownloadError.new("#{self.class}: Failed to download #{url}: Status Code: #{response.status}", error_response)
       end
-      request.run
     end
 
     # Retrieve the file size
@@ -158,7 +164,7 @@ module BrowseEverything
       when 'file'
         File.size(url.path)
       when /https?/
-        response = Typhoeus.head(url.to_s, headers: headers)
+        response = Faraday.head(url.to_s, headers: headers)
         length_value = response.headers['Content-Length'] || file_size
         length_value.to_i
       else
