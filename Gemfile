@@ -45,6 +45,10 @@ if ENV['RAILS_VERSION']
 
     # sprockets is optional for rails 7, but we currently require it, and test with it.
     gem "sprockets-rails"
+
+    # workaround bug in old rails
+    # https://github.com/rails/rails/pull/54264
+    gem "concurrent-ruby", "< 1.3.5"
   when /^6\.1\./
     # rails previous to 7.1 can't use sqlite 2
     gem "sqlite3", "~> 1.4"
@@ -53,17 +57,18 @@ if ENV['RAILS_VERSION']
     # Once mail 2.8.0 final is released this will not be required.
     # https://github.com/mikel/mail/pull/1472
     gem "mail", ">= 2.8.0.rc1"
+
+    # workaround bug in old rails
+    # https://github.com/rails/rails/pull/54264
+    gem "concurrent-ruby", "< 1.3.5"
   when /^6\.0\./
     # rails previous to 7.1 can't use sqlite 2
     gem "sqlite3", "~> 1.4"
 
     gem 'sass-rails', '>= 6'
-  when /^5\.[12]\./
-    # rails previous to 7.1 can't use sqlite 2
-    gem "sqlite3", "~> 1.4"
 
-    gem 'sass-rails', '~> 5.0'
-    gem 'sprockets', '~> 3.7'
-    gem 'thor', '~> 0.20'
+    # workaround bug in old rails
+    # https://github.com/rails/rails/pull/54264
+    gem "concurrent-ruby", "< 1.3.5"
   end
 end
