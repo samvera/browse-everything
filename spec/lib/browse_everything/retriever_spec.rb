@@ -160,12 +160,13 @@ describe BrowseEverything::Retriever do
         stub_request(
           :get, "https://retrieve.cloud.example.com/some/dir/file_error.pdf"
         ).and_return(
-          status: 403
+          status: 403,
+          body: "Did not like this"
         )
       end
 
       it 'raises an exception' do
-        expect { retriever.download(download_options) }.to raise_error(BrowseEverything::DownloadError, /BrowseEverything::Retriever: Failed to download/)
+        expect { retriever.download(download_options) }.to raise_error(BrowseEverything::DownloadError, /BrowseEverything::Retriever: Failed to download.* Status Code: 403.*Did not like this/)
       end
     end
   end
@@ -234,7 +235,7 @@ describe BrowseEverything::Retriever do
       let(:url) { 'https://retrieve.cloud.example.com/some/dir/can_retrieve.pdf' }
       before do
         stub_request(
-          :get, "https://retrieve.cloud.example.com/some/dir/can_retrieve.pdf"
+          :get, %r{^https://retrieve.cloud.example.com/some/dir/can_retrieve.pdf\?}
         ).to_return(
           status: 206,
           body: '%'
@@ -250,7 +251,7 @@ describe BrowseEverything::Retriever do
       let(:url) { 'https://retrieve.cloud.example.com/some/dir/cannot_retrieve.pdf' }
       before do
         stub_request(
-          :get, "https://retrieve.cloud.example.com/some/dir/cannot_retrieve.pdf"
+          :get, %r{^https://retrieve.cloud.example.com/some/dir/cannot_retrieve.pdf\?}
         ).to_return(
           status: 403
         )
