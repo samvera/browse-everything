@@ -70,7 +70,7 @@ module BrowseEverything
       # @param path [String] the path (default to the root)
       # @return [Array<BrowseEverything::FileEntry>] file entries for the path
       def list_files(drive, request_params, path: '')
-        drive.list_files(request_params.to_h) do |file_list, error|
+        drive.list_files(**request_params.to_h) do |file_list, error|
           # Raise an exception if there was an error Google API's
           if error.present?
             # In order to properly trigger reauthentication, the token must be cleared
