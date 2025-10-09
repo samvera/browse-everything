@@ -4,7 +4,7 @@ include BrowserConfigHelper
 
 describe BrowseEverything::Browser do
   let(:file_config) do
-    "file_system:\n  home: '/file/config/home'\ndropbox:\n  client_id: 'DropboxId'\n  client_secret: 'DropboxClientSecret'\n  download_directory: 'tmp/'"
+    "file_system:\n  home: '/file/config/home'\ngoogle_drive:\n  client_id: 'GoogleDriveId'\n  client_secret: 'GoogleDriveClientSecret'\n  download_directory: 'tmp/'"
   end
 
   let(:global_config) do
@@ -12,7 +12,7 @@ describe BrowseEverything::Browser do
       file_system: {
         home: '/global/config/home'
       },
-      dropbox: {
+      google_drive: {
         client_id: 'DropboxId',
         client_secret: 'DropboxClientSecret',
         download_directory: 'tmp/'
@@ -25,9 +25,9 @@ describe BrowseEverything::Browser do
       file_system: {
         home: '/local/config/home'
       },
-      dropbox: {
-        client_id: 'DropboxId',
-        client_secret: 'DropboxClientSecret',
+      google_drive: {
+        client_id: 'GoogleDriveId',
+        client_secret: 'GoogleDriveClientSecret',
         download_directory: 'tmp/'
       },
       url_options: url_options
@@ -43,9 +43,9 @@ describe BrowseEverything::Browser do
     end
 
     it 'has 2 providers' do
-      expect(browser.providers.keys).to eq(%w[file_system dropbox])
+      expect(browser.providers.keys).to eq(%w[file_system google_drive])
       expect(browser.providers[:file_system]).to be_a BrowseEverything::Driver::FileSystem
-      expect(browser.providers[:dropbox]).to be_a BrowseEverything::Driver::Dropbox
+      expect(browser.providers[:google_drive]).to be_a BrowseEverything::Driver::GoogleDrive
     end
 
     it 'uses the file configuration' do
@@ -60,9 +60,9 @@ describe BrowseEverything::Browser do
     before { BrowseEverything.configure(global_config) }
 
     it 'has 2 providers' do
-      expect(browser.providers.keys).to eq(%w[file_system dropbox])
+      expect(browser.providers.keys).to eq(%w[file_system google_drive])
       expect(browser.providers[:file_system]).to be_a BrowseEverything::Driver::FileSystem
-      expect(browser.providers[:dropbox]).to be_a BrowseEverything::Driver::Dropbox
+      expect(browser.providers[:google_drive]).to be_a BrowseEverything::Driver::GoogleDrive
     end
 
     it 'uses the global configuration' do
@@ -75,9 +75,9 @@ describe BrowseEverything::Browser do
     let(:browser) { described_class.new(local_config) }
 
     it 'has 2 providers' do
-      expect(browser.providers.keys).to eq(%w[file_system dropbox])
+      expect(browser.providers.keys).to eq(%w[file_system google_drive])
       expect(browser.providers[:file_system]).to be_a BrowseEverything::Driver::FileSystem
-      expect(browser.providers[:dropbox]).to be_a BrowseEverything::Driver::Dropbox
+      expect(browser.providers[:google_drive]).to be_a BrowseEverything::Driver::GoogleDrive
     end
 
     it 'uses the local configuration' do
