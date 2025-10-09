@@ -9,6 +9,9 @@ group :development, :test do
   gem 'pry-byebug' unless ENV['CI']
 end
 
+# "soft"/"optional" dependency, but needed for our tests of dropbox driver to pass
+gem 'dropbox_api', '>= 0.1.20'
+
 # == Extra dependencies for dummy test app ==
 #
 # Extra dependencies for dummy test app are in .gemspec as a development dependency

@@ -20,7 +20,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'addressable', '~> 2.5'
   spec.add_dependency 'aws-sdk-s3'
-  spec.add_dependency 'dropbox_api', '>= 0.1.20'
   spec.add_dependency 'google-apis-drive_v3'
   spec.add_dependency 'googleauth', '>= 0.6.6', '< 2.0'
   spec.add_dependency 'rails', '>= 4.2', '< 8.1'
