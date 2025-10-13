@@ -9,7 +9,7 @@ begin
 rescue Gem::LoadError => e
   new_raise = Gem::LoadError.new("Loading BrowseEverything::Driver:Dropbox requires the availability of gem dropbox_api '#{e.requirement}', please add it to your Gemfile")
   new_raise.requirement = e.requirement
-  # raise new_raise, cause: nil # cause is confusing and unneeded here.
+  raise new_raise, cause: nil # cause is confusing and unneeded here.
 end
 
 module BrowseEverything
