@@ -11,6 +11,7 @@ end
 
 # "soft"/"optional" dependency, but needed for our tests of dropbox driver to pass
 gem 'dropbox_api', '>= 0.1.20'
+gem 'ruby-box'
 
 # == Extra dependencies for dummy test app ==
 #
