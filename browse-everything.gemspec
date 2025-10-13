@@ -24,7 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'googleauth', '>= 0.6.6', '< 2.0'
   spec.add_dependency 'rails', '>= 4.2', '< 8.1'
   spec.add_dependency 'ruby-box'
-  spec.add_dependency 'signet', '~> 0.8'
   spec.add_dependency 'faraday', "~> 2.0"
 
   # Development dependencies include dependencies necessary for running
