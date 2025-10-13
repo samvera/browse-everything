@@ -1,7 +1,14 @@
 # frozen_string_literal: true
 
-require 'ruby-box'
 require_relative 'authentication_factory'
+
+begin
+  gem 'ruby-box'
+rescue Gem::LoadError => e
+  new_raise = Gem::LoadError.new("Loading BrowseEverything::Driver:Box requires the availability of gem ruby-box #{e.requirement}, please add it to your Gemfile")
+  new_raise.requirement = e.requirement
+  raise new_raise, cause: nil # cause is confusing and unneeded here.
+end
 
 module BrowseEverything
   module Driver
