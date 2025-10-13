@@ -18,7 +18,7 @@
 # file_system:
 #   allow_relative_home: true
 #   home: ./browseable_files
-
+#
 # # Note: dropbox requires manual addition of `dropbox_api` gem to Gemfile, and
 # # `require 'browse_everything/driver/dropbox'` in a startup file.
 #
@@ -26,6 +26,9 @@
 #   client_id: YOUR_DROPBOX_APP_KEY
 #   client_secret: YOUR_DROPBOX_APP_SECRET
 #   download_directory: tmp/
+#
+# # Note: box requires addition of `ruby-box` to Gemfile, and
+# # `require 'browse_everything/driver/box'` in a startup file.
 #
 # box:
 #   client_id: YOUR_BOX_CLIENT_ID

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'browse_everything/driver/box'
+
 include BrowserConfigHelper
 
 describe BrowseEverything::Driver::Box do

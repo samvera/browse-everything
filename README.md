@@ -38,6 +38,17 @@ dependency on old unmaintained `oauth2` 1.x](https://github.com/Jesus/dropbox_ap
 * Add `require 'browse_everything/driver/dropbox'` to a startup file, eg
   `config/application.rb`.
 
+### Box.com
+
+The driver uses unmaintained [ruby-box](https://github.com/attachmentsme/ruby-box)
+gem, which should probably be replaced with [boxr](https://github.com/cburnette/boxr).
+See unfinished work at https://github.com/samvera/browse-everything/pull/185
+
+* Add `ruby-box` to your Gemfile.
+* Add `require 'browse_everything/driver/box'` to a startup file, eg
+  `config/application.rb`.
+
+
 ## Technical Debt/Legacy warning
 
 This project has been receiving very limited maintenance for at least 2-4 years
