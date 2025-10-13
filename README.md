@@ -24,6 +24,20 @@ download the files.
 
 **This gem does not depend on hydra-head**
 
+## Certain drivers needing maintenance require extra setup
+
+Certain drivers need additional development work if they are to be fully
+supported again, and for now require extra opt-in setup.
+
+### Dropbox
+
+The driver has a dependency on unmaintained dropbox_api gem with it's [own
+dependency on old unmaintained `oauth2` 1.x](https://github.com/Jesus/dropbox_api/issues/96), so requires some opt-in setup and configuration. https://github.com/samvera/browse-everything/pull/448
+
+* Add `dropbox_api, '>= 0.1.20'` to your Gemfile.
+* Add `require 'browse_everything/driver/dropbox'` to a startup file, eg
+  `config/application.rb`.
+
 ## Technical Debt/Legacy warning
 
 This project has been receiving very limited maintenance for at least 2-4 years

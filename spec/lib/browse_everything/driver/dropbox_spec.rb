@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'browse_everything/driver/dropbox'
+
 include BrowserConfigHelper
 
 describe BrowseEverything::Driver::Dropbox do

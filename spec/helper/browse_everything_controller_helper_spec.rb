@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+#
+require 'browse_everything/driver/dropbox'
 
 require File.expand_path('../spec_helper', __dir__)
 

@@ -12,10 +12,12 @@ module BrowseEverything
   module Driver
     autoload :Base,        'browse_everything/driver/base'
     autoload :FileSystem,  'browse_everything/driver/file_system'
-    autoload :Dropbox,     'browse_everything/driver/dropbox'
     autoload :Box,         'browse_everything/driver/box'
     autoload :GoogleDrive, 'browse_everything/driver/google_drive'
     autoload :S3,          'browse_everything/driver/s3'
+
+    # Intentionally require explicit require, as it has a non-declared dependency
+    # autoload :Dropbox,     'browse_everything/driver/dropbox'
 
     # Access the sorter set for the base driver class
     # @return [Proc]

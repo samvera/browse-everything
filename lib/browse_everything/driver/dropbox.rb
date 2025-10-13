@@ -1,8 +1,16 @@
 # frozen_string_literal: true
 
 require 'tmpdir'
-require 'dropbox_api'
 require_relative 'authentication_factory'
+
+# We have an unspecified "optional" dependency, not great but it's what we got
+begin
+  gem 'dropbox_api', '>= 0.1.20'
+rescue Gem::LoadError => e
+  new_raise = Gem::LoadError.new("Loading BrowseEverything::Driver:Dropbox requires the availability of gem dropbox_api '#{e.requirement}', please add it to your Gemfile")
+  new_raise.requirement = e.requirement
+  raise new_raise, cause: nil # cause is confusing and unneeded here.
+end
 
 module BrowseEverything
   module Driver

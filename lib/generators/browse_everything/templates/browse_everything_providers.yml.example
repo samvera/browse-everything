@@ -2,16 +2,10 @@
 # To make browse-everything aware of a provider, uncomment the info for that provider and add your API key information.
 # The file_system provider can be a path to any directory on the server where your application is running.
 #
-# dropbox:
-#   client_id: YOUR_DROPBOX_APP_KEY
-#   client_secret: YOUR_DROPBOX_APP_SECRET
-#   download_directory: tmp/
-# box:
-#   client_id: YOUR_BOX_CLIENT_ID
-#   client_secret: YOUR_BOX_CLIENT_SECRET
 # google_drive:
 #   client_id: YOUR_GOOGLE_API_CLIENT_ID
 #   client_secret: YOUR_GOOGLE_API_CLIENT_SECRET
+#
 # s3:
 #   bucket: YOUR_AWS_S3_BUCKET
 #   response_type: signed_url # set to :public_url for public urls or :s3_uri for an s3://BUCKET/KEY uri
@@ -20,3 +14,19 @@
 #   app_secret: YOUR_AWS_S3_SECRET # explicitly here, or left out to use system-configured
 #   region: YOUR_AWS_S3_REGION     # defaults.
 #   See https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/
+#
+# file_system:
+#   allow_relative_home: true
+#   home: ./browseable_files
+
+# # Note: dropbox requires manual addition of `dropbox_api` gem to Gemfile, and
+# # `require 'browse_everything/driver/dropbox'` in a startup file.
+#
+# dropbox:
+#   client_id: YOUR_DROPBOX_APP_KEY
+#   client_secret: YOUR_DROPBOX_APP_SECRET
+#   download_directory: tmp/
+#
+# box:
+#   client_id: YOUR_BOX_CLIENT_ID
+#   client_secret: YOUR_BOX_CLIENT_SECRET
