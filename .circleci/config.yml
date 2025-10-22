@@ -46,9 +46,13 @@ workflows:
   ci:
     jobs:
       - build:
+          name: "ruby3-4_rails8-1"
+          ruby_version: 3.3.6
+          rails_version: 8.1.0
+      - build:
           name: "ruby3-3_rails8-0"
           ruby_version: 3.3.6
-          rails_version: 8.0.0.1
+          rails_version: 8.0.3
       - build:
           name: "ruby3-3_rails7-2"
           ruby_version: 3.3.6
@@ -80,9 +84,13 @@ workflows:
                 - main
     jobs:
       - build:
+          name: "ruby3-4_rails8-1"
+          ruby_version: 3.3.6
+          rails_version: 8.1.0
+      - build:
           name: "ruby3-3_rails8-0"
           ruby_version: 3.3.6
-          rails_version: 8.0.0.1
+          rails_version: 8.0.3
       - build:
           name: "ruby3-3_rails7-2"
           ruby_version: 3.3.5
