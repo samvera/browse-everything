@@ -4,9 +4,6 @@
 // CSS for bootstrap 3, intended to be sass @import'ed into a context that has access to
 // bootstrap 3 mixins and variables.
 
-@import "jquery.treetable";
-@import "jquery.treetable.theme.browse";
-
 @mixin ev-link {
   cursor: pointer;
   a {

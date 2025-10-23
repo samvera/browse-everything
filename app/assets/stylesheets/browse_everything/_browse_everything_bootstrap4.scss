@@ -7,9 +7,6 @@
 // This updates the original bootstrap3 SCSS to work with bootstrap 4, but also improves/fixes
 // some display while we're at it.
 
-@import "jquery.treetable";
-@import "jquery.treetable.theme.browse";
-
 @mixin ev-link {
   cursor: pointer;
   a {

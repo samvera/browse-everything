@@ -26,16 +26,16 @@ $(function () {
     };
     ctx.callback_proxy = {
       show: function show(func) {
-        ctx.callbacks.show.add(func);return this;
+        ctx.callbacks.show.add(func); return this;
       },
       done: function done(func) {
-        ctx.callbacks.done.add(func);return this;
+        ctx.callbacks.done.add(func); return this;
       },
       cancel: function cancel(func) {
-        ctx.callbacks.cancel.add(func);return this;
+        ctx.callbacks.cancel.add(func); return this;
       },
       fail: function fail(func) {
-        ctx.callbacks.fail.add(func);return this;
+        ctx.callbacks.fail.add(func); return this;
       }
     };
     $(obj).data('ev-state', ctx);
@@ -101,7 +101,8 @@ $(function () {
   var toggleBranchSelect = function toggleBranchSelect(row) {
     if (row.hasClass('collapsed')) {
       var node_id = row.find('td.ev-file-name a.ev-link').attr('href');
-      return $('table#file-list').treetable('expandNode', node_id);
+      return;
+      // return $('table#file-list').treetable('expandNode', node_id);
     }
   };
 
@@ -131,7 +132,8 @@ $(function () {
             if (action === "1") {
               $(box).prop("checked", true);
               var node_id = $(this).find('td.ev-file-name a.ev-link').attr('href');
-              return $('table#file-list').treetable('expandNode', node_id);
+              return;
+              // return $('table#file-list').treetable('expandNode', node_id);
             } else {
               return $(box).prop("checked", false);
             }
@@ -154,39 +156,39 @@ $(function () {
   };
 
   var tableSetup = function tableSetup(table) {
-    table.treetable({
-      expandable: true,
-      onNodeCollapse: function onNodeCollapse() {
-        var node = this;
-        return table.treetable("unloadBranch", node);
-      },
-      onNodeExpand: function onNodeExpand() {
-        var node = this;
-        startWait();
-        var size = $(node.row).find('td.ev-file-size').text().trim();
-        var start = 1;
-        var increment = 1;
-        if (size.indexOf("MB") > -1) {
-          start = 10;
-          increment = 5;
-        }
-        if (size.indexOf("KB") > -1) {
-          start = 50;
-          increment = 10;
-        }
-        setProgress(start);
-        var progressIntervalID = setInterval(function () {
-          start = start + increment;
-          if (start > 99) {
-            start = 99;
-          }
-          return setProgress(start);
-        }, 2000);
-        return setTimeout(function () {
-          return loadFiles(node, table, progressIntervalID);
-        }, 10);
-      }
-    });
+    // table.treetable({
+    //   expandable: true,
+    //   onNodeCollapse: function onNodeCollapse() {
+    //     var node = this;
+    //     return table.treetable("unloadBranch", node);
+    //   },
+    //   onNodeExpand: function onNodeExpand() {
+    //     var node = this;
+    //     startWait();
+    //     var size = $(node.row).find('td.ev-file-size').text().trim();
+    //     var start = 1;
+    //     var increment = 1;
+    //     if (size.indexOf("MB") > -1) {
+    //       start = 10;
+    //       increment = 5;
+    //     }
+    //     if (size.indexOf("KB") > -1) {
+    //       start = 50;
+    //       increment = 10;
+    //     }
+    //     setProgress(start);
+    //     var progressIntervalID = setInterval(function () {
+    //       start = start + increment;
+    //       if (start > 99) {
+    //         start = 99;
+    //       }
+    //       return setProgress(start);
+    //     }, 2000);
+    //     return setTimeout(function () {
+    //       return loadFiles(node, table, progressIntervalID);
+    //     }, 10);
+    //   }
+    // });
     $("#file-list tr:first").focus();
     return sizeColumns(table);
   };
@@ -212,7 +214,8 @@ $(function () {
         parent: node.row.data('tt-id'),
         accept: dialog.data('ev-state').opts.accept,
         context: dialog.data('ev-state').opts.context
-      } }).done(function (html) {
+      }
+    }).done(function (html) {
       setProgress('100');
       clearInterval(progressIntervalID);
       var rows = $('tbody tr', $(html));
@@ -367,7 +370,8 @@ $(function () {
       data: {
         accept: dialog.data('ev-state').opts.accept,
         context: dialog.data('ev-state').opts.context
-      } }).done(function (data) {
+      }
+    }).done(function (data) {
       $('.ev-files').html(data);
       indicateSelected();
       $('#provider_auth').focus();
@@ -415,7 +419,8 @@ $(function () {
     var row = $(this).closest('tr');
     var node_id = row.find('td.ev-file-name a.ev-link').attr('href');
     if (row.hasClass('collapsed')) {
-      return $('table#file-list').treetable('expandNode', node_id);
+      return;
+      // return $('table#file-list').treetable('expandNode', node_id);
     } else {
       return selectChildRows(row, action);
     }
@@ -447,13 +452,13 @@ var auto_toggle = function auto_toggle() {
 if (typeof Turbolinks !== 'undefined' && Turbolinks !== null && Turbolinks.supported) {
   // Use turbolinks:load for Turbolinks 5, otherwise use the old way
   if (Turbolinks.BrowserAdapter) {
-    $(document).on('turbolinks:load', function() {
+    $(document).on('turbolinks:load', function () {
       // make sure turbolinks:load AND jquery onReady have BOTH happened,
       // they could come in any order.
       $(auto_toggle);
     });
   } else {
-    $(document).on('page:change', function() {
+    $(document).on('page:change', function () {
       $(auto_toggle);
     });
   }
