@@ -7,10 +7,14 @@ module BrowseEverything
     # or may not be able to figure out how to get browse-everything JS and CSS to load,
     # but we should at least let you load the engine and try, so we don't try
     # to configure sprockets unless it is installed...
-    if config.respond_to?(:assets)
-      config.assets.paths << config.root.join('vendor', 'assets', 'javascripts')
-      config.assets.paths << config.root.join('vendor', 'assets', 'stylesheets')
-      config.assets.precompile += %w[browse_everything.js browse_everything.css]
+
+    initializer 'browse_everything.assets.precompile' do |app|
+      if app.config.respond_to?(:assets)
+        app.config.assets.paths << root.join('node_modules').to_s
+        # Add Bootstrap Icons fonts directory to asset paths so font-url() can find them
+        app.config.assets.paths << root.join('node_modules', 'bootstrap-icons', 'font', 'fonts').to_s
+        app.config.assets.precompile += %w[browse_everything.js browse_everything.scss]
+      end
     end
   end
 end

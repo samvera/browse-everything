@@ -4,6 +4,9 @@
 // CSS for bootstrap 3, intended to be sass @import'ed into a context that has access to
 // bootstrap 3 mixins and variables.
 
+// Import Wunderbaum styles
+@import "browse_everything_wunderbaum";
+
 @mixin ev-link {
   cursor: pointer;
   a {

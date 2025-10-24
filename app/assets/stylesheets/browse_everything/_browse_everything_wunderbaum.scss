@@ -1,0 +1,138 @@
+// Define @font-face for bootstrap-icons with proper asset paths for Rails
+@font-face {
+  font-family: "bootstrap-icons";
+  src: font-url("bootstrap-icons.woff2") format("woff2"),
+    font-url("bootstrap-icons.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+/*
+  Override bootstrap-icons' Sass variables to prevent their @font-face from generating,
+  as this request returns a 404 code made by bootstrap-icons.
+*/
+$bootstrap-icons-font-src: none !default;
+
+/* 
+  Import bootstrap-icons for icon classes (.bi-* with Unicode characters)
+  The @font-face in the file will use $bootstrap-icons-font-src from above.
+*/
+@import "bootstrap-icons/font/bootstrap-icons.scss";
+
+// Import Wunderbaum styles
+@import "wunderbaum/dist/wunderbaum";
+
+// Wunderbaum style overrides
+#browse-everything {
+  .wunderbaum {
+    font-size: 14px;
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    overflow: hidden;
+    display: block;
+
+    .wb-header {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      border-bottom: 2px solid #dee2e6;
+      display: flex;
+      align-items: center;
+    }
+
+    .wb-header-row {
+      display: flex;
+      width: 100%;
+      flex: 1 1 auto;
+    }
+
+    .wb-col-header {
+      padding: 8px;
+      border-right: 1px solid #dee2e6;
+      box-sizing: border-box;
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+
+    .wb-body {
+      background-color: white;
+    }
+
+    .wb-row {
+      border-bottom: 1px solid #e9ecef;
+      transition: background-color 0.15s ease-in-out;
+      display: flex;
+      width: 100%;
+
+      &:hover {
+        background-color: #f8f9fa;
+      }
+
+      &.wb-selected {
+        background-color: #ced4d5 !important;
+      }
+
+      &.wb-active {
+        outline: 2px solid #818484;
+        outline-offset: -2px;
+      }
+    }
+
+    .wb-col {
+      padding: 8px;
+      border-right: 1px solid #e9ecef;
+      vertical-align: middle;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+
+    .wb-node {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .wb-expander {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .wb-title {
+      flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+  }
+
+  // Allow node list to expand to show all content
+  .wb-node-list {
+    height: auto !important;
+    min-height: 100px;
+  }
+
+  // Style the Wunderbaum container
+  div#file-list {
+    min-height: 200px;
+    max-height: 400px;
+    width: 100%;
+    max-width: 100%;
+    overflow-y: auto;
+    overflow-x: auto;
+
+    &.wunderbaum {
+      table-layout: fixed;
+    }
+  }
+}

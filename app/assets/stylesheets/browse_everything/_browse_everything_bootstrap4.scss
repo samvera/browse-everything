@@ -7,6 +7,9 @@
 // This updates the original bootstrap3 SCSS to work with bootstrap 4, but also improves/fixes
 // some display while we're at it.
 
+// Import Wunderbaum styles
+@import "browse_everything_wunderbaum";
+
 @mixin ev-link {
   cursor: pointer;
   a {
@@ -38,6 +41,7 @@
     position: relative;
     overflow-x: auto;
     overflow-y: auto;
+    // max-height: 400px;
 
     li {
       overflow: hidden;
@@ -75,7 +79,9 @@
     height: calc(90vh - 150px);
     padding: 0;
 
-    li { @include ev-link; }
+    li {
+      @include ev-link;
+    }
 
     table {
       margin: 0;
