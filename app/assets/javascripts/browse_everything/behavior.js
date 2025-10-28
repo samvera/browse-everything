@@ -1,467 +1,725 @@
 'use strict';
 
-$(function () {
-  var dialog = $('div#browse-everything');
+document.addEventListener('DOMContentLoaded', function () {
+  var dialog = document.querySelector('div#browse-everything');
   var selected_files = new Map(); // { url: input element object }
+  var wunderbaumInstance = null; // Global Wunderbaum tree instance
 
-  var initialize = function initialize(obj, options) {
-    if ($('div#browse-everything').length === 0) {
-      // bootstrap 4 needs at least the inner class="modal-dialog" div, or it gets really
-      // confused and can't close the dialog.
-      dialog = $('<div tabindex="-1" id="browse-everything" class="ev-browser modal fade" aria-live="polite" role="dialog" aria-labelledby="beModalLabel">' + '<div class="modal-dialog modal-lg" role="document"></div>' + '</div>').hide().appendTo('body');
+  // Helper: Custom Callbacks implementation (replaces $.Callbacks)
+  function Callbacks() {
+    var list = [];
+    return {
+      add: function (fn) {
+        list.push(fn);
+      },
+      fire: function () {
+        var args = arguments;
+        list.forEach(function (fn) {
+          fn.apply(null, args);
+        });
+      }
+    };
+  }
+
+  // Helper: Serialize form data (replaces $.param)
+  function param(obj) {
+    var str = [];
+    for (var p in obj) {
+      if (obj.hasOwnProperty(p)) {
+        var value = obj[p];
+        // Skip undefined, null, and empty string values
+        if (value !== undefined && value !== null && value !== '') {
+          str.push(encodeURIComponent(p) + '=' + encodeURIComponent(value));
+        }
+      }
+    }
+    return str.join('&');
+  }
+
+  // Helper: Get/set element data (replaces $.data)
+  var dataStore = new WeakMap();
+  function getData(el, key) {
+    var data = dataStore.get(el) || {};
+    return key ? data[key] : data;
+  }
+  function setData(el, key, value) {
+    var data = dataStore.get(el) || {};
+    data[key] = value;
+    dataStore.set(el, data);
+  }
+
+  // Helper: Event delegation (replaces $(document).on)
+  function delegate(element, eventType, selector, handler) {
+    element.addEventListener(eventType, function (event) {
+      var target = event.target.closest(selector);
+      if (target) {
+        handler.call(target, event);
+      }
+    });
+  }
+
+  // Helper: AJAX wrapper using fetch (replaces $.ajax)
+  function ajax(url, options) {
+    options = options || {};
+    var config = {
+      method: options.type || options.method || 'GET',
+      headers: options.headers || {}
+    };
+
+    // Add X-Requested-With header for Rails to detect AJAX requests
+    config.headers['X-Requested-With'] = 'XMLHttpRequest';
+
+    // Add CSRF token
+    var csrfToken = document.querySelector('[name="csrf-token"]');
+    if (csrfToken) {
+      config.headers['X-CSRF-TOKEN'] = csrfToken.content;
     }
 
-    dialog.modal({
-      backdrop: 'static',
-      show: false
+    var responseType = options.dataType || 'text';
+
+    // Set Accept header based on dataType
+    if (responseType === 'json') {
+      config.headers['Accept'] = 'application/json';
+    } else {
+      config.headers['Accept'] = 'text/html, */*';
+    }
+
+    // Handle data
+    if (options.data) {
+      if (config.method === 'GET') {
+        var queryString = typeof options.data === 'string' ? options.data : param(options.data);
+        url += (url.indexOf('?') === -1 ? '?' : '&') + queryString;
+      } else {
+        if (typeof options.data === 'string') {
+          config.body = options.data;
+          config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        } else if (options.data instanceof FormData) {
+          config.body = options.data;
+        } else {
+          config.body = param(options.data);
+          config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        }
+      }
+    }
+
+    return fetch(url, config).then(function (response) {
+      if (!response.ok) {
+        return Promise.reject({
+          status: response.status,
+          statusText: response.statusText,
+          responseText: ''
+        });
+      }
+      if (responseType === 'json') {
+        return response.json();
+      }
+      return response.text();
+    }).then(function (data) {
+      return Promise.resolve(data);
+    }).catch(function (error) {
+      if (error.responseText === undefined && error.message) {
+        error.responseText = error.message;
+      }
+      return Promise.reject(error);
     });
+  }
+
+  var initialize = function initialize(obj, options) {
+    if (document.querySelectorAll('div#browse-everything').length === 0) {
+      // bootstrap 4 needs at least the inner class="modal-dialog" div
+      dialog = document.createElement('div');
+      dialog.setAttribute('tabindex', '-1');
+      dialog.id = 'browse-everything';
+      dialog.className = 'ev-browser modal fade';
+      dialog.setAttribute('aria-live', 'polite');
+      dialog.setAttribute('role', 'dialog');
+      dialog.setAttribute('aria-labelledby', 'beModalLabel');
+      dialog.innerHTML = '<div class="modal-dialog modal-lg" role="document"></div>';
+      dialog.style.display = 'none';
+      document.body.appendChild(dialog);
+    }
+
+    // Initialize Bootstrap modal
+    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+      setData(dialog, 'bootstrap-modal', new bootstrap.Modal(dialog, {
+        backdrop: 'static',
+        show: false
+      }));
+    }
+
+    var mergedOptions = { ...(options || {}) };
+    if (!mergedOptions.accept) {
+      mergedOptions.accept = '';
+    }
+    if (!mergedOptions.context) {
+      mergedOptions.context = '';
+    }
+
     var ctx = {
-      opts: $.extend(true, {}, options),
+      opts: mergedOptions,
       callbacks: {
-        show: $.Callbacks(),
-        done: $.Callbacks(),
-        cancel: $.Callbacks(),
-        fail: $.Callbacks()
+        show: Callbacks(),
+        done: Callbacks(),
+        cancel: Callbacks(),
+        fail: Callbacks()
       }
     };
     ctx.callback_proxy = {
       show: function show(func) {
-        ctx.callbacks.show.add(func); return this;
+        ctx.callbacks.show.add(func);
+        return this;
       },
       done: function done(func) {
-        ctx.callbacks.done.add(func); return this;
+        ctx.callbacks.done.add(func);
+        return this;
       },
       cancel: function cancel(func) {
-        ctx.callbacks.cancel.add(func); return this;
+        ctx.callbacks.cancel.add(func);
+        return this;
       },
       fail: function fail(func) {
-        ctx.callbacks.fail.add(func); return this;
+        ctx.callbacks.fail.add(func);
+        return this;
       }
     };
-    $(obj).data('ev-state', ctx);
+    setData(obj, 'ev-state', ctx);
     return ctx;
   };
 
   var toHiddenFields = function toHiddenFields(data) {
-    var fields = $.param(data).split('&').map(function (t) {
+    var fields = param(data).split('&').map(function (t) {
       return t.replace(/\+/g, ' ').split('=', 2);
     });
-    var elements = $(fields).map(function () {
-      return $("<input type='hidden'/>").attr('name', decodeURIComponent(this[0])).val(decodeURIComponent(this[1]))[0];
+    return fields.map(function (field) {
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = decodeURIComponent(field[0]);
+      input.value = decodeURIComponent(field[1]);
+      return input;
     });
-    return $(elements.toArray());
   };
 
   var indicateSelected = function indicateSelected() {
-    return selected_files.forEach(function (value, key) {
-      var row = $('*[data-ev-location=\'' + key + '\']');
-      row.find('.ev-select-file').prop('checked', true);
-      return row.addClass('ev-selected');
-    });
-  };
-
-  var fileIsSelected = function fileIsSelected(row) {
-    return selected_files.has(row.data('ev-location'));
-  };
-
-  var toggleFileSelect = function toggleFileSelect(row) {
-    row.toggleClass('ev-selected');
-    if (row.hasClass('ev-selected')) {
-      selectFile(row);
+    if (wunderbaumInstance) {
+      // Wunderbaum mode: restore selection state
+      selected_files.forEach(function (value, key) {
+        // Find node by location in data
+        wunderbaumInstance.visit(function (node) {
+          if (node.data.location === key && !node.data.folder) {
+            node.setSelected(true);
+            return false;
+          }
+        });
+      });
     } else {
-      unselectFile(row);
-    }
-    return updateFileCount();
-  };
-
-  var hidden_input_prototype = $("<input type='hidden' class='ev-url' name='selected_files[]'/>");
-  var selectFile = function selectFile(row) {
-    var file_location = row.data('ev-location');
-    var hidden_input = hidden_input_prototype.clone().val(file_location);
-    selected_files.set(file_location, hidden_input);
-    if (!$(row).find('.ev-select-file').prop('checked')) {
-      return $(row).find('.ev-select-file').prop('checked', true);
+      // Fallback: legacy table mode
+      selected_files.forEach(function (value, key) {
+        var row = document.querySelector('*[data-ev-location=\'' + key + '\']');
+        if (row) {
+          var checkbox = row.querySelector('.ev-select-file');
+          if (checkbox) checkbox.checked = true;
+          row.classList.add('ev-selected');
+        }
+      });
     }
   };
 
-  var unselectFile = function unselectFile(row) {
-    var file_location = row.data('ev-location');
-    selected_files.delete(file_location);
-    if ($(row).find('.ev-select-file').prop('checked')) {
-      return $(row).find('.ev-select-file').prop('checked', false);
-    }
-  };
-
+  // Update selected file count display
   var updateFileCount = function updateFileCount() {
     var count = selected_files.size;
-    var files = count === 1 ? "file" : "files";
-    return $('.ev-status').html(count + ' ' + files + ' selected');
-  };
-
-  var toggleBranchSelect = function toggleBranchSelect(row) {
-    if (row.hasClass('collapsed')) {
-      var node_id = row.find('td.ev-file-name a.ev-link').attr('href');
-      return;
-      // return $('table#file-list').treetable('expandNode', node_id);
+    var files = count === 1 ? 'file' : 'files';
+    var statusEl = document.querySelector('.ev-status');
+    if (statusEl) {
+      statusEl.innerHTML = count + ' ' + files + ' selected';
     }
   };
 
-  var selectAll = function selectAll(rows) {
-    return rows.each(function () {
-      if ($(this).data('tt-branch')) {
-        var box = $(this).find('#select_all')[0];
-        $(box).prop('checked', true);
-        $(box).prop('value', "1");
-        return toggleBranchSelect($(this));
-      } else {
-        if (!fileIsSelected($(this))) {
-          return toggleFileSelect($(this));
-        }
-      }
+  /**
+   * Select all file descendants of inside a folder node.
+   * Setting isSelected=true on a folder automatically triggers to lazyLoad
+   * its chidlren and select them as well.
+   * @param {Object} node Wunderbaum folder node
+   */
+  var selectAllFilesInNode = function selectAllFilesInNode(node) {
+    node.visit(function (descendant) {
+      descendant.setSelected(true);
     });
   };
 
-  var selectChildRows = function selectChildRows(row, action) {
-    var returned_rows = $('table#file-list tr').each(function () {
-      if ($(this).data('tt-parent-id')) {
-        var re = RegExp($(row).data('tt-id'), 'i');
-        if ($(this).data('tt-parent-id').match(re)) {
-          if ($(this).data('tt-branch')) {
-            var box = $(this).find('#select_all')[0];
-            $(box).prop('value', action);
-            if (action === "1") {
-              $(box).prop("checked", true);
-              var node_id = $(this).find('td.ev-file-name a.ev-link').attr('href');
-              return;
-              // return $('table#file-list').treetable('expandNode', node_id);
-            } else {
-              return $(box).prop("checked", false);
-            }
-          } else {
-            if (action === "1") {
-              $(this).addClass('ev-selected');
-              if (!fileIsSelected($(this))) {
-                selectFile($(this));
-              }
-            } else {
-              $(this).removeClass('ev-selected');
-              unselectFile($(this));
-            }
-          }
+  /**
+   * Sync Wunderbaum selection state with selected_files Map
+   */
+  var updateWunderbaumSelection = function updateWunderbaumSelection() {
+    if (!wunderbaumInstance) return;
+
+    // Get all selected nodes from Wunderbaum
+    var selectedNodes = wunderbaumInstance.getSelectedNodes();
+
+    selectedNodes.forEach(function (node) {
+      // Only track file selections, not folders
+      if (!node.data.folder) {
+        var location = node.data.data.location;
+        if (location) {
+          var hidden_input = document.createElement('input');
+          hidden_input.type = 'hidden';
+          hidden_input.className = 'ev-url';
+          hidden_input.name = 'selected_files[]';
+          hidden_input.value = location;
+          selected_files.set(location, hidden_input);
         }
       }
     });
     updateFileCount();
-    return returned_rows;
   };
 
-  var tableSetup = function tableSetup(table) {
-    // table.treetable({
-    //   expandable: true,
-    //   onNodeCollapse: function onNodeCollapse() {
-    //     var node = this;
-    //     return table.treetable("unloadBranch", node);
-    //   },
-    //   onNodeExpand: function onNodeExpand() {
-    //     var node = this;
-    //     startWait();
-    //     var size = $(node.row).find('td.ev-file-size').text().trim();
-    //     var start = 1;
-    //     var increment = 1;
-    //     if (size.indexOf("MB") > -1) {
-    //       start = 10;
-    //       increment = 5;
-    //     }
-    //     if (size.indexOf("KB") > -1) {
-    //       start = 50;
-    //       increment = 10;
-    //     }
-    //     setProgress(start);
-    //     var progressIntervalID = setInterval(function () {
-    //       start = start + increment;
-    //       if (start > 99) {
-    //         start = 99;
-    //       }
-    //       return setProgress(start);
-    //     }, 2000);
-    //     return setTimeout(function () {
-    //       return loadFiles(node, table, progressIntervalID);
-    //     }, 10);
-    //   }
-    // });
-    $("#file-list tr:first").focus();
-    return sizeColumns(table);
-  };
+  // Table setup using Wunderbaum
+  var tableSetup = function tableSetup(tableOrHtml) {
+    // Convert HTML table to Wunderbaum tree data
+    var treeData = window.WunderbaumAdapter.htmlToFlatNodes(tableOrHtml);
 
-  var sizeColumns = function sizeColumns(table) {
-    var full_width = $('.ev-files').width();
-    table.width(full_width);
-    var set_size = function set_size(selector, pct) {
-      return $(selector, table).width(full_width * pct).css('width', full_width * pct).css('max-width', full_width * pct);
-    };
-    set_size('.ev-file', 0.4);
-    set_size('.ev-container', 0.4);
-    set_size('.ev-size', 0.1);
-    set_size('.ev-kind', 0.3);
-    return set_size('.ev-date', 0.2);
-  };
-
-  var loadFiles = function loadFiles(node, table, progressIntervalID) {
-    return $.ajax({
-      async: true, // Must be false, otherwise loadBranch happens after showChildren?
-      url: $('a.ev-link', node.row).attr('href'),
-      data: {
-        parent: node.row.data('tt-id'),
-        accept: dialog.data('ev-state').opts.accept,
-        context: dialog.data('ev-state').opts.context
+    // Get or create container for Wunderbaum
+    var container = document.querySelector('#file-list');
+    if (!container) {
+      var filesContainer = document.querySelector('.ev-files');
+      if (filesContainer) {
+        // Replace table with div container
+        var table = filesContainer.querySelector('table#file-list');
+        if (table) {
+          var newDiv = document.createElement('div');
+          newDiv.id = 'file-list';
+          newDiv.style.minHeight = '300px'; // Ensure it's visible
+          newDiv.style.width = '100%';
+          table.parentNode.replaceChild(newDiv, table);
+          container = newDiv;
+        }
       }
-    }).done(function (html) {
-      setProgress('100');
-      clearInterval(progressIntervalID);
-      var rows = $('tbody tr', $(html));
-      table.treetable("loadBranch", node, rows);
-      $(node).show();
-      sizeColumns(table);
-      indicateSelected();
-      if ($(node.row).find('#select_all')[0].checked) {
-        return selectAll(rows);
-      }
-    }).always(function () {
-      clearInterval(progressIntervalID);
-      return stopWait();
-    });
+    }
+
+    if (!container) {
+      console.error('Could not find or create #file-list container');
+      return null;
+    }
+
+    // Destroy existing instance if present
+    if (wunderbaumInstance) {
+      wunderbaumInstance.destroy();
+      wunderbaumInstance = null;
+    }
+
+    // Initialize Wunderbaum
+    try {
+      wunderbaumInstance = new mar10.Wunderbaum({
+        id: 'browse-tree',
+        element: container,
+        source: treeData,
+        selectMode: 'hier',
+        checkbox: true,
+        minExpandLevel: 0, // Don't auto-expand any levels, let users expand manually
+        types: {},
+        columnsMenu: false,
+        icon: true, // Enable icons
+        iconMap: 'bootstrap', // Use Bootstrap Icons
+        emptyChildListExpandable: false, // Folders without children don't show expander
+        columns: [
+          { id: '*', title: 'Name', width: '*' },
+          { id: 'size', title: 'Size', width: '100px' },
+          { id: 'kind', title: 'Kind', width: '100px' },
+          { id: 'date', title: 'Modified', width: '150px' }
+        ],
+        // Display the number of selected files in the badge of a collapsed folder
+        iconBadge: (e) => {
+          const node = e.node;
+          // Do nothing if the node is a file
+          if (!node.children || node.expanded) return;
+
+          // Get all (both files and folders) selected children
+          const selectedDescendants = node.getSelectedNodes(false);
+
+          // Filter the selected children to only include files
+          const selectedFiles = selectedDescendants.filter(childNode => {
+            return !childNode.data.folder;
+          });
+
+          const count = selectedFiles.length;
+          // Don't show a badge if nothing is selected
+          if (count === 0) return; else return { badge: count };
+        },
+        render: function (e) {
+          var node = e.node;
+          // Render columns from additional data in custom structure from wunderbaum_adapter.js
+          if (e.renderColInfosById) {
+            var sizeCol = e.renderColInfosById['size'];
+            if (sizeCol && sizeCol.elem) sizeCol.elem.textContent = node.data.size || '';
+            var kindCol = e.renderColInfosById['kind'];
+            if (kindCol && kindCol.elem) kindCol.elem.textContent = node.data.kind || '';
+            var dateCol = e.renderColInfosById['date'];
+            if (dateCol && dateCol.elem) dateCol.elem.textContent = node.data.date || '';
+          }
+        },
+        // Handle lazy loading of folder contents
+        lazyLoad: async function (e) {
+          var node = e.node;
+          var ctx = getData(dialog, 'ev-state');
+
+          startWait();
+          var progressIntervalID = setInterval(function () {
+            var current = parseInt(document.querySelector('.loading-text')?.textContent || '0');
+            setProgress(Math.min(current + 10, 90).toString());
+          }, 200);
+
+          try {
+            try {
+              const html = await ajax(node.data.link || node.key, {
+                method: 'GET',
+                data: {
+                  parent: node.key,
+                  accept: ctx ? ctx.opts.accept : undefined,
+                  context: ctx ? ctx.opts.context : undefined
+                }
+              });
+              clearInterval(progressIntervalID);
+              setProgress('100');
+
+              // Convert HTML response to child nodes
+              var childNodes = window.WunderbaumAdapter.htmlToFlatNodes(html);
+
+              // After returning, the nodes will be added to the tree
+              // If the parent is selected, recursively select all file descendants
+              setTimeout(function () {
+                console.log('Loaded children for node', node);
+                indicateSelected();
+                // If parent node is selected, ensure all nested files are selected
+                if (node.selected) {
+                  selectAllFilesInNode(node);
+                }
+                updateWunderbaumSelection();
+              }, 0);
+
+              return childNodes;
+            } catch (error) {
+              console.error('Error loading folder contents:', error);
+              return [];
+            }
+          } finally {
+            clearInterval(progressIntervalID);
+            stopWait();
+          }
+        },
+
+        // Handle selection changes
+        change: function (e) {
+          if (e.info && e.info.changeType === 'select') {
+            updateWunderbaumSelection();
+          }
+        },
+        beforeSelect: async function (e) {
+          // If selecting a folder, recursively expand all subfolders
+          // so that all nested children are loaded and can be selected
+          if (e.flag && e.node.data.folder) {
+            await e.node.expandAll();
+          }
+        },
+        select: function (e) {
+          console.log(`Selected ${e.node}: ${e.flag}`);
+
+          // After a folder is selected (and expanded), ensure all nested files are selected
+          if (e.flag && e.node.data.folder) {
+            e.node.setExpanded(true);
+            // Use setTimeout to ensure the expansion has completed
+            setTimeout(function () {
+              selectAllFilesInNode(e.node);
+              updateWunderbaumSelection();
+            }, 100);
+          } else {
+            // For single file selection, just update the count
+            updateWunderbaumSelection();
+          }
+        },
+      });
+
+      // Focus first node
+      setTimeout(function () {
+        if (wunderbaumInstance && wunderbaumInstance.getFirstChild()) {
+          wunderbaumInstance.getFirstChild().setFocus();
+        }
+      }, 100);
+
+      return wunderbaumInstance;
+    } catch (error) {
+      console.error('Error initializing Wunderbaum:', error);
+      return null;
+    }
   };
 
   var setProgress = function setProgress(done) {
-    return $('.loading-text').text(done + '% complete');
+    var progressText = document.querySelector('.loading-text');
+    if (progressText) {
+      progressText.textContent = done + '% complete';
+    }
   };
 
   var refreshFiles = function refreshFiles() {
-    return $('.ev-providers select').change();
+    var select = document.querySelector('.ev-providers select');
+    if (select) {
+      var event = new Event('change', { bubbles: true });
+      select.dispatchEvent(event);
+    }
   };
 
   var startWait = function startWait() {
-    $('.loading-progress').removeClass("hidden");
-    $('body').css('cursor', 'wait');
-    $("html").addClass("wait");
-    $(".ev-browser").addClass("loading");
-    return $('.ev-submit').attr('disabled', true);
+    var progress = document.querySelector('.loading-progress');
+    if (progress) progress.classList.remove('hidden');
+    document.body.style.cursor = 'wait';
+    document.documentElement.classList.add('wait');
+    var browser = document.querySelector('.ev-browser');
+    if (browser) browser.classList.add('loading');
+    var submitBtn = document.querySelector('.ev-submit');
+    if (submitBtn) submitBtn.setAttribute('disabled', 'true');
   };
 
   var stopWait = function stopWait() {
-    $('.loading-progress').addClass("hidden");
-    $('body').css('cursor', 'default');
-    $("html").removeClass("wait");
-    $(".ev-browser").removeClass("loading");
-    return $('.ev-submit').attr('disabled', false);
+    var progress = document.querySelector('.loading-progress');
+    if (progress) progress.classList.add('hidden');
+    document.body.style.cursor = 'default';
+    document.documentElement.classList.remove('wait');
+    var browser = document.querySelector('.ev-browser');
+    if (browser) browser.classList.remove('loading');
+    var submitBtn = document.querySelector('.ev-submit');
+    if (submitBtn) submitBtn.removeAttribute('disabled');
   };
 
-  $(window).on('resize', function () {
-    return sizeColumns($('table#file-list'));
-  });
-
-  $.fn.browseEverything = function (options) {
-    var ctx = $(this).data('ev-state');
+  // browse-everything plugin initialization
+  function initBrowseEverything(element, options) {
+    var ctx = getData(element, 'ev-state');
 
     // Try and load the options from the HTML data attributes
     if (ctx == null && options == null) {
-      options = $(this).data();
+      options = {};
+      for (var attr in element.dataset) {
+        if (element.dataset.hasOwnProperty(attr)) {
+          options[attr] = element.dataset[attr];
+        }
+      }
     }
 
     if (options != null) {
-      ctx = initialize(this[0], options);
+      ctx = initialize(element, options);
     }
 
-    $(this).click(function () {
-      dialog.data('ev-state', ctx);
-      return dialog.load(ctx.opts.route, function () {
-        setTimeout(refreshFiles, 50);
-        ctx.callbacks.show.fire();
-        dialog.removeClass('fade')
-          .removeClass('in')
-          .addClass('show');
+    element.addEventListener('click', function () {
+      setData(dialog, 'ev-state', ctx);
 
-        return dialog.modal('show');
-      });
+      // Load dialog content using ajax helper (includes X-Requested-With header)
+      ajax(ctx.opts.route, { method: 'GET' })
+        .then(function (html) {
+          dialog.innerHTML = html;
+
+          // Initialize Wunderbaum on initial table if present
+          var initialTable = dialog.querySelector('table#file-list');
+          if (initialTable) {
+            tableSetup(initialTable);
+          }
+
+          setTimeout(refreshFiles, 50);
+          ctx.callbacks.show.fire();
+          dialog.classList.remove('fade');
+          dialog.classList.remove('in');
+          dialog.classList.add('show');
+
+          // Show Bootstrap modal
+          var modal = getData(dialog, 'bootstrap-modal');
+          if (modal && modal.show) {
+            modal.show();
+          } else {
+            dialog.style.display = 'block';
+          }
+        })
+        .catch(function (error) {
+          console.error('Error loading browse dialog:', error);
+        });
     });
 
-    if (ctx) {
-      return ctx.callback_proxy;
-    } else {
-      return {
-        show: function show() {
-          return this;
-        },
-        done: function done() {
-          return this;
-        },
-        cancel: function cancel() {
-          return this;
-        },
-        fail: function fail() {
-          return this;
-        }
-      };
-    }
-  };
+    return ctx ? ctx.callback_proxy : {
+      show: function () { return this; },
+      done: function () { return this; },
+      cancel: function () { return this; },
+      fail: function () { return this; }
+    };
+  }
 
-  $.fn.browseEverything.toggleCheckbox = function (box) {
-    if (box.value === "0") {
-      return $(box).prop('value', "1");
-    } else {
-      return $(box).prop('value', "0");
-    }
-  };
-
-  $(document).on('ev.refresh', function (event) {
-    return refreshFiles();
+  // Hanve ev.refresh event
+  document.addEventListener('ev.refresh', function () {
+    refreshFiles();
   });
 
-  $(document).on('click', 'button.ev-cancel', function (event) {
+  // Handle Cancel button click event
+  delegate(document, 'click', 'button.ev-cancel', function (event) {
     event.preventDefault();
-    dialog.data('ev-state').callbacks.cancel.fire();
+    var ctx = getData(dialog, 'ev-state');
+    if (ctx) ctx.callbacks.cancel.fire();
     selected_files.clear();
-    return $('.ev-browser').modal('hide');
+    var modal = getData(dialog, 'bootstrap-modal');
+    if (modal && modal.hide) {
+      modal.hide();
+    } else if (dialog) {
+      dialog.style.display = 'none';
+    }
   });
 
-  $(document).on('click', 'button.ev-submit', function (event) {
+  // Handle Submit button click event
+  delegate(document, 'click', 'button.ev-submit', function (event) {
     event.preventDefault();
-    $(this).button('loading');
+    var button = this;
+
+    // Show loading state
+    if (button.dataset.loading) {
+      button.textContent = button.dataset.loading;
+    }
+    button.setAttribute('disabled', 'true');
     startWait();
-    $('form.ev-submit-form').append(Array.from(selected_files.values()));
-    var main_form = $(this).closest('form');
-    var resolver_url = main_form.data('resolver');
-    var ctx = dialog.data('ev-state');
-    $(main_form).find('input[name=context]').val(ctx.opts.context);
-    return $.ajax(resolver_url, {
+
+    // Append selected files to form
+    var form = document.querySelector('form.ev-submit-form');
+    if (form) {
+      selected_files.forEach(function (input) {
+        form.appendChild(input.cloneNode());
+      });
+    }
+
+    var main_form = button.closest('form');
+    var resolver_url = main_form.dataset.resolver;
+    var ctx = getData(dialog, 'ev-state');
+    var contextInput = main_form.querySelector('input[name=context]');
+    if (contextInput && ctx) {
+      contextInput.value = ctx.opts.context;
+    }
+
+    // Serialize form
+    var formData = new FormData(main_form);
+
+    ajax(resolver_url, {
       type: 'POST',
       dataType: 'json',
-      data: main_form.serialize()
-    }).done(function (data) {
-      if (ctx.opts.target != null) {
-        var fields = toHiddenFields({ selected_files: data });
-        $(ctx.opts.target).append(fields);
+      data: formData
+    }).then(function (data) {
+      // Update file submission status
+      var filesStatus = document.getElementById('status');
+      if (filesStatus) {
+        filesStatus.innerHTML = data?.length.toString() + ' items selected';
       }
-      return ctx.callbacks.done.fire(data);
-    }).fail(function (xhr, status, error) {
-      return ctx.callbacks.fail.fire(status, error, xhr.responseText);
-    }).always(function () {
+      if (ctx && ctx.opts.target != null) {
+        var fields = toHiddenFields({ selected_files: data });
+        var target = document.querySelector(ctx.opts.target);
+        if (target) {
+          fields.forEach(function (field) {
+            target.appendChild(field);
+          });
+        }
+      }
+      if (ctx) ctx.callbacks.done.fire(data);
+    }).catch(function (error) {
+      if (ctx) ctx.callbacks.fail.fire(error.status, error.statusText, error.responseText);
+    }).finally(function () {
       selected_files.clear();
-      $('body').css('cursor', 'default');
-      $('.ev-browser').modal('hide');
-      return $('#browse-btn').focus();
+      document.body.style.cursor = 'default';
+      var modal = getData(dialog, 'bootstrap-modal');
+      if (modal && modal.hide) {
+        modal.hide();
+      } else if (dialog) {
+        dialog.style.display = 'none';
+      }
+      var browseBtn = document.querySelector('#browse-btn');
+      if (browseBtn) browseBtn.focus();
     });
   });
 
-  $(document).on('click', '.ev-files .ev-container a.ev-link', function (event) {
-    event.stopPropagation();
-    event.preventDefault();
-    var row = $(this).closest('tr');
-    var action = row.hasClass('expanded') ? 'collapseNode' : 'expandNode';
-    var node_id = $(this).attr('href');
-    return $('table#file-list').treetable(action, node_id);
-  });
-
-  $(document).on('change', '.ev-providers select', function (event) {
+  // Handle Provider selection change event
+  delegate(document, 'change', '.ev-providers select', function (event) {
     event.preventDefault();
     startWait();
-    return $.ajax({
-      url: $(this).val(),
+    var ctx = getData(dialog, 'ev-state');
+
+    ajax(this.value, {
       data: {
-        accept: dialog.data('ev-state').opts.accept,
-        context: dialog.data('ev-state').opts.context
+        accept: ctx ? ctx.opts.accept : undefined,
+        context: ctx ? ctx.opts.context : undefined
       }
-    }).done(function (data) {
-      $('.ev-files').html(data);
+    }).then(function (data) {
+      var filesContainer = document.querySelector('.ev-files');
+      if (filesContainer) {
+        filesContainer.innerHTML = data;
+      }
       indicateSelected();
-      $('#provider_auth').focus();
-      return tableSetup($('table#file-list'));
-    }).fail(function (xhr, status, error) {
-      if (xhr.responseText.indexOf("Refresh token has expired") > -1) {
-        return $('.ev-files').html("Your sessison has expired please clear your cookies.");
-      } else {
-        return $('.ev-files').html(xhr.responseText);
+      var authEl = document.querySelector('#provider_auth');
+      if (authEl) authEl.focus();
+      var table = document.querySelector('table#file-list');
+      if (table) tableSetup(table);
+    }).catch(function (error) {
+      var filesContainer = document.querySelector('.ev-files');
+      if (filesContainer) {
+        if (error.responseText && error.responseText.indexOf('Refresh token has expired') > -1) {
+          filesContainer.innerHTML = 'Your session has expired please clear your cookies.';
+        } else {
+          filesContainer.innerHTML = error.responseText || 'An error occurred';
+        }
       }
-    }).always(function () {
-      return stopWait();
+    }).finally(function () {
+      stopWait();
     });
   });
 
-  $(document).on('click', '.ev-providers a', function (event) {
-    $('.ev-providers li').removeClass('ev-selected');
-    return $(this).closest('li').addClass('ev-selected');
+  // Handle Provider link click event
+  delegate(document, 'click', '.ev-providers a', function () {
+    var allProviders = document.querySelectorAll('.ev-providers li');
+    allProviders.forEach(function (li) {
+      li.classList.remove('ev-selected');
+    });
+    var li = this.closest('li');
+    if (li) li.classList.add('ev-selected');
   });
 
-  $(document).on('click', '.ev-file a', function (event) {
+  // Handle Auth link click event
+  delegate(document, 'click', '.ev-auth', function (event) {
     event.preventDefault();
-    var target = $(this).closest('*[data-ev-location]');
-    return toggleFileSelect(target);
-  });
-
-  $(document).on('click', '.ev-auth', function (event) {
-    event.preventDefault();
-    var auth_win = window.open($(this).attr('href'));
+    var auth_win = window.open(this.getAttribute('href'));
     var check_func = function check_func() {
       if (auth_win.closed) {
-        return $('.ev-providers .ev-selected a').click();
+        var selectedLink = document.querySelector('.ev-providers .ev-selected a');
+        if (selectedLink) selectedLink.click();
       } else {
-        return window.setTimeout(check_func, 1000);
+        window.setTimeout(check_func, 1000);
       }
     };
-    return check_func();
+    check_func();
   });
 
-  $(document).on('change', 'input.ev-select-all', function (event) {
-    event.stopPropagation();
-    event.preventDefault();
-    $.fn.browseEverything.toggleCheckbox(this);
-    var action = this.value;
-    var row = $(this).closest('tr');
-    var node_id = row.find('td.ev-file-name a.ev-link').attr('href');
-    if (row.hasClass('collapsed')) {
-      return;
-      // return $('table#file-list').treetable('expandNode', node_id);
+  // Auto-initialize triggers for the browse-everything dialog
+  var auto_toggle = function auto_toggle() {
+    var triggers = document.querySelectorAll('*[data-toggle=browse-everything]');
+
+    triggers.forEach(function (trigger) {
+      var ctx = getData(trigger, 'ev-state');
+      if (ctx == null) {
+        // Initialize with data attributes
+        var options = {};
+        for (var attr in trigger.dataset) {
+          if (trigger.dataset.hasOwnProperty(attr)) {
+            options[attr] = trigger.dataset[attr];
+          }
+        }
+        initBrowseEverything(trigger, options);
+      }
+    });
+  };
+
+  // Handle Turbolinks
+  if (typeof Turbolinks !== 'undefined' && Turbolinks !== null && Turbolinks.supported) {
+    if (Turbolinks.BrowserAdapter) {
+      document.addEventListener('turbolinks:load', auto_toggle);
     } else {
-      return selectChildRows(row, action);
+      document.addEventListener('page:change', auto_toggle);
     }
-  });
-
-  return $(document).on('change', 'input.ev-select-file', function (event) {
-    event.stopPropagation();
-    event.preventDefault();
-    return toggleFileSelect($(this).closest('tr'));
-  });
-});
-
-var auto_toggle = function auto_toggle() {
-  var triggers = $('*[data-toggle=browse-everything]');
-  if (typeof Rails !== 'undefined' && Rails !== null) {
-    $.ajaxSetup({
-      headers: { 'X-CSRF-TOKEN': (Rails || $.rails).csrfToken() || '' }
-    });
-  }
-
-  return triggers.each(function () {
-    var ctx = $(this).data('ev-state');
-    if (ctx == null) {
-      return $(this).browseEverything($(this).data());
-    }
-  });
-};
-
-if (typeof Turbolinks !== 'undefined' && Turbolinks !== null && Turbolinks.supported) {
-  // Use turbolinks:load for Turbolinks 5, otherwise use the old way
-  if (Turbolinks.BrowserAdapter) {
-    $(document).on('turbolinks:load', function () {
-      // make sure turbolinks:load AND jquery onReady have BOTH happened,
-      // they could come in any order.
-      $(auto_toggle);
-    });
   } else {
-    $(document).on('page:change', function () {
-      $(auto_toggle);
-    });
+    auto_toggle();
   }
-} else {
-  $(auto_toggle);
-}
+});
