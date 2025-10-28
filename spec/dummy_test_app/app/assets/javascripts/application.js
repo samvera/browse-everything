@@ -18,8 +18,6 @@
 
 // Actual stack required for current browse-everything JS
 
-//= require jquery3
-//= require bootstrap
 //= require browse_everything
 
 //= require_tree .

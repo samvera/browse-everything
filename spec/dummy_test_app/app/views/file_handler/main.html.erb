@@ -13,13 +13,14 @@
   <p id="status">0 items selected</p>
 
   <script>
-    $(document).on('turbolinks:load', function() {
-      // Have to make sure onReady is ALSO passed, in case it's first load.
-      $(function() {
-        $('#browse-btn').browseEverything()
-          .done(function(data) { $('#status').html(data.length.toString() + " items selected") })
-          .cancel(function()   { window.alert('Canceled!') });
-      });
-    });
+    // jQuery is no longer needed to initialize browse-everything. The button uses data-toggle
+    // attributes to auto-initialize the browse-everything button using vanilla JavaScript.
+
+    // Note: The data-toggle attribute causes auto-initialization via the `auto_toggle` function
+    // which runs on DOMContentLoaded event. The button click handler is set up automatically.
+    // Callbacks can be added by listening to custom events.
+
+    // This demo uses the simplest approach without custom callbacks. The status is updated via
+    // form submission.
   </script>
 </div>
