@@ -31,7 +31,13 @@ $bootstrap-icons-font-src: none !default;
     max-width: 100%;
     border: 1px solid #dee2e6;
     border-radius: 4px;
-    overflow: hidden;
+    overflow: auto;
+    // Styling fixes for better scrolling behavior
+    overflow-anchor: none;
+    touch-action: pan-y;
+    will-change: scroll-position;
+    height: 100%;
+    max-height: 100%;
     display: block;
 
     .wb-header {
@@ -114,25 +120,31 @@ $bootstrap-icons-font-src: none !default;
       white-space: nowrap;
       cursor: pointer;
     }
-  }
 
-  // Allow node list to expand to show all content
-  .wb-node-list {
-    height: auto !important;
-    min-height: 100px;
-  }
+    // Add this from wunderbaum's default styles to make indentation spans visible
+    // inside the <table> DOM structure
+    span.wb-node i.wb-indent {
+      height: var(--wb-icon-outer-height);
+      width: var(--wb-icon-outer-width);
+      padding: var(--wb-icon-padding-y) var(--wb-icon-padding-x);
+      display: inline-block;
+    }
 
-  // Style the Wunderbaum container
-  div#file-list {
-    min-height: 200px;
-    max-height: 400px;
-    width: 100%;
-    max-width: 100%;
-    overflow-y: auto;
-    overflow-x: auto;
-
-    &.wunderbaum {
-      table-layout: fixed;
+    span.wb-node i.wb-indent::before {
+      content: " ";
     }
   }
+}
+
+// Allow node list to expand within container
+.wb-node-list {
+  min-height: 100px;
+  overflow-anchor: none;
+}
+
+// Style the Wunderbaum container
+div#file-list {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
 }

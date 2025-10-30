@@ -16,11 +16,24 @@
     // jQuery is no longer needed to initialize browse-everything. The button uses data-toggle
     // attributes to auto-initialize the browse-everything button using vanilla JavaScript.
 
-    // Note: The data-toggle attribute causes auto-initialization via the `auto_toggle` function
+    // In the simplest approach to adding browse-everything, `data-toggle` attribute causes
+    // auto-initialization via the `auto_toggle` function in behavior.js,
     // which runs on DOMContentLoaded event. The button click handler is set up automatically.
-    // Callbacks can be added by listening to custom events.
+    // Callbacks can be added by listening to custom events, as seen in this demo.
 
-    // This demo uses the simplest approach without custom callbacks. The status is updated via
-    // form submission.
+    document.addEventListener('DOMContentLoaded', function() {
+      var btn = document.getElementById('browse-btn');
+
+      // Initialize browse-everything with callbacks
+      if (window.initBrowseEverything && btn) {
+        window.initBrowseEverything(btn)
+          .done(function(data) {
+            document.getElementById('status').textContent = data.length + ' items selected';
+          })
+          .cancel(function() {
+            window.alert('Canceled!');
+          });
+      }
+    });
   </script>
 </div>

@@ -239,10 +239,16 @@ document.addEventListener('DOMContentLoaded', function () {
    * Setting isSelected=true on a folder automatically triggers to lazyLoad
    * its chidlren and select them as well.
    * @param {Object} node Wunderbaum folder node
+   * @param {boolean} isSelected to select or unselect the files
    */
-  var selectAllFilesInNode = function selectAllFilesInNode(node) {
-    node.visit(function (descendant) {
-      descendant.setSelected(true);
+  var selectAllFilesInNode = function selectAllFilesInNode(node, isSelected = true) {
+    node.visit(async function (descendant) {
+      descendant.setSelected(isSelected);
+      if (descendant.data.folder) {
+        // Expand the folder to load children before selecting
+        await descendant.setExpanded(true);
+        descendant.setSelected(isSelected);
+      }
     });
   };
 
@@ -251,6 +257,9 @@ document.addEventListener('DOMContentLoaded', function () {
    */
   var updateWunderbaumSelection = function updateWunderbaumSelection() {
     if (!wunderbaumInstance) return;
+
+    // Clear current selection
+    selected_files.clear();
 
     // Get all selected nodes from Wunderbaum
     var selectedNodes = wunderbaumInstance.getSelectedNodes();
@@ -309,21 +318,21 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize Wunderbaum
     try {
       wunderbaumInstance = new mar10.Wunderbaum({
-        id: 'browse-tree',
         element: container,
         source: treeData,
         selectMode: 'hier',
         checkbox: true,
-        minExpandLevel: 0, // Don't auto-expand any levels, let users expand manually
+        // Don't auto-expand on load
+        minExpandLevel: 0,
         types: {},
         columnsMenu: false,
-        icon: true, // Enable icons
-        iconMap: 'bootstrap', // Use Bootstrap Icons
-        emptyChildListExpandable: false, // Folders without children don't show expander
+        // Enable icons and use Bootstrap Icons
+        icon: true,
+        iconMap: 'bootstrap',
         columns: [
           { id: '*', title: 'Name', width: '*' },
           { id: 'size', title: 'Size', width: '100px' },
-          { id: 'kind', title: 'Kind', width: '100px' },
+          { id: 'kind', title: 'Kind', width: '*' },
           { id: 'date', title: 'Modified', width: '150px' }
         ],
         // Display the number of selected files in the badge of a collapsed folder
@@ -383,15 +392,9 @@ document.addEventListener('DOMContentLoaded', function () {
               // Convert HTML response to child nodes
               var childNodes = window.WunderbaumAdapter.htmlToFlatNodes(html);
 
-              // After returning, the nodes will be added to the tree
-              // If the parent is selected, recursively select all file descendants
+              // Use setTimeout to allow UI to update before processing selection
               setTimeout(function () {
-                console.log('Loaded children for node', node);
                 indicateSelected();
-                // If parent node is selected, ensure all nested files are selected
-                if (node.selected) {
-                  selectAllFilesInNode(node);
-                }
                 updateWunderbaumSelection();
               }, 0);
 
@@ -405,29 +408,21 @@ document.addEventListener('DOMContentLoaded', function () {
             stopWait();
           }
         },
-
-        // Handle selection changes
-        change: function (e) {
-          if (e.info && e.info.changeType === 'select') {
-            updateWunderbaumSelection();
-          }
-        },
         beforeSelect: async function (e) {
-          // If selecting a folder, recursively expand all subfolders
-          // so that all nested children are loaded and can be selected
+          // If selecting a folder, expand it first so that all nested children are loaded and can be selected
           if (e.flag && e.node.data.folder) {
             await e.node.expandAll();
           }
         },
         select: function (e) {
-          console.log(`Selected ${e.node}: ${e.flag}`);
-
-          // After a folder is selected (and expanded), ensure all nested files are selected
-          if (e.flag && e.node.data.folder) {
-            e.node.setExpanded(true);
+          // After a folder is selected, select all nested files
+          if (e.node.data.folder) {
+            // Make sure folder is expanded to load children
+            if (e.flag && !e.node.expanded) e.node.setExpanded(true);
             // Use setTimeout to ensure the expansion has completed
             setTimeout(function () {
-              selectAllFilesInNode(e.node);
+              // Select/unselect files in the current folder if the folder is selected/unselected
+              selectAllFilesInNode(e.node, e.flag);
               updateWunderbaumSelection();
             }, 100);
           } else {
@@ -436,13 +431,6 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         },
       });
-
-      // Focus first node
-      setTimeout(function () {
-        if (wunderbaumInstance && wunderbaumInstance.getFirstChild()) {
-          wunderbaumInstance.getFirstChild().setFocus();
-        }
-      }, 100);
 
       return wunderbaumInstance;
     } catch (error) {
@@ -547,7 +535,10 @@ document.addEventListener('DOMContentLoaded', function () {
     };
   }
 
-  // Hanve ev.refresh event
+  // Export initBrowseEverything globally for programmatic use
+  window.initBrowseEverything = initBrowseEverything;
+
+  // Handle ev.refresh event
   document.addEventListener('ev.refresh', function () {
     refreshFiles();
   });
