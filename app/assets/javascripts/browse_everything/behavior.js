@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var selected_files = new Map(); // { url: input element object }
   var wunderbaumInstance = null; // Global Wunderbaum tree instance
 
+  /** START: Helper functions for jQuery methods */
   // Helper: Custom Callbacks implementation (replaces $.Callbacks)
   function Callbacks() {
     var list = [];
@@ -123,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return Promise.reject(error);
     });
   }
+  /** END: Helper functions for jQuery methods */
 
   var initialize = function initialize(obj, options) {
     if (document.querySelectorAll('div#browse-everything').length === 0) {
@@ -182,10 +184,16 @@ document.addEventListener('DOMContentLoaded', function () {
         return this;
       }
     };
+    // Store the context object on the DOM element obj with the key 'ev-state'
     setData(obj, 'ev-state', ctx);
     return ctx;
   };
 
+  /**
+   * Convert selected file data to hidden input fields for form submission
+   * @param {Object} data selected file data
+   * @returns {Array<Object>}
+   */
   var toHiddenFields = function toHiddenFields(data) {
     var fields = param(data).split('&').map(function (t) {
       return t.replace(/\+/g, ' ').split('=', 2);
@@ -199,32 +207,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   };
 
-  var indicateSelected = function indicateSelected() {
-    if (wunderbaumInstance) {
-      // Wunderbaum mode: restore selection state
-      selected_files.forEach(function (value, key) {
-        // Find node by location in data
-        wunderbaumInstance.visit(function (node) {
-          if (node.data.location === key && !node.data.folder) {
-            node.setSelected(true);
-            return false;
-          }
-        });
-      });
-    } else {
-      // Fallback: legacy table mode
-      selected_files.forEach(function (value, key) {
-        var row = document.querySelector('*[data-ev-location=\'' + key + '\']');
-        if (row) {
-          var checkbox = row.querySelector('.ev-select-file');
-          if (checkbox) checkbox.checked = true;
-          row.classList.add('ev-selected');
-        }
-      });
-    }
-  };
-
-  // Update selected file count display
+  /**
+   * Update the file count display in the status element
+   */
   var updateFileCount = function updateFileCount() {
     var count = selected_files.size;
     var files = count === 1 ? 'file' : 'files';
@@ -234,21 +219,52 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   };
 
+  // Flag to indicate if we're doing a batch selection operation
+  var isBatchSelecting = false;
+
   /**
-   * Select all file descendants of inside a folder node.
-   * Setting isSelected=true on a folder automatically triggers to lazyLoad
-   * its chidlren and select them as well.
-   * @param {Object} node Wunderbaum folder node
-   * @param {boolean} isSelected to select or unselect the files
+   * Recursively expand all folders starting from a node
+   * @param {Object} node the starting Wunderbaum node
+   * @returns {Promise} resolves when all folders are expanded
    */
-  var selectAllFilesInNode = function selectAllFilesInNode(node, isSelected = true) {
-    node.visit(async function (descendant) {
-      descendant.setSelected(isSelected);
-      if (descendant.data.folder) {
-        // Expand the folder to load children before selecting
-        await descendant.setExpanded(true);
-        descendant.setSelected(isSelected);
+  var expandAllFoldersRecursively = async function expandAllFoldersRecursively(node) {
+    // If this is a folder and not expanded, expand it first
+    if (node.data.folder && !node.expanded) {
+      await node.setExpanded(true, { loadLazy: true });
+    }
+
+    // If this node has children, recursively expand them
+    if (node.children && node.children.length > 0) {
+      // Expand all child folders in sequence
+      for (var i = 0; i < node.children.length; i++) {
+        var child = node.children[i];
+        if (child.data.folder) {
+          await expandAllFoldersRecursively(child);
+        }
       }
+    }
+  };
+
+  /**
+   * Select/unselect all files and folders in a folder node
+   * @param {Object} folder Wunderbaum folder node
+   * @param {Boolean} isSelected - true to select, false to unselect
+   */
+  var selectAllFilesInFolder = function selectAllFilesInNode(folder, isSelected = true) {
+    // Collect all descendants (both files and folders)
+    var nodesToSelect = [];
+
+    folder.visit(function (descendant) {
+      nodesToSelect.push(descendant);
+    });
+
+    // Nothing to select
+    if (nodesToSelect.length === 0) return;
+
+    // Select all files/folders at once, preventing focus/scroll
+    nodesToSelect.forEach(function (n) {
+      // Use noEvents option to prevent triggering scroll events
+      n.setSelected(isSelected, { noEvents: true });
     });
   };
 
@@ -281,7 +297,11 @@ document.addEventListener('DOMContentLoaded', function () {
     updateFileCount();
   };
 
-  // Table setup using Wunderbaum
+  /**
+   * Table setup using Wunderbaum
+   * @param {HTMLElement|String} tableOrHtml 
+   * @returns {Object|Null} Wunderbaum instance or null on error
+   */
   var tableSetup = function tableSetup(tableOrHtml) {
     // Convert HTML table to Wunderbaum tree data
     var treeData = window.WunderbaumAdapter.htmlToFlatNodes(tableOrHtml);
@@ -311,20 +331,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Destroy existing instance if present
     if (wunderbaumInstance) {
-      wunderbaumInstance.destroy();
+      try {
+        wunderbaumInstance.destroy();
+      } catch (e) {
+        // Chrome throws NoModificationAllowedError if element is detached.
+        // This is safe to ignore as the instance recreated in next step.
+        console.warn('Wunderbaum destroy warning (ignore):', e.message);
+      }
       wunderbaumInstance = null;
     }
 
     // Initialize Wunderbaum
     try {
       wunderbaumInstance = new mar10.Wunderbaum({
+        id: 'browse-everything-tree',
         element: container,
         source: treeData,
         selectMode: 'hier',
         checkbox: true,
+        // Turn off logging
+        debugLevel: 0,
         // Don't auto-expand on load
         minExpandLevel: 0,
-        types: {},
         columnsMenu: false,
         // Enable icons and use Bootstrap Icons
         icon: true,
@@ -341,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function () {
           // Do nothing if the node is a file
           if (!node.children || node.expanded) return;
 
-          // Get all (both files and folders) selected children
+          // Get all selected children
           const selectedDescendants = node.getSelectedNodes(false);
 
           // Filter the selected children to only include files
@@ -368,35 +396,36 @@ document.addEventListener('DOMContentLoaded', function () {
         // Handle lazy loading of folder contents
         lazyLoad: async function (e) {
           var node = e.node;
-          var ctx = getData(dialog, 'ev-state');
 
-          startWait();
-          var progressIntervalID = setInterval(function () {
-            var current = parseInt(document.querySelector('.loading-text')?.textContent || '0');
-            setProgress(Math.min(current + 10, 90).toString());
-          }, 200);
+          // Only show wait state if we're NOT in a batch selection operation
+          var waitForLoading = !isBatchSelecting;
+          var progressIntervalID;
+
+          if (waitForLoading) {
+            startWait();
+            // Update progress text periodically
+            progressIntervalID = setInterval(function () {
+              var current = parseInt(document.querySelector('.loading-text')?.textContent || '0');
+              if (!isNaN(current)) setProgress(Math.min(current + 10, 90).toString());
+            }, 200);
+          }
 
           try {
             try {
               const html = await ajax(node.data.link || node.key, {
                 method: 'GET',
-                data: {
-                  parent: node.key,
-                  accept: ctx ? ctx.opts.accept : undefined,
-                  context: ctx ? ctx.opts.context : undefined
-                }
+                data: { parent: node.key }
               });
-              clearInterval(progressIntervalID);
-              setProgress('100');
+
+              if (waitForLoading) clearInterval(progressIntervalID);
 
               // Convert HTML response to child nodes
               var childNodes = window.WunderbaumAdapter.htmlToFlatNodes(html);
 
-              // Use setTimeout to allow UI to update before processing selection
-              setTimeout(function () {
-                indicateSelected();
+              // Only update selection if not in batch mode
+              if (!isBatchSelecting) {
                 updateWunderbaumSelection();
-              }, 0);
+              }
 
               return childNodes;
             } catch (error) {
@@ -404,27 +433,43 @@ document.addEventListener('DOMContentLoaded', function () {
               return [];
             }
           } finally {
-            clearInterval(progressIntervalID);
-            stopWait();
+            if (waitForLoading) {
+              clearInterval(progressIntervalID);
+              stopWait();
+            }
           }
         },
-        beforeSelect: async function (e) {
-          // If selecting a folder, expand it first so that all nested children are loaded and can be selected
-          if (e.flag && e.node.data.folder) {
-            await e.node.expandAll();
-          }
-        },
-        select: function (e) {
-          // After a folder is selected, select all nested files
+        select: async function (e) {
+          // If already in batch selection mode, ignore this event to prevent re-entry
+          if (isBatchSelecting) return;
+
+          // For folders, expand all nested folders first, then select all files
           if (e.node.data.folder) {
-            // Make sure folder is expanded to load children
-            if (e.flag && !e.node.expanded) e.node.setExpanded(true);
-            // Use setTimeout to ensure the expansion has completed
-            setTimeout(function () {
-              // Select/unselect files in the current folder if the folder is selected/unselected
-              selectAllFilesInNode(e.node, e.flag);
+            isBatchSelecting = true;
+            startWait();
+
+            try {
+              // Only when selecting, expand all nested folders first.
+              // This ensures all children are loaded before selecting files.
+              if (e.flag) {
+                setProgress('Loading folders...');
+
+                // Recursively expand this folder and all its subfolders
+                await expandAllFoldersRecursively(e.node);
+
+                // Wait for all DOM updates and tree mutations to complete
+                await new Promise(resolve => setTimeout(resolve, 100));
+              }
+
+              // Select/unselect all files in this folder
+              selectAllFilesInFolder(e.node, e.flag);
+
               updateWunderbaumSelection();
-            }, 100);
+            } finally {
+              // Always hide loading indicator when done
+              stopWait();
+              isBatchSelecting = false;
+            }
           } else {
             // For single file selection, just update the count
             updateWunderbaumSelection();
@@ -442,7 +487,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var setProgress = function setProgress(done) {
     var progressText = document.querySelector('.loading-text');
     if (progressText) {
-      progressText.textContent = done + '% complete';
+      progressText.textContent = done;
     }
   };
 
@@ -461,6 +506,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.documentElement.classList.add('wait');
     var browser = document.querySelector('.ev-browser');
     if (browser) browser.classList.add('loading');
+    // Also add loading class to the file list table/wunderbaum
+    var fileList = document.querySelector('#file-list');
+    if (fileList) fileList.classList.add('loading');
     var submitBtn = document.querySelector('.ev-submit');
     if (submitBtn) submitBtn.setAttribute('disabled', 'true');
   };
@@ -472,6 +520,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.documentElement.classList.remove('wait');
     var browser = document.querySelector('.ev-browser');
     if (browser) browser.classList.remove('loading');
+    // Also remove loading class from the file list
+    var fileList = document.querySelector('#file-list');
+    if (fileList) fileList.classList.remove('loading');
     var submitBtn = document.querySelector('.ev-submit');
     if (submitBtn) submitBtn.removeAttribute('disabled');
   };
@@ -640,7 +691,6 @@ document.addEventListener('DOMContentLoaded', function () {
       if (filesContainer) {
         filesContainer.innerHTML = data;
       }
-      indicateSelected();
       var authEl = document.querySelector('#provider_auth');
       if (authEl) authEl.focus();
       var table = document.querySelector('table#file-list');

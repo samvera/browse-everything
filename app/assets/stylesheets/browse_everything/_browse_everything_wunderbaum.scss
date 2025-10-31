@@ -32,13 +32,16 @@ $bootstrap-icons-font-src: none !default;
     border: 1px solid #dee2e6;
     border-radius: 4px;
     overflow: auto;
-    // Styling fixes for better scrolling behavior
+    // Disable scroll anchoring to prevent jumping
     overflow-anchor: none;
-    touch-action: pan-y;
-    will-change: scroll-position;
+    // Prevent overscroll/bounce effects that cause twitching
+    overscroll-behavior: contain;
     height: 100%;
     max-height: 100%;
     display: block;
+    // Force GPU acceleration to smooth scrolling
+    transform: translateZ(0);
+    -webkit-overflow-scrolling: touch;
 
     .wb-header {
       background-color: #f8f9fa;
