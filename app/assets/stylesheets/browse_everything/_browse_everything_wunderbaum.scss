@@ -1,11 +1,25 @@
 // Define @font-face for bootstrap-icons with proper asset paths for Rails
-@font-face {
-  font-family: "bootstrap-icons";
-  src: font-url("bootstrap-icons.woff2") format("woff2"),
-    font-url("bootstrap-icons.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
+@if function-exists(font-url) {
+  // Sprockets asset pipeline - use font-url() helper
+  @font-face {
+    font-family: "bootstrap-icons";
+    src: font-url("bootstrap-icons/font/fonts/bootstrap-icons.woff2") format("woff2"),
+      font-url("bootstrap-icons/font/fonts/bootstrap-icons.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+  }
+}
+@else {
+  // Standalone Sass - use plain url() with relative paths
+  @font-face {
+    font-family: "bootstrap-icons";
+    src: url("bootstrap-icons/font/fonts/bootstrap-icons.woff2") format("woff2"),
+      url("bootstrap-icons/font/fonts/bootstrap-icons.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+  }
 }
 
 /*

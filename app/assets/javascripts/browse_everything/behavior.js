@@ -95,7 +95,13 @@ document.addEventListener('DOMContentLoaded', function () {
           config.body = options.data;
           config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
         } else if (options.data instanceof FormData) {
-          config.body = options.data;
+          // Convert FormData to URL-encoded string
+          var params = [];
+          for (var pair of options.data.entries()) {
+            params.push(encodeURIComponent(pair[0]) + '=' + encodeURIComponent(pair[1]));
+          }
+          config.body = params.join('&');
+          config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
         } else {
           config.body = param(options.data);
           config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -248,10 +254,10 @@ document.addEventListener('DOMContentLoaded', function () {
   /**
    * Select/unselect all files and folders in a folder node
    * @param {Object} folder Wunderbaum folder node
-   * @param {Boolean} isSelected - true to select, false to unselect
+   * @param {Boolean} isSelected flag indicating whether to select or unselect
    */
   var selectAllFilesInFolder = function selectAllFilesInNode(folder, isSelected = true) {
-    // Collect all descendants (both files and folders)
+    // Collect all descendants to select
     var nodesToSelect = [];
 
     folder.visit(function (descendant) {
@@ -311,12 +317,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!container) {
       var filesContainer = document.querySelector('.ev-files');
       if (filesContainer) {
-        // Replace table with div container
+        // Create table with div container for wunderbaum initialization
         var table = filesContainer.querySelector('table#file-list');
         if (table) {
           var newDiv = document.createElement('div');
           newDiv.id = 'file-list';
-          newDiv.style.minHeight = '300px'; // Ensure it's visible
+          newDiv.style.minHeight = '300px';
           newDiv.style.width = '100%';
           table.parentNode.replaceChild(newDiv, table);
           container = newDiv;
@@ -369,10 +375,8 @@ document.addEventListener('DOMContentLoaded', function () {
           // Do nothing if the node is a file
           if (!node.children || node.expanded) return;
 
-          // Get all selected children
+          // Get all selected children and filter to only include files
           const selectedDescendants = node.getSelectedNodes(false);
-
-          // Filter the selected children to only include files
           const selectedFiles = selectedDescendants.filter(childNode => {
             return !childNode.data.folder;
           });
@@ -439,8 +443,17 @@ document.addEventListener('DOMContentLoaded', function () {
             }
           }
         },
+        click: function (e) {
+          if (e.node.data.folder) {
+            // Expand folder on click event
+            e.node.setExpanded(true);
+          } else {
+            // Select node on click event for only files
+            e.node.setSelected(!e.node.isSelected());
+          }
+        },
         select: async function (e) {
-          // If already in batch selection mode, ignore this event to prevent re-entry
+          // If already in batch selection mode, ignore this event to prevent nested calls
           if (isBatchSelecting) return;
 
           // For folders, expand all nested folders first, then select all files
@@ -449,7 +462,7 @@ document.addEventListener('DOMContentLoaded', function () {
             startWait();
 
             try {
-              // Only when selecting, expand all nested folders first.
+              // When selecting, expand all nested folders first.
               // This ensures all children are loaded before selecting files.
               if (e.flag) {
                 setProgress('Loading folders...');
