@@ -41,6 +41,16 @@
             <% end %>
           <% end %>
         </td>
+        <% if file.container? %>
+          <td role="gridcell" class="ev-directory-select">
+            <%= check_box_tag(:select_all, "0", false, class: "ev-select-all") %>
+          </td>
+        <% else %>
+          <td role="gridcell" class="ev-file-select">
+            <%= check_box_tag(file.id.to_s.parameterize, "0", false, class: "ev-select-file") %>
+          </td>
+        <% end %>
+
         <% if file.size %>
           <td role="gridcell" class="ev-file-size">
             <%= file_size_to_human_size(file.size) %>

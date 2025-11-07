@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   };
 
-  // Flag to indicate if we're doing a batch selection operation
+  // Flag to indicate when a nested selection operation is in progress
   var isBatchSelecting = false;
 
   /**
@@ -401,13 +401,13 @@ document.addEventListener('DOMContentLoaded', function () {
         lazyLoad: async function (e) {
           var node = e.node;
 
-          // Only show wait state if we're NOT in a batch selection operation
+          // Only show wait state if not in a batch selection operation
           var waitForLoading = !isBatchSelecting;
           var progressIntervalID;
 
           if (waitForLoading) {
             startWait();
-            // Update progress text periodically
+            // Update progress text periodically for selection progress
             progressIntervalID = setInterval(function () {
               var current = parseInt(document.querySelector('.loading-text')?.textContent || '0');
               if (!isNaN(current)) setProgress(Math.min(current + 10, 90).toString());
@@ -444,8 +444,10 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         },
         click: function (e) {
+          const isTitleClick = e.event.target.classList.contains('wb-title') || e.event.target.closest('.wb-title');
+          if (!isTitleClick) return;
           if (e.node.data.folder) {
-            // Expand folder on click event
+            // Expand folder when clicked on title of a folder
             e.node.setExpanded(true);
           } else {
             // Select node on click event for only files
