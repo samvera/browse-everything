@@ -58,10 +58,6 @@
       }
       border-top: none;
     }
-
-    &.list ul {
-      @include content-columns(3);
-    }
   }
 
   .ev-container li {
@@ -101,7 +97,7 @@
 
   .ev-providers {
     select {
-      width: 30%
+      margin-left: 0.5em;
     }
   }
 

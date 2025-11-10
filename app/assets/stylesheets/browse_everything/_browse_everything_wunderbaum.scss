@@ -57,32 +57,18 @@ $bootstrap-icons-font-src: none !default;
     transform: translateZ(0);
     -webkit-overflow-scrolling: touch;
 
+    /* Remove all borders from the Wunderbaum table, cells, and rows */
+    table,
+    .wb-grid table,
+    td,
+    th,
+    .wb-row span.wb-col {
+      border: none !important;
+    }
+
     .wb-header {
-      background-color: #f8f9fa;
       font-weight: 600;
       border-bottom: 2px solid #dee2e6;
-      display: flex;
-      align-items: center;
-    }
-
-    .wb-header-row {
-      display: flex;
-      width: 100%;
-      flex: 1 1 auto;
-    }
-
-    .wb-col-header {
-      padding: 8px;
-      border-right: 1px solid #dee2e6;
-      box-sizing: border-box;
-
-      &:last-child {
-        border-right: none;
-      }
-    }
-
-    .wb-body {
-      background-color: white;
     }
 
     .wb-row {
@@ -128,14 +114,6 @@ $bootstrap-icons-font-src: none !default;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-    }
-
-    .wb-title {
-      flex-grow: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      cursor: pointer;
     }
 
     // Add this from wunderbaum's default styles to make indentation spans visible
