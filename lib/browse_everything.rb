@@ -14,6 +14,8 @@ module BrowseEverything
     autoload :FileSystem,  'browse_everything/driver/file_system'
     autoload :GoogleDrive, 'browse_everything/driver/google_drive'
     autoload :S3,          'browse_everything/driver/s3'
+    autoload :Sharepoint,  'browse_everything/driver/sharepoint'
+
 
     # Intentionally require explicit require, as it has a non-declared dependency
     # autoload :Dropbox,     'browse_everything/driver/dropbox'
@@ -38,6 +40,12 @@ module BrowseEverything
     module Google
       autoload :Credentials,        'browse_everything/auth/google/credentials'
       autoload :RequestParameters,  'browse_everything/auth/google/request_parameters'
+    end
+  end
+
+  module Auth
+    module Sharepoint
+      autoload :Session,        'browse_everything/auth/sharepoint/session'
     end
   end
 
