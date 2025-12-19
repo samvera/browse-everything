@@ -33,12 +33,12 @@
                   class="<%=file.container? ? 'folder' : 'file'%>" aria-hidden="true">
               <%= file.name %>
             </span>
-            <span class="visually-hidden"><%= file.container? ? ', folder' : ', file' %> </span>
+            <span class="sr-only"><%= file.container? ? ', folder' : ', file' %> </span>
           <% else %>
             <%= link_to browse_everything_engine.contents_path(provider_name, file.id), class: 'ev-link' do %>
               <span class="<%=file.container? ? 'folder' : 'file'%>" aria-hidden="true"/>
               <%= file.name %>
-              <span class="visually-hidden"><%= file.container? ? ', folder' : ', file' %> </span>
+              <span class="sr-only"><%= file.container? ? ', folder' : ', file' %> </span>
             <% end %>
           <% end %>
         </td>

@@ -145,15 +145,13 @@ This generator will set up the _config/browse_everything_providers.yml_ file and
 
 If you prefer not to use the generator, or need info on how to set up providers in the browse_everything_providers.yml, use the info on [Configuring browse-everything](https://github.com/samvera/browse-everything/wiki/Configuring-browse-everything).
 
-Browse-everything depends on bootstrap, it can work with bootstrap 3, 4, or 5.
+Browse-everything depends on bootstrap, it can work with bootstrap 3 or bootstrap 4.
 
 ### CSS
 
 **For bootstrap3 support**, your app should include the [bootstrap-sass](https://github.com/twbs/bootstrap-sass) gem in it's Gemfile, and following the install directions for bootstrap-sass, should have `@import 'bootstrap-sprockets'` and `@import 'bootstrap'` in it's application.scss. After those lines, add `@import "browse_everything/browse_everything_bootstrap3";` to your application.scss.
 
 **For bootstrap4 support**, your app should include the [bootstrap](https://github.com/twbs/bootstrap-rubygem) gem in it's Gemfile, and following the install directions for that gem should have `@import "bootstrap";` in it's application.scss. After that line, add `@import 'browse_everything/browse_everything_bootstrap4'` to your application.scss.
-
-**For bootstrap5 support**, your app should include the [bootstrap](https://github.com/twbs/bootstrap-rubygem) gem in it's Gemfile, and following the install directions for that gem should have `@import "bootstrap";` in it's application.scss. After that line, add `@import 'browse_everything/browse_everything_bootstrap5'` to your application.scss.
 
 ### Javascript
 
@@ -164,7 +162,7 @@ In `app/assets/javascripts/application.js` include jquery and the BrowseEverythi
 //= require browse_everything
 ```
 
-(Same for your chosen Bootstrap version)
+(Same for bootstrap3 or bootstrap 4)
 
 ### Migration CSS inclusion from pre-1.0
 
@@ -197,13 +195,13 @@ that can be posted back to Rails to re-create the array on the server side.
 
 #### Via data attributes
 
-To trigger browse-everything using data attributes, set the _data-bs-toggle_ attribute to "browse-everything" on the HTML tag.  This tells the javascript where to attach the browse-everything behaviors. Pass in the options using the _data-route_ and _data-bs-target_ attributes, as in `data-bs-target="#myForm"`.
+To trigger browse-everything using data attributes, set the _data-toggle_ attribute to "browse-everything" on the HTML tag.  This tells the javascript where to attach the browse-everything behaviors. Pass in the options using the _data-route_ and _data-target_ attributes, as in `data-target="#myForm"`.
 
 For example:
 
 ```html
-<button type="button" data-bs-toggle="browse-everything" data-route="<%=browse_everything_engine.root_path%>"
-  data-bs-target="#myForm" class="btn btn-large btn-success" id="browse">Browse!</button>
+<button type="button" data-toggle="browse-everything" data-route="<%=browse_everything_engine.root_path%>"
+  data-target="#myForm" class="btn btn-large btn-success" id="browse">Browse!</button>
 ```
 
 #### Via JavaScript
@@ -254,7 +252,7 @@ If you initialized browse-everything via JavaScript, the results data passed to 
 ```
 See [JavaScript Methods](https://github.com/samvera/browse-everything/wiki/JavaScript-Methods) for more info on using javascript to trigger browse-everything.
 
-If you initialized browse-everything via data-attributes and set the _target_ option (via the _data-bs-target_ attribute or via the _target_ option on the javascript method), the results data will be written as hidden fields in the `<form>` you've specified as the target.  When the user submits that form, the results will look like this:
+If you initialized browse-everything via data-attributes and set the _target_ option (via the _data-target_ attribute or via the _target_ option on the javascript method), the results data be written as hidden fields in the `<form>` you've specified as the target.  When the user submits that form, the results will look like this:
 ```ruby
 "selected_files" => {
   "0"=>{

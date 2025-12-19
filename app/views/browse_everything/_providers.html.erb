@@ -1,7 +1,7 @@
-<form class="d-flex flex-row align-items-center flex-wrap">
+<form class="form-inline">
   <label target="provider-select">Source:</label>
-  <%# form-control class for bootstrap3, custom-select class for bootstrap4, form-select for bootstrap 5 %>
-  <select class="form-control custom-select form-select" id="provider-select">
+  <%# form-control class for bootstrap3, custom-select class for bootstrap4 %>
+  <select class="form-control custom-select" id="provider-select">
     <% browser.providers.each_pair do |key, provider| %>
       <option value="<%=browse_everything_engine.contents_path(key)%>">
         <%= provider.name %>
