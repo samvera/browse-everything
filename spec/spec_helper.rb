@@ -63,6 +63,13 @@ module BrowserConfigHelper
                                  app_secret: 'S3AppSecret',
                                  bucket: 's3.bucket',
                                  region: 'us-east-1'
+                               },
+                               'sharepoint' => {
+                                 client_id: 'SharepointClientID',
+                                 client_secret: 'SharepointClientSecret',
+                                 tenant_id: 'SharepointTenantID',
+                                 redirect_uri: 'http://example.com/browse/connect',
+                                 scope: 'offline_access https://graph.microsoft.com/.default'
                                })
   end
 

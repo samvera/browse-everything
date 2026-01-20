@@ -32,7 +32,7 @@ module BrowseEverything
         value = value.fetch('access_token') if value.is_a? Hash
 
         # Restore the credentials if the access token string itself has been cached
-        restore_credentials(value) if @credentials.nil?
+        @credentials = authorizer.get_credentials(user_id) || restore_credentials(value) if @credentials.nil?
 
         super(value)
       end
@@ -90,15 +90,64 @@ module BrowseEverything
         @entries += list_files(drive, request_params, path: path) if request_params.page_token.present?
       end
 
+      # Retrieve the drive details
+      # @param drive [Google::Apis::DriveV3::Drive] the Google Drive File
+      # @param path [String] path for the resource details (unused)
+      # @return [BrowseEverything::FileEntry] file entry for the resource node
+      def drive_details(drive)
+        BrowseEverything::FileEntry.new(
+          drive.id,
+          "#{key}:#{drive.id}",
+          drive.name,
+          0,
+          Time.new,
+          true,
+          'drive'
+        )
+      end
+
+      # Lists the drives accessible by a Google Drive context
+      # @param drive [Google::Apis::DriveV3::DriveService] the Google Drive context
+      # @return [Array<BrowseEverything::FileEntry>] file entries for the drives
+      def list_drives(drive)
+        page_token = nil
+        drive.list_drives(fields: "nextPageToken,drives(name,id)", page_size: 100) do |drive_list, error|
+          # Raise an exception if there was an error Google API's
+          if error.present?
+            # In order to properly trigger reauthentication, the token must be cleared
+            # Additionally, the error is not automatically raised from the Google Client
+            @token = nil
+            raise error
+          end
+
+          @entries += drive_list.drives.map do |gdrive_file|
+            drive_details(gdrive_file)
+          end
+
+          page_token = drive_list.next_page_token
+        end
+
+        @entries += list_drives(drive) if page_token.present?
+      end
+
       # Retrieve the files for any given resource on Google Drive
       # @param path [String] the root or Folder path for which to list contents
       # @return [Array<BrowseEverything::FileEntry>] file entries for the path
       def contents(path = '')
         @entries = []
-        drive_service.batch do |drive|
-          request_params = Auth::Google::RequestParameters.new
-          request_params.q += " and '#{path}' in parents " if path.present?
-          list_files(drive, request_params, path: path)
+        if path.empty?
+          @entries << drive_details(Google::Apis::DriveV3::Drive.new(id: "root", name: "My Drive"))
+          @entries << drive_details(Google::Apis::DriveV3::Drive.new(id: "shared_drives", name: "Shared drives")) if drive_service.list_drives.drives.any?
+        elsif path == 'shared_drives'
+          drive_service.batch do |drive|
+            list_drives(drive)
+          end
+        else
+          drive_service.batch do |drive|
+            request_params = Auth::Google::RequestParameters.new
+            request_params.q += " and '#{path}' in parents "
+            list_files(drive, request_params, path: path)
+          end
         end
 
         @sorter.call(@entries)
@@ -108,7 +157,7 @@ module BrowseEverything
       # @param id [String] identifier for the resource
       # @return [Array<String, Hash>] authorized link to the resource
       def link_for(id)
-        file = drive_service.get_file(id, fields: 'id, name, size')
+        file = drive_service.get_file(id, supports_all_drives: true, fields: 'id, name, size')
         auth_header = { 'Authorization' => "Bearer #{credentials.access_token}" }
         extras = {
           auth_header: auth_header,
@@ -166,7 +215,7 @@ module BrowseEverything
       # This is *the* method which, passing an HTTP request, redeems an authorization code for an access token
       # @return [String] a new access token
       def authorize!
-        @credentials = authorizer.get_credentials_from_code(user_id: user_id, code: code)
+        @credentials = authorizer.get_and_store_credentials_from_code(user_id: user_id, code: code)
         @token = @credentials.access_token
         @code = nil # The authorization code can only be redeemed for an access token once
         @token
@@ -229,11 +278,11 @@ module BrowseEverything
       # @param access_token [String] the access token redeemed using an authorization code
       # @return Credentials credentials restored from a cached access token
       def restore_credentials(access_token)
-        client = Auth::Google::Credentials.new
+        client = Google::Auth::UserRefreshCredentials.new
         client.client_id = client_id.id
         client.client_secret = client_id.secret
         client.update_token!('access_token' => access_token)
-        @credentials = client
+        client
       end
     end
   end

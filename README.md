@@ -15,7 +15,7 @@ Community Support: [![Samvera Community Slack](https://img.shields.io/badge/samv
 This Gem allows your rails application to access user files from cloud storage.
 Currently there are drivers implemented for [Dropbox](http://www.dropbox.com),
 [Google Drive](http://drive.google.com),
-[Box](http://www.box.com), [Amazon S3](https://aws.amazon.com/s3/),
+[Box](http://www.box.com), [Amazon S3](https://aws.amazon.com/s3/), [Sharepoint](https://www.microsoft.com/en-us/microsoft-365/sharepoint/collaboration)
 and a server-side directory share.
 
 The gem uses [OAuth](http://oauth.net/) to connect to a user's account and
@@ -108,19 +108,17 @@ _Until a Product Owner has been identified, we ask that you please direct all re
 
 ## Supported Ruby Releases
 Currently, the following releases of Ruby are tested:
+- 3.3
+- 3.2
 - 3.1
-- 3.0
-- 2.7
-- 2.6
 
 ## Supported Rails Releases
 The supported Rail releases follow those specified by [the security policy of the Rails Community](https://rubyonrails.org/security/).  As is the case with the supported Ruby releases, it is recommended that one upgrades from any Rails release no longer receiving security updates.
+- 8.0
+- 7.2
 - 7.1
 - 7.0
 - 6.1
-- 6.0
-- 5.2
-- 5.1
 
 ## Installation
 

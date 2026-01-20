@@ -35,6 +35,7 @@ Metrics/ClassLength:
   Max: 130
   Exclude:
     - 'lib/browse_everything/driver/google_drive.rb'
+    - 'lib/browse_everything/driver/sharepoint.rb'
 
 Metrics/MethodLength:
   Exclude:
@@ -79,6 +80,7 @@ Style/MixinUsage:
     - 'spec/lib/browse_everything/driver/file_system_spec.rb'
     - 'spec/lib/browse_everything/driver/google_drive_spec.rb'
     - 'spec/lib/browse_everything/driver/s3_spec.rb'
+    - 'spec/lib/browse_everything/driver/sharepoint_spec.rb'
     - 'spec/services/browser_factory_spec.rb'
 
 Style/NumericLiterals:
