@@ -7,9 +7,11 @@ module BrowseEverything
     # or may not be able to figure out how to get browse-everything JS and CSS to load,
     # but we should at least let you load the engine and try, so we don't try
     # to configure sprockets unless it is installed...
+
     if config.respond_to?(:assets)
       config.assets.paths << config.root.join('vendor', 'assets', 'javascripts')
       config.assets.paths << config.root.join('vendor', 'assets', 'stylesheets')
+      config.assets.paths << config.root.join('vendor', 'assets', 'fonts')
       config.assets.precompile += %w[browse_everything.js browse_everything.css]
     end
   end

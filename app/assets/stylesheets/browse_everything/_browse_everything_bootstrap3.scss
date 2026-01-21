@@ -4,8 +4,8 @@
 // CSS for bootstrap 3, intended to be sass @import'ed into a context that has access to
 // bootstrap 3 mixins and variables.
 
-@import "jquery.treetable";
-@import "jquery.treetable.theme.browse";
+// Import Wunderbaum styles
+@import "browse_everything_wunderbaum";
 
 @mixin ev-link {
   cursor: pointer;
@@ -58,10 +58,6 @@
       }
       border-top: none;
     }
-
-    &.list ul {
-      @include content-columns(3);
-    }
   }
 
   .ev-container li {
@@ -101,23 +97,50 @@
 
   .ev-providers {
     select {
-      width: 30%
+      margin-left: 0.5em;
     }
   }
 
   .loading {
-    pointer-events: none;
-    opacity: 0.2;
+    pointer-events: none !important;
+    opacity: 0.3 !important;
+    filter: blur(2px);
+    user-select: none !important;
+    position: relative;
+
+    // Add overlay to completely block interaction
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.5);
+      z-index: 1000;
+      cursor: wait;
+    }
   }
 
   .loading-progress {
     position: absolute;
-    top: 8em;
-    left: 4em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2em 3em;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    &.hidden {
+      display: none;
+    }
   }
 
-  // Massively large text instead of something more artistic
   .loading-text {
-    font-size: 4em;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
   }
 }

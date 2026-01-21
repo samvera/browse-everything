@@ -19,6 +19,15 @@
   }
 }
 
+@mixin ev-link {
+  cursor: pointer;
+  a {
+    color: inherit;
+    background-color: inherit;
+    text-decoration: none;
+  }
+}
+
 #browse-everything {
   div {
     background-color: white;
@@ -70,7 +79,7 @@
       font-weight: $headings-font-weight;
       line-height: $headings-line-height;
       margin-bottom: 0;
-      @extend .mr-2;
+      @extend .me-2;
     }
   }
 
@@ -99,45 +108,21 @@
   }
 
   .loading {
-    pointer-events: none !important;
-    opacity: 0.3 !important;
-    filter: blur(2px);
-    user-select: none !important;
-    position: relative;
-
-    // Add overlay to completely block interaction
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255, 255, 255, 0.5);
-      z-index: 1000;
-      cursor: wait;
-    }
+    pointer-events: none;
+    opacity: 0.2;
   }
 
   .loading-progress {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 2em 3em;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    top: 8em;
+    left: 4em;
     &.hidden {
       display: none;
     }
   }
 
+  // Massively large text instead of something more artistic
   .loading-text {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #333;
+    font-size: 4em;
   }
 }

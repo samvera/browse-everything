@@ -1,6 +1,10 @@
 Authorized!
 
 <script>
-  window.opener.jQuery(window.opener.document).trigger('ev.refresh')
-  window.close()
+  // Trigger refresh event in parent window (vanilla JS)
+  if (window.opener && window.opener.document) {
+    var event = new CustomEvent('ev.refresh', { bubbles: true });
+    window.opener.document.dispatchEvent(event);
+  }
+  window.close();
 </script>

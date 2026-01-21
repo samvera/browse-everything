@@ -1,0 +1,112 @@
+// Import locally embedded SVG icons
+@import "wunderbaum_icons";
+
+// Import Wunderbaum styles
+@import "wunderbaum/dist/wunderbaum";
+
+// Wunderbaum style overrides
+#browse-everything {
+  .wunderbaum {
+    font-size: 14px;
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    overflow: auto;
+    // Disable scroll anchoring to prevent jumping
+    overflow-anchor: none;
+    // Prevent overscroll/bounce effects that cause twitching
+    overscroll-behavior: contain;
+    height: 100%;
+    max-height: 100%;
+    display: block;
+    // Force GPU acceleration to smooth scrolling
+    transform: translateZ(0);
+    -webkit-overflow-scrolling: touch;
+
+    /* Remove all borders from the Wunderbaum table, cells, and rows */
+    table,
+    .wb-grid table,
+    td,
+    th,
+    .wb-row span.wb-col {
+      border: none !important;
+    }
+
+    .wb-header {
+      font-weight: 600;
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    .wb-row {
+      border-bottom: 1px solid #e9ecef;
+      transition: background-color 0.15s ease-in-out;
+      display: flex;
+      width: 100%;
+
+      &:hover {
+        background-color: #f8f9fa;
+      }
+
+      &.wb-selected {
+        background-color: #ced4d5 !important;
+      }
+
+      &.wb-active {
+        outline: 2px solid #818484;
+        outline-offset: -2px;
+      }
+    }
+
+    .wb-col {
+      padding: 8px;
+      border-right: 1px solid #e9ecef;
+      vertical-align: middle;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
+
+    .wb-node {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .wb-expander {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    // Add this from wunderbaum's default styles to make indentation spans visible
+    // inside the <table> DOM structure
+    span.wb-node i.wb-indent {
+      height: var(--wb-icon-outer-height);
+      width: var(--wb-icon-outer-width);
+      padding: var(--wb-icon-padding-y) var(--wb-icon-padding-x);
+      display: inline-block;
+    }
+
+    span.wb-node i.wb-indent::before {
+      content: " ";
+    }
+  }
+}
+
+// Allow node list to expand within container
+.wb-node-list {
+  min-height: 100px;
+  overflow-anchor: none;
+}
+
+// Style the Wunderbaum container
+div#file-list {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+}

@@ -1,4 +1,4 @@
-  <table id="file-list" role="grid" tabindex="-1" title="Choose files to upload from the table below" aria-live="polite">
+  <table id="file-list" role="grid" tabindex="0" aria-label="Choose files to upload from the table below" aria-live="polite">
     <thead>
       <tr role="row" tabindex="-1">
         <th role="columnheader">Name</th>
@@ -36,9 +36,8 @@
             <span class="sr-only"><%= file.container? ? ', folder' : ', file' %> </span>
           <% else %>
             <%= link_to browse_everything_engine.contents_path(provider_name, file.id), class: 'ev-link' do %>
-              <span class="<%=file.container? ? 'folder' : 'file'%>" aria-hidden="true"/>
+              <span class="<%=file.container? ? 'folder' : 'file'%>" aria-hidden="true" />
               <%= file.name %>
-              <span class="sr-only"><%= file.container? ? ', folder' : ', file' %> </span>
             <% end %>
           <% end %>
         </td>

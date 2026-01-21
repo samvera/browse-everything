@@ -1,0 +1,22 @@
+{
+  "name": "browse-everything",
+  "version": "2.0.0",
+  "description": "Rails engine providing a multi-provider file browser",
+  "private": true,
+  "dependencies": {
+    "wunderbaum": "^0.11.0"
+  },
+  "scripts": {
+    "postinstall": "bash script/vendor-assets.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samvera/browse-everything.git"
+  },
+  "keywords": [
+    "rails",
+    "file-browser",
+    "cloud-storage"
+  ],
+  "license": "Apache-2.0"
+}
