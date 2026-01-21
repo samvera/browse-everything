@@ -335,6 +335,20 @@ document.addEventListener('DOMContentLoaded', function () {
       return null;
     }
 
+    // Add tabindex to insert the container into the tab order of the page
+    container.setAttribute('tabindex', 0);
+
+    // Shift focus to first row when container receives focus
+    container.addEventListener('focus', function () {
+      if (wunderbaumInstance && wunderbaumInstance.count() > 0) {
+        var firstNode = wunderbaumInstance.getFirstChild();
+        if (firstNode) {
+          // Set focus and ensure the node is marked as active
+          firstNode.setActive(true, { focusNode: true });
+        }
+      }
+    });
+
     // Destroy existing instance if present
     if (wunderbaumInstance) {
       try {
@@ -360,9 +374,26 @@ document.addEventListener('DOMContentLoaded', function () {
         // Don't auto-expand on load
         minExpandLevel: 0,
         columnsMenu: false,
-        // Enable icons and use Bootstrap Icons
+        // Enable icons with a locally embedded custom SVG icon map
         icon: true,
-        iconMap: 'bootstrap',
+        iconMap: {
+          expanderExpanded: 'wb-svg-icon wb-svg-expander-expanded',
+          expanderCollapsed: 'wb-svg-icon wb-svg-expander-collapsed',
+          expanderLazy: 'wb-svg-icon wb-svg-expander-collapsed wb-helper-lazy-expander',
+          checkChecked: 'wb-svg-icon wb-svg-check-checked',
+          checkUnchecked: 'wb-svg-icon wb-svg-check-unchecked',
+          checkUnknown: 'wb-svg-icon wb-svg-check-unknown',
+          folder: 'wb-svg-icon wb-svg-folder',
+          folderOpen: 'wb-svg-icon wb-svg-folder-open',
+          folderLazy: 'wb-svg-icon wb-svg-folder-lazy',
+          doc: 'wb-svg-icon wb-svg-doc',
+          error: 'wb-svg-icon wb-svg-error',
+          loading: 'wb-svg-icon wb-svg-loading wb-busy',
+          noData: 'wb-svg-icon wb-svg-nodata'
+        },
+        keyboard: true,
+        // Force row mode to enable expand/collapse with ArrowLeft/Right keys
+        navigationModeOption: 'row',
         columns: [
           { id: '*', title: 'Name', width: '*' },
           { id: 'size', title: 'Size', width: '100px' },
@@ -453,6 +484,60 @@ document.addEventListener('DOMContentLoaded', function () {
             // Select node on click event for only files
             e.node.setSelected(!e.node.isSelected());
           }
+        },
+        keydown: function (e) {
+          /**
+           * Customize keyboard navigation for 'Space' key for folders to work with lazy-loading.
+           * For all the other keyboard shortcuts, allow Wunderbaum's default keyboard navigation.
+           */
+          if (e.event.key !== ' ' && e.event.keyCode !== 32) {
+            return;
+          }
+
+          const node = e.node;
+          if (!node) return;
+
+          // For files, allow Wunderbaum's default handling, i.e. toggle selection
+          if (!node.data.folder) {
+            return;
+          }
+
+          // For folders, prevent default handling and use custom handling with support for lazy-loading
+          e.event.preventDefault();
+
+          // Check if the folders need to expand first
+          const needsExpansion = !node.expanded || (node.children && node.children.some(function (child) {
+            return child.data.folder && !child.expanded;
+          }));
+
+          if (needsExpansion && !node.isSelected()) {
+            // Only expand if selecting and the tree is not fully expanded
+            isBatchSelecting = true;
+            startWait();
+
+            (async function () {
+              try {
+                setProgress('Loading folders...');
+
+                // Recursively expand this folder and all of its subfolders
+                await expandAllFoldersRecursively(node);
+
+                // Wait for all DOM updates and tree mutations to complete
+                await new Promise(resolve => setTimeout(resolve, 50));
+
+                // Toggle selection in hierarchical mode will select all children
+                node.setSelected(!node.isSelected());
+              } finally {
+                stopWait();
+                isBatchSelecting = false;
+              }
+            })();
+          } else {
+            // Toggle selection when the folder is already selected
+            node.setSelected(!node.isSelected());
+          }
+          // Prevent Wunderbaum's default Space handling for folders
+          return false;
         },
         select: async function (e) {
           // If already in batch selection mode, ignore this event to prevent nested calls

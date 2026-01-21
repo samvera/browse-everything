@@ -176,7 +176,7 @@ However, we also recommend merging the contents of this file into your main `app
 
 Next major release of `browse-everything` removes jQuery as a dependency and modernizes the JavaScript implementation to use plain JavaScript with the use of [Wunderbaum](https://github.com/mar10/wunderbaum) JS library to render file browse interface.
 
-`jQuery` is no longer required to use this Gem in this version. All `jQuery` code have been rewritten using plain JavaScript. And all the `jQuery` and dependant libraries are removed. So the new version uses `wunderbaum` instead of `jquery.treetable` for the  file browse interface, along with `bootstrap-icons` to support icons in the file browse interface.
+`jQuery` is no longer required to use this Gem in this version. All `jQuery` code have been rewritten using plain JavaScript. And all the `jQuery` and dependant libraries are removed. So the new version uses `wunderbaum` instead of `jquery.treetable` for the  file browse interface with locally embedded SVG icons in the file browse interface.
 
 #### Removed APIs & Dependencies
 
@@ -184,7 +184,7 @@ Next major release of `browse-everything` removes jQuery as a dependency and mod
 |----------|--------------|-------------|
 | JavaScript API | `$.fn.browseEverything()` </br>`$.fn.browseEverything.toggleCheckbox()` | Data attributes (`data-toggle="browse-everything"`) </br>Wunderbaum's built-in checkbox handling |
 | Gem Dependency | `jquery-rails`, `bootstrap` | No longer required |
-| JS Library | `jquery-treetable` | `wunderbaum`, `bootstrap-icons` |
+| JS Library | `jquery-treetable` | `wunderbaum` |
 
 #### Migration Notes
 
@@ -192,9 +192,9 @@ Next major release of `browse-everything` removes jQuery as a dependency and mod
 <thead>
 <tr>
 <th>Component</th>
-<th>Old: v1.x</th>
-<th>New: future release</th>
-<th width="50%">Notes on setup for future release</th>
+<th width="25%">Old: v1.x</th>
+<th width="40%">New: future release</th>
+<th>Notes on setup for future release</th>
 </tr>
 </thead>
 <tbody>
@@ -231,22 +231,13 @@ Data attribute initialization:
 <tr valign="top">
 <td rowspan="2"><strong>Asset Configuration</strong></td>
 <td><strong>Asset Pipeline (Sprockets)</strong> with <code>jQuery</code> + <code>jquery.treetable</code></td>
-<td><strong>Asset Pipeline (Sprockets)</strong> with <code>wunderbaum</code> + <code>bootstrap-icons</code></td>
-<td>✅ No additional setup required.<br/>Fonts automatically served via <code>vendor/assets</code>.</td>
+<td><strong>Asset Pipeline (Sprockets)</strong> with <code>wunderbaum</code></td>
+<td>✅ No additional setup required.</td>
 </tr>
 <tr valign="top">
 <td>N/A</td>
-<td><strong>CSS Bundling (cssbundling-rails)</strong> with <code>wunderbaum</code> + <code>bootstrap-icons</code></br>Requires font path configuration.</td>
-<td>Update <code>package.json</code> by adding the fonts path to the Sass build scripts:
-
-```json
-{
-  "scripts": {
-    "build:css": "sass ... --load-path=$(bundle show 'browse-everything')/vendor/assets/fonts ...",
-    "build:css:dev": "sass ... --load-path=$(bundle show 'browse-everything')/vendor/assets/fonts --watch"
-  }
-}
-```
+<td><strong>CSS Bundling (cssbundling-rails)</strong> with <code>wunderbaum</code></br>Requires font path configuration.</td>
+<td>
 Clear the Rails asset cache and rebuild assets;
 
 ```bash

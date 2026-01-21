@@ -2,12 +2,7 @@
 # yarn lockfile v1
 
 
-bootstrap-icons@^1.13.1:
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/bootstrap-icons/-/bootstrap-icons-1.13.1.tgz#0aad3f5b55b67402990e729ce3883416f9cef6c5"
-  integrity sha512-ijombt4v6bv5CLeXvRWKy7CuM3TRTuPEuGaGKvTV5cz65rQSY8RQ2JcHt6b90cBBAC7s8fsf2EkQDldzCoXUjw==
-
 wunderbaum@^0.11.0:
   version "0.11.1"
-  resolved "https://registry.yarnpkg.com/wunderbaum/-/wunderbaum-0.11.1.tgz#f58bf1bf10d1d1c92ca1fe832c2cf1501c4fa184"
+  resolved "https://registry.npmjs.org/wunderbaum/-/wunderbaum-0.11.1.tgz"
   integrity sha512-SYfRahkw95DEBzwoUY1YNiv7ZKCG4XVolyrAGtRs2nC/6wZYZf2togTqfp4ReeXP4IJlfK1swXe3WUC2yRZBYw==

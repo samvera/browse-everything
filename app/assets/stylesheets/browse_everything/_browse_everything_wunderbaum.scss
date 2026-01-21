@@ -1,38 +1,5 @@
-// Define @font-face for bootstrap-icons with proper asset paths for Rails
-@if function-exists(font-url) {
-  // Sprockets asset pipeline - use font-url() helper
-  @font-face {
-    font-family: "bootstrap-icons";
-    src: font-url("bootstrap-icons/bootstrap-icons.woff2") format("woff2"),
-      font-url("bootstrap-icons/bootstrap-icons.woff") format("woff");
-    font-weight: normal;
-    font-style: normal;
-    font-display: block;
-  }
-}
-@else {
-  // Standalone Sass - use plain url() with relative paths
-  @font-face {
-    font-family: "bootstrap-icons";
-    src: url("bootstrap-icons/bootstrap-icons.woff2") format("woff2"),
-      url("bootstrap-icons/bootstrap-icons.woff") format("woff");
-    font-weight: normal;
-    font-style: normal;
-    font-display: block;
-  }
-}
-
-/*
-  Override bootstrap-icons' Sass variables to prevent their @font-face from generating,
-  as this request returns a 404 code made by bootstrap-icons.
-*/
-$bootstrap-icons-font-src: none !default;
-
-/* 
-  Import bootstrap-icons for icon classes (.bi-* with Unicode characters)
-  The @font-face in the file will use $bootstrap-icons-font-src from above.
-*/
-@import "bootstrap-icons/font/bootstrap-icons.scss";
+// Import locally embedded SVG icons
+@import "wunderbaum_icons";
 
 // Import Wunderbaum styles
 @import "wunderbaum/dist/wunderbaum";
