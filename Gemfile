@@ -29,6 +29,12 @@ gem 'ruby-box'
 
 ENV['RAILS_VERSION'] ||= "8.0.0"
 
+# json 3 dropped the quirks_mode option that ActiveSupport before 8.1 passes
+# when encoding, so Hash#to_json raises ArgumentError under it.
+if ENV['RAILS_VERSION'] != 'edge' && Gem::Version.new(ENV['RAILS_VERSION']) < Gem::Version.new('8.1')
+  gem 'json', '< 3'
+end
+
 if ENV['RAILS_VERSION']
   if ENV['RAILS_VERSION'] == 'edge'
     gem 'rails', github: 'rails/rails'
