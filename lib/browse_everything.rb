@@ -44,7 +44,7 @@ module BrowseEverything
 
   module Auth
     module Sharepoint
-      autoload :Session,            'browse_everything/auth/sharepoint/session'
+      autoload :Session, 'browse_everything/auth/sharepoint/session'
     end
   end
 
