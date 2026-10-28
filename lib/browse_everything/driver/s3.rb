@@ -55,16 +55,18 @@ module BrowseEverything
       def link_for(path)
         obj = bucket.object(full_path(path))
 
-        extras = {
-          file_name: File.basename(path),
-          expires: (config[:expires_in] if config[:response_type] == :signed_url)
-        }.compact
-
-        url = case config[:response_type].to_sym
+        response_type = config[:response_type].to_sym
+        url = case response_type
               when :signed_url then obj.presigned_url(:get, expires_in: config[:expires_in])
               when :public_url then obj.public_url
               when :s3_uri     then "s3://#{obj.bucket_name}/#{obj.key}"
               end
+
+        extras = {
+          file_name: File.basename(path),
+          file_size: object_size(obj),
+          expires: (signed_url_expiry(url) if response_type == :signed_url)
+        }.compact
 
         [url, extras]
       end
@@ -78,6 +80,26 @@ module BrowseEverything
       end
 
       private
+
+      # The size is a convenience for consumers, so credentials that can list
+      # but not read an object (enough for an :s3_uri link) leave it out
+      # rather than fail the link.
+      def object_size(obj)
+        obj.content_length
+      rescue Aws::S3::Errors::ServiceError, Seahorse::Client::NetworkingError
+        nil
+      end
+
+      # Retriever#retrieve parses `expires` as a time, so send when the link
+      # expires, as the Box and Google Drive drivers do. It is read from the
+      # signed URL itself because the SDK can sign for less than expires_in,
+      # for example when the signing credentials are temporary.
+      def signed_url_expiry(url)
+        params = Rack::Utils.parse_query(URI(url).query)
+        return unless params['X-Amz-Date'] && params['X-Amz-Expires']
+
+        Time.strptime(params['X-Amz-Date'], '%Y%m%dT%H%M%S%z') + params['X-Amz-Expires'].to_i
+      end
 
       def strip(path)
         path.sub %r{^/?(.+?)/?$}, '\1'
