@@ -323,7 +323,6 @@ $(function () {
 
   $(document).on('click', 'button.ev-submit', function (event) {
     event.preventDefault();
-    $(this).button('loading');
     startWait();
     $('form.ev-submit-form').append(Array.from(selected_files.values()));
     var main_form = $(this).closest('form');
