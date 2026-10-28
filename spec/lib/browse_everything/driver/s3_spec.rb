@@ -134,28 +134,68 @@ describe BrowseEverything::Driver::S3 do
       context 'when retrieving the link for an asset' do
         subject { contents[2] }
 
+        let(:signed_at) { Time.now.utc.change(usec: 0) }
+        let(:presigned_url) do
+          "https://s3.amazonaws.com/presigned_url?X-Amz-Date=#{signed_at.strftime('%Y%m%dT%H%M%SZ')}&X-Amz-Expires=3600"
+        end
+
         before do
           object = instance_double(Aws::S3::Object)
-          allow(object).to receive(:presigned_url).and_return('https://s3.amazonaws.com/presigned_url')
+          allow(object).to receive(:presigned_url).and_return(presigned_url)
           allow(object).to receive(:public_url).and_return('https://s3.amazonaws.com/public_url')
           allow(object).to receive(:bucket_name).and_return('s3.bucket')
           allow(object).to receive(:key).and_return('foo/quux.png')
+          allow(object).to receive(:content_length).and_return(1_511_860)
           allow(provider.bucket).to receive(:object).and_return(object)
         end
 
         it ':signed_url' do
           provider.config[:response_type] = :signed_url
-          expect(provider.link_for('foo/quux.png')).to eq ['https://s3.amazonaws.com/presigned_url', { file_name: 'quux.png', expires: 14400 }]
+          expect(provider.link_for('foo/quux.png')).to eq [presigned_url, { file_name: 'quux.png', file_size: 1_511_860, expires: signed_at + 3600 }]
+        end
+
+        it ':signed_url reports the lifetime the URL was signed for, not expires_in' do
+          provider.config[:response_type] = :signed_url
+          provider.config[:expires_in] = 14400
+          expect(provider.link_for('foo/quux.png').last[:expires]).to eq signed_at + 3600
+        end
+
+        it ':signed_url configured as a string still sends the expiry' do
+          provider.config[:response_type] = 'signed_url'
+          expect(provider.link_for('foo/quux.png').last[:expires]).to eq signed_at + 3600
+        end
+
+        [Aws::S3::Errors::Forbidden.new(nil, 'Forbidden'), Seahorse::Client::NetworkingError.new(Errno::ECONNRESET.new)].each do |error|
+          it "leaves out the size when reading it raises #{error.class}" do
+            provider.config[:response_type] = :s3_uri
+            allow(provider.bucket.object('foo/quux.png')).to receive(:content_length).and_raise(error)
+            expect(provider.link_for('foo/quux.png')).to eq ['s3://s3.bucket/foo/quux.png', { file_name: 'quux.png' }]
+          end
+        end
+
+        it ':s3_uri keeps a key that is not a valid URI' do
+          provider.config[:response_type] = :s3_uri
+          allow(provider.bucket.object('foo/quux.png')).to receive(:key).and_return('foo/résumé file.pdf')
+          expect(provider.link_for('foo/quux.png').first).to eq 's3://s3.bucket/foo/résumé file.pdf'
+        end
+
+        it ':signed_url gives an expiry the retriever accepts' do
+          provider.config[:response_type] = :signed_url
+          url, extras = provider.link_for('foo/quux.png')
+          spec = { 'url' => url, 'expires' => extras[:expires].to_s, 'file_size' => extras[:file_size] }
+          retriever = BrowseEverything::Retriever.new
+          allow(retriever).to receive(:retrieve_http)
+          expect { retriever.retrieve(spec) }.not_to raise_error
         end
 
         it ':public_url' do
           provider.config[:response_type] = :public_url
-          expect(provider.link_for('foo/quux.png')).to eq ['https://s3.amazonaws.com/public_url', { file_name: 'quux.png' }]
+          expect(provider.link_for('foo/quux.png')).to eq ['https://s3.amazonaws.com/public_url', { file_name: 'quux.png', file_size: 1_511_860 }]
         end
 
         it ':s3_uri' do
           provider.config[:response_type] = :s3_uri
-          expect(provider.link_for('foo/quux.png')).to eq ['s3://s3.bucket/foo/quux.png', { file_name: 'quux.png' }]
+          expect(provider.link_for('foo/quux.png')).to eq ['s3://s3.bucket/foo/quux.png', { file_name: 'quux.png', file_size: 1_511_860 }]
         end
       end
     end
