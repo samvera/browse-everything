@@ -23,7 +23,7 @@ end
 
 # Set a default RAILS_VERSION so we make sure to get extra dependencies for it...
 
-ENV['RAILS_VERSION'] ||= "8.0.0"
+ENV['RAILS_VERSION'] ||= "8.1.4.1"
 
 # json 3 dropped the quirks_mode option that ActiveSupport before 8.1 passes
 # when encoding, so Hash#to_json raises ArgumentError under it.
