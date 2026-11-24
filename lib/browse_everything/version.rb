@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module BrowseEverything
-  VERSION = '1.6.1'
+  VERSION = '1.6.2'
 end
