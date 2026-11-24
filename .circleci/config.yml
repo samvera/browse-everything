@@ -14,10 +14,7 @@ jobs:
       bundler_version:
         type: string
         default: 2.5.21
-      resource_class:
-        type: string
-        default: medium
-    resource_class: << parameters.resource_class >>
+    resource_class: large
     executor:
       name: 'samvera/ruby'
       ruby_version: << parameters.ruby_version >>
@@ -61,7 +58,6 @@ workflows:
           name: "ruby3-3_rails8-1"
           ruby_version: 3.3.13
           rails_version: 8.1.4.1
-          resource_class: large
       - build:
           name: "ruby3-3_rails8-0"
           ruby_version: 3.3.13
